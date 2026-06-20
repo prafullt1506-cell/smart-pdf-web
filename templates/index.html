@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart PDF Engine</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #e53935;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        input[type="file"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .compress-btn {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+        .compress-btn:hover {
+            background-color: #c62828;
+        }
+        .download-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        .download-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.15);
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .warning-text {
+            font-size: 13px;
+            color: #777;
+            margin-top: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Main Heading -->
+        <h1>Smart PDF Engine</h1>
+        <p>Upload your PDF file to compress it instantly online.</p>
+
+        <!-- PDF Upload & Compress Form -->
+        <div class="form-group">
+            <form action="/compress" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".pdf" required>
+                <br>
+                <button type="submit" class="compress-btn">⚙️ Compress PDF</button>
+            </form>
+        </div>
+
+        <!-- Offline Software Download Section -->
+        <div class="download-section">
+            <h3>Want to use this offline?</h3>
+            <a href="/static/Smart_Compressor.exe" download="Smart_Compressor.exe" class="download-btn">
+                ⬇️ Download Smart Compressor (Windows)
+            </a>
+            <p class="warning-text">
+                Note: If Windows shows a security prompt, click <strong>'More info'</strong> and <strong>'Run anyway'</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Vercel Web Analytics Script (For tracking visitors) -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+</body>
+</html>
