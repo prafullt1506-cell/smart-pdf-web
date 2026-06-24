@@ -413,7 +413,7 @@ def protect_pdf():
         return jsonify({"error": str(e)}), 500
 
 # ==========================================
-# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (NEW!)
+# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (CM + Pixel + Custom DPI Target Array)
 # ==========================================
 @app.route('/process-image-crop', methods=['POST'])
 def process_image_crop():
@@ -429,7 +429,7 @@ def process_image_crop():
             img = img.convert("RGB")
             original_format = 'JPEG'
 
-        # 1. Cropping Coordinates
+        # 1. Cropping Engine Execution
         x = int(float(request.form.get('x', 0)))
         y = int(float(request.form.get('y', 0)))
         w = int(float(request.form.get('width', img.width)))
@@ -438,43 +438,69 @@ def process_image_crop():
         if w > 0 and h > 0:
             img = img.crop((x, y, x + w, y + h))
 
-        # 2. Magic Enhance
+        # 2. Magic Enhance Matrix (Auto Clean & Sharp Filter)
         if request.form.get('enhance') == 'true':
             enhancer = ImageEnhance.Sharpness(img)
-            img = enhancer.enhance(1.5)
+            img = enhancer.enhance(1.6) 
             enhancer_contrast = ImageEnhance.Contrast(img)
-            img = enhancer_contrast.enhance(1.1)
+            img = enhancer_contrast.enhance(1.15)
             enhancer_color = ImageEnhance.Color(img)
             img = enhancer_color.enhance(1.1)
 
-        # 3. Target Pixels (Resizing with LANCZOS)
-        target_w = request.form.get('target_w')
-        target_h = request.form.get('target_h')
-        if target_w and target_h and target_w.isdigit() and target_h.isdigit():
-            img = img.resize((int(target_w), int(target_h)), Image.Resampling.LANCZOS)
+        # 3. Dynamic Unit Resolution Target Parser (PX vs CM conversion with DPI)
+        unit = request.form.get('unit', 'px')
+        raw_w = request.form.get('target_w', '')
+        raw_h = request.form.get('target_h', '')
+        raw_dpi = request.form.get('target_dpi', '')
 
-        # 4. Target KB (Compression)
+        # जर युजरने DPI दिला नसेल तर Default 300 DPI सेट करणे
+        try:
+            target_dpi = int(raw_dpi) if raw_dpi else 300
+        except ValueError:
+            target_dpi = 300
+
+        target_w, target_h = None, None
+
+        if raw_w and raw_h:
+            try:
+                if unit == 'cm':
+                    # CM to Pixel Formula based on Custom DPI: Pixels = (CM / 2.54) * DPI
+                    target_w = int((float(raw_w) / 2.54) * target_dpi)
+                    target_h = int((float(raw_h) / 2.54) * target_dpi)
+                else:
+                    target_w = int(float(raw_w))
+                    target_h = int(float(raw_h))
+            except ValueError:
+                pass
+
+        # Perform High-Quality LANCZOS Resampling Matrix
+        if target_w and target_h and target_w > 0 and target_h > 0:
+            img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+
+        # 4. Byte Clamping Compression (KB Engine Clamping + DPI Binding)
         target_kb = request.form.get('target_kb')
         img_byte_arr = io.BytesIO()
         
         if target_kb and target_kb.isdigit():
             target_bytes = int(target_kb) * 1024
-            quality = 100
-            while quality > 10:
+            quality = 95
+            while quality > 15:
                 img_byte_arr.seek(0)
                 img_byte_arr.truncate()
-                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True)
+                # DPI मेटाडेटा इमेजमध्ये सेव्ह करणे
+                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True, dpi=(target_dpi, target_dpi))
                 if img_byte_arr.tell() <= target_bytes:
                     break
                 quality -= 5
         else:
-            img.save(img_byte_arr, format=original_format, quality=95, optimize=True)
+            # जर KB सेट केलं नसेल तर Best Quality सोबत DPI सेव्ह करणे
+            img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
         img_byte_arr.seek(0)
-        return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Pro_Cropped.{original_format.lower()}")
+        return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Pro_Studio_Render.{original_format.lower()}")
 
     except Exception as e:
-        print("Error:", e)
+        print("Error System Core Grid Failure:", e)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
