@@ -3,160 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Image Cropper - PDF Toolkit Pro</title>
+    <title>Ultimate Pro Image Workspace - PDF Toolkit Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .img-container { max-height: 500px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 0.5rem; overflow: hidden; }
+        .img-workspace { max-height: 450px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 1rem; overflow: hidden; }
         img { display: block; max-width: 100%; }
+        /* Compare Slider Magic CSS */
+        .preview-box { background: #1e293b; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen font-sans">
+<body class="bg-slate-950 text-white min-h-screen font-sans antialiased">
     
-    <!-- Navbar -->
-    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg">
-        <a href="/" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">PDF Toolkit Pro</a>
-        <a href="/" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all border border-gray-600">Home</a>
+    <!-- Navigation -->
+    <nav class="glass-panel sticky top-0 z-50 px-8 py-4 flex justify-between items-center shadow-xl">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">✂️</span>
+            <a href="/" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500">PDF Toolkit Pro</a>
+        </div>
+        <a href="/" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 font-bold rounded-full transition-all border border-slate-600 text-sm shadow-md">Dashboard</a>
     </nav>
 
-    <div class="container mx-auto px-4 py-10 max-w-6xl">
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold mb-3">Pro Image <span class="text-blue-500">Cropper & Enhancer</span></h1>
-            <p class="text-gray-400">Crop, Auto-Clean, and Resize images with Pixel & KB control.</p>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Top Info Header -->
+        <div class="text-center mb-8">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-pink-500/20">
+                ✨ Live Matrix Slicing Engine Active
+            </span>
+            <h1 class="text-4xl font-black tracking-tight mb-2">Advanced Image Cropper <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">& Studio</span></h1>
+            <p class="text-sm text-slate-400 max-w-xl mx-auto">Real-time before/after render, multi-unit dimension scaling, and dynamic size clamping workspace.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Left Panel: Upload & Preview -->
-            <div class="md:col-span-2 glass-panel p-6 rounded-2xl shadow-xl">
-                <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer mb-4 bg-gray-800 rounded-full border border-gray-700">
-                
-                <div class="img-container shadow-inner border border-gray-700">
-                    <img id="image" src="" alt="Upload an image to start" style="display: none;">
+            <!-- LEFT WORKSPACE: CROP MATRIX & SIDE-BY-SIDE PREVIEW (8 Cols) -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                <!-- Cropper Input/Display Grid -->
+                <div class="glass-panel p-6 rounded-3xl shadow-xl">
+                    <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer mb-5 bg-slate-900 rounded-full border border-slate-800 p-1">
+                    
+                    <div class="img-workspace border border-slate-800 shadow-inner">
+                        <img id="image" src="" alt="Upload a master image asset to compile studio grid" style="display: none;">
+                    </div>
+
+                    <!-- Ratio Presets -->
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center hidden" id="ratio-buttons">
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(16/9)">16:9 Desktop</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(4/3)">4:3 Frame</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(1)">1:1 Square</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(NaN)">Free Form</button>
+                    </div>
                 </div>
 
-                <!-- Aspect Ratio Buttons -->
-                <div class="flex flex-wrap gap-2 mt-4 justify-center" id="ratio-buttons" style="display: none;">
-                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(16/9)">16:9 (Desktop)</button>
-                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(4/3)">4:3 (Standard)</button>
-                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(1)">1:1 (Square)</button>
-                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(NaN)">Free Crop</button>
+                <!-- 🌟 LIVE PREVIEW LAB & COMPARISON PANEL -->
+                <div id="previewPanel" class="glass-panel p-6 rounded-3xl shadow-xl hidden">
+                    <h3 class="text-xs font-black tracking-widest uppercase text-slate-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-pink-500"></i> Real-Time Studio Preview Render
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Before / Live Crop Matrix -->
+                        <div class="preview-box p-4 flex flex-col items-center">
+                            <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">Original / Crop Selection</span>
+                            <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-950 rounded-lg">
+                                <div id="cropPreview" class="overflow-hidden bg-slate-900 shadow-lg"></div>
+                            </div>
+                        </div>
+
+                        <!-- After / Smart Matrix Enhancement Preview -->
+                        <div class="preview-box p-4 flex flex-col items-center border border-purple-500/20 relative">
+                            <span class="text-[10px] font-black uppercase text-purple-400 tracking-wider mb-2 bg-purple-950/40 px-2.5 py-1 rounded-md border border-purple-900/40">✨ Dynamic Studio Render (Live Output)</span>
+                            <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-950 rounded-lg relative">
+                                <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain filter transition-all duration-300 shadow-lg" src="" alt="Live Preview Frame">
+                                <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider hidden">Enhanced Filter Active</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Right Panel: Controls -->
-            <div class="glass-panel p-6 rounded-2xl shadow-xl flex flex-col gap-6">
-                
-                <!-- Magic Enhance -->
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                    <label class="flex items-center cursor-pointer">
+            <!-- RIGHT PANEL: CORE LOGIC CONTROLS (4 Cols) -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                <!-- Magic Enhance Control Toggle -->
+                <div class="glass-panel p-5 rounded-3xl border border-slate-800">
+                    <label class="flex items-center justify-between cursor-pointer">
+                        <div class="font-extrabold text-slate-200 text-sm flex items-center gap-2">
+                            <span>🪄</span> Magic Auto-Clean & Clear
+                        </div>
                         <div class="relative">
                             <input type="checkbox" id="magicEnhance" class="sr-only">
-                            <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
-                        </div>
-                        <div class="ml-3 font-semibold text-purple-400 flex items-center gap-2">
-                            ✨ Magic Auto-Enhance
+                            <div class="block bg-slate-800 w-12 h-6 rounded-full border border-slate-700 transition-colors"></div>
+                            <div class="dot absolute left-1 top-1 bg-slate-400 w-4 h-4 rounded-full transition-all duration-300"></div>
                         </div>
                     </label>
-                    <p class="text-xs text-gray-400 mt-2">Automatically fixes blur, brightness, and contrast.</p>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Real-time pipeline engine injecting active sharpness, balanced contrast matrix, and rich pixel balance mapping.</p>
                 </div>
 
-                <!-- Targeted Output -->
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-                    <h3 class="font-bold text-gray-300 mb-3 border-b border-gray-700 pb-2">Target Output (Optional)</h3>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="text-xs text-gray-400">Width (px)</label>
-                            <input type="number" id="targetW" placeholder="e.g. 1920" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400">Height (px)</label>
-                            <input type="number" id="targetH" placeholder="e.g. 1080" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                    </div>
-
+                <!-- Resizing & Scaling Unit Grid -->
+                <div class="glass-panel p-5 rounded-3xl border border-slate-800 flex flex-col gap-5">
                     <div>
-                        <label class="text-xs text-gray-400">Max File Size (KB)</label>
-                        <input type="number" id="targetKB" placeholder="e.g. 50 (for forms)" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                        <h3 class="font-black text-xs text-slate-400 uppercase tracking-widest mb-3 pb-1 border-b border-slate-800/60 flex items-center justify-between">
+                            <span>Target Dimension Unit</span>
+                            <span class="text-[10px] text-pink-400 lowercase italic font-bold">Smart Transform Enforced</span>
+                        </h3>
+                        
+                        <!-- Unit Type Switcher Buttons -->
+                        <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                            <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10">Pixels (PX)</button>
+                            <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white">Centimeters (CM)</button>
+                        </div>
                     </div>
-                    <p class="text-[10px] text-gray-500 mt-1">*Leave blank to keep original size/quality.</p>
+
+                    <!-- Input Parameters Form Field (Width & Height) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label id="lblWidth" class="text-xs font-bold text-slate-400 block mb-1">Target Width (px)</label>
+                            <input type="number" id="targetW" placeholder="Auto" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                        </div>
+                        <div>
+                            <label id="lblHeight" class="text-xs font-bold text-slate-400 block mb-1">Target Height (px)</label>
+                            <input type="number" id="targetH" placeholder="Auto" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Input Parameters Form Field (KB & DPI) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 block mb-1">Max Size (KB)</label>
+                            <input type="number" id="targetKB" placeholder="e.g., 50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 block mb-1">Target DPI</label>
+                            <input type="number" id="targetDPI" placeholder="e.g., 300" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Process Button -->
-                <button id="processBtn" class="w-full py-4 mt-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-bold text-lg shadow-lg transform transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Crop & Download 🚀
+                <!-- Core Download Execute Trigger -->
+                <button id="processBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-pink-500/20 transform hover:-translate-y-1 transition-all disabled:opacity-40 disabled:pointer-events-none" disabled>
+                    ⚡ PRO DOWNLOAD RENDER
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- JS for Pro Functionality -->
     <script>
         let cropper;
+        let currentUnit = 'px'; // Default state tracker
         const imageElement = document.getElementById('image');
         const uploadInput = document.getElementById('imageUpload');
         const processBtn = document.getElementById('processBtn');
         const ratioButtons = document.getElementById('ratio-buttons');
-
-        // Checkbox Toggle CSS Logic
+        const previewPanel = document.getElementById('previewPanel');
         const magicToggle = document.getElementById('magicEnhance');
+        const liveEnhancedPreview = document.getElementById('liveEnhancedPreview');
+
+        // Dynamic Switch unit logic (PX vs CM calculation map)
+        function switchUnit(unit) {
+            currentUnit = unit;
+            const pxBtn = document.getElementById('unitPixelBtn');
+            const cmBtn = document.getElementById('unitCmBtn');
+            const lblW = document.getElementById('lblWidth');
+            const lblH = document.getElementById('lblHeight');
+            const wInput = document.getElementById('targetW');
+            const hInput = document.getElementById('targetH');
+
+            if(unit === 'cm') {
+                cmBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10";
+                pxBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
+                lblW.innerText = "Target Width (cm)";
+                lblH.innerText = "Target Height (cm)";
+                wInput.placeholder = "e.g., 3.5";
+                hInput.placeholder = "e.g., 4.5";
+            } else {
+                pxBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10";
+                cmBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
+                lblW.innerText = "Target Width (px)";
+                lblH.innerText = "Target Height (px)";
+                wInput.placeholder = "Auto";
+                hInput.placeholder = "Auto";
+            }
+            triggerLivePreviewGeneration();
+        }
+
+        // Checkbox Slide Interface Binding Handler
         magicToggle.addEventListener('change', function() {
             const dot = this.parentElement.querySelector('.dot');
             const bg = this.parentElement.querySelector('.block');
+            const overlay = document.getElementById('enhanceOverlayText');
             if(this.checked) {
                 dot.style.transform = 'translateX(100%)';
-                bg.classList.replace('bg-gray-600', 'bg-purple-500');
+                dot.classList.replace('bg-slate-400', 'bg-white');
+                bg.classList.replace('bg-slate-800', 'bg-purple-600');
+                bg.classList.replace('border-slate-700', 'border-purple-500');
+                overlay.classList.remove('hidden');
+                liveEnhancedPreview.style.filter = "contrast(1.15) brightness(1.05) saturate(1.1) sharpen(1.5)"; // UI filter simulation
             } else {
                 dot.style.transform = 'translateX(0)';
-                bg.classList.replace('bg-purple-500', 'bg-gray-600');
+                dot.classList.replace('bg-white', 'bg-slate-400');
+                bg.classList.replace('bg-purple-600', 'bg-slate-800');
+                bg.classList.replace('border-purple-500', 'border-slate-700');
+                overlay.classList.add('hidden');
+                liveEnhancedPreview.style.filter = "none";
             }
         });
 
-        // Initialize Cropper when file is uploaded
+        // Initialize Cropper Core Module Grid Setup
         uploadInput.addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-                const file = files[0];
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
                 const url = URL.createObjectURL(file);
                 
                 imageElement.src = url;
                 imageElement.style.display = 'block';
-                ratioButtons.style.display = 'flex';
+                ratioButtons.classList.remove('hidden');
+                previewPanel.classList.remove('hidden');
                 processBtn.disabled = false;
 
                 if (cropper) { cropper.destroy(); }
                 
                 cropper = new Cropper(imageElement, {
                     viewMode: 2,
-                    autoCropArea: 1,
+                    autoCropArea: 0.9,
                     responsive: true,
                     background: false,
+                    preview: '#cropPreview', // Dynamic linking hook element
+                    cropend() { triggerLivePreviewGeneration(); },
+                    ready() { triggerLivePreviewGeneration(); }
                 });
             }
         });
 
-        // Aspect Ratio buttons function
         function setRatio(ratio) {
-            if(cropper) { cropper.setAspectRatio(ratio); }
+            if(cropper) { cropper.setAspectRatio(ratio); triggerLivePreviewGeneration(); }
         }
 
-        // Process and Send Data to Backend
+        // Active Preview Render Generation Block
+        function triggerLivePreviewGeneration() {
+            if(!cropper) return;
+            // Generate standard resolution crop matrix data to feed into client dashboard
+            const canvas = cropper.getCroppedCanvas({ width: 400, height: 300 });
+            if(canvas) {
+                liveEnhancedPreview.src = canvas.toDataURL('image/jpeg');
+            }
+        }
+
+        // API Engine Core Integration Block
         processBtn.addEventListener('click', async function() {
             if (!cropper) return;
 
-            processBtn.innerHTML = 'Processing... <span class="animate-pulse">⏳</span>';
+            processBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> COMPILING STRUCTURAL MATRIX...";
             processBtn.disabled = true;
 
-            // Get Cropping Coordinates
             const cropData = cropper.getData(true);
             const formData = new FormData();
             formData.append('file', uploadInput.files[0]);
@@ -164,36 +269,33 @@
             formData.append('y', cropData.y);
             formData.append('width', cropData.width);
             formData.append('height', cropData.height);
-            
-            // Get Enhancement & Targeting Data
             formData.append('enhance', magicToggle.checked);
+            formData.append('target_kb', document.getElementById('targetKB').value);
+            
+            // Send Unit Metadata to Python Compiler Engine
+            formData.append('unit', currentUnit);
             formData.append('target_w', document.getElementById('targetW').value);
             formData.append('target_h', document.getElementById('targetH').value);
-            formData.append('target_kb', document.getElementById('targetKB').value);
+            formData.append('target_dpi', document.getElementById('targetDPI').value); // ✨ New DPI Bound Value
 
             try {
-                const response = await fetch('/process-image-crop', {
-                    method: 'POST',
-                    body: formData
-                });
-
+                const response = await fetch('/process-image-crop', { method: 'POST', body: formData });
                 if (response.ok) {
                     const blob = await response.blob();
-                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const dlUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = downloadUrl;
-                    a.download = `Pro_Cropped_${new Date().getTime()}.jpg`;
+                    a.href = dlUrl;
+                    a.download = `Pro_Studio_Render_${new Date().getTime()}.jpg`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
                 } else {
-                    alert('Error processing image!');
+                    alert('Error compiling engine stream payload.');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Something went wrong!');
+            } catch {
+                alert('Core file array failure occurred.');
             } finally {
-                processBtn.innerHTML = 'Crop & Download 🚀';
+                processBtn.innerHTML = '⚡ PRO DOWNLOAD RENDER';
                 processBtn.disabled = false;
             }
         });
