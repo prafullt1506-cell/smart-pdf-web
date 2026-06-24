@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Premium Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-50 via-slate-50 to-indigo-50 min-h-screen flex items-center justify-center font-sans p-6 relative">
+
+    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-md text-slate-700 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:bg-white hover:shadow-md hover:text-purple-600 transition-all font-semibold text-sm">
+        <i class="fa-solid fa-arrow-left"></i> Dashboard
+    </a>
+
+    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden">
+        
+        <div class="text-center mb-8">
+            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-purple-50 text-purple-600 font-bold text-[10px] uppercase tracking-widest mb-4 border border-purple-100 shadow-sm">
+                <i class="fa-solid fa-object-group"></i> Smart Block Append Active
+            </span>
+            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Merge PDF</h1>
+            <p class="text-sm text-slate-500 mt-2 font-medium">Combine multiple separate PDF structures into one unified document.</p>
+        </div>
+
+        <input type="file" id="fileInput" multiple accept=".pdf" class="hidden">
+
+        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 hover:border-purple-400 bg-slate-50/50 hover:bg-purple-50/30 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
+            <div class="text-5xl text-slate-300 group-hover:text-purple-500 group-hover:scale-110 transition-all duration-300 mb-4">
+                <i class="fa-solid fa-file-circle-plus text-purple-400"></i>
+            </div>
+            <p class="text-sm font-extrabold text-slate-700 mb-1">Click to Upload Multiple PDFs</p>
+            <p class="text-xs text-slate-400 font-medium">Files will be merged in the order of upload</p>
+        </div>
+
+        <div class="flex justify-between items-center px-2 mb-3">
+            <span class="font-extrabold text-slate-800 text-[11px] tracking-widest uppercase">Compilation Queue</span>
+            <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">Clear All</button>
+        </div>
+
+        <div id="queueBox" class="bg-white border border-slate-100 rounded-2xl h-40 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner">
+            <p class="text-center text-slate-400 font-medium text-xs mt-14">No documents inside compiler grid.</p>
+        </div>
+
+        <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-600 h-full rounded-full w-0 transition-all duration-300 relative"></div>
+        </div>
+
+        <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1">
+            <span class="relative z-10 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-layer-group text-yellow-300"></i> MERGE FILES
+            </span>
+        </button>
+
+        <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95">
+            <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
+                <i class="fa-solid fa-check text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 mb-6 text-center tracking-tight">PDFs Unified Perfectly!</h2>
+            
+            <div class="flex space-x-4 w-full mb-6">
+                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+                    <p class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Total Input</p>
+                    <p id="valLeft" class="text-slate-700 text-xl font-black">0 KB</p>
+                </div>
+                <div class="flex-1 bg-purple-50 border border-purple-100 rounded-2xl p-4 text-center">
+                    <p class="text-purple-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Merged Size</p>
+                    <p id="valRight" class="text-slate-700 text-xl font-black">0 KB</p>
+                </div>
+            </div>
+
+            <div class="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 text-xs tracking-wide">
+                ✨ Unified PDF Matrix Architecture is safe & ready!
+            </div>
+
+            <div class="flex w-full space-x-3">
+                <button onclick="closePopup()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200">Close</button>
+                <a id="downloadLnk" href="#" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
+                    <i class="fa-solid fa-download text-lg"></i> Download Merged PDF
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let selectedFiles = [];
+
+        function triggerUpload() {
+            document.getElementById('fileInput').click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            for(let i=0; i<files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+            updateQueueUI();
+        });
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateQueueUI();
+        }
+
+        function clearQueue() {
+            selectedFiles = [];
+            document.getElementById('fileInput').value = '';
+            document.getElementById('progressBar').style.width = '0%';
+            updateQueueUI();
+        }
+
+        function updateQueueUI() {
+            const box = document.getElementById('queueBox');
+            if (selectedFiles.length === 0) {
+                box.innerHTML = '<p class="text-center text-slate-400 font-medium text-xs mt-14">No documents inside compiler grid.</p>';
+                return;
+            }
+            box.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl p-2.5 mb-2 transition-colors';
+                item.innerHTML = `
+                    <div class="flex items-center w-4/5">
+                        <i class="fa-regular fa-file-pdf text-purple-500 mr-2"></i>
+                        <span class="text-xs font-bold text-slate-700 truncate"><span class="text-[10px] text-slate-400 mr-1">[${index+1}]</span> ${file.name}</span>
+                    </div>
+                    <button onclick="removeFile(${index})" class="text-slate-300 hover:text-red-500 transition-colors px-2"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                box.appendChild(item);
+            });
+        }
+
+        function processEngine() {
+            if (selectedFiles.length < 2) {
+                alert("Please upload at least 2 PDF files to merge!");
+                return;
+            }
+            const btn = document.getElementById('startBtn');
+            const pBar = document.getElementById('progressBar');
+            
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> COMPILING BLOCK CHAINS...";
+            btn.classList.add("opacity-80", "pointer-events-none");
+            pBar.style.width = '50%';
+
+            const formData = new FormData();
+            selectedFiles.forEach(f => formData.append('files', f));
+
+            fetch('/merge_pdfs', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                pBar.style.width = '100%';
+                if (data.success) {
+                    setTimeout(() => { showPopup(data); }, 600);
+                } else {
+                    alert("Error merging documents: " + data.error);
+                    resetBtn();
+                }
+            })
+            .catch(() => {
+                alert("A core structural system failed!");
+                resetBtn();
+            });
+        }
+
+        function showPopup(data) {
+            const popup = document.getElementById('successPopup');
+            popup.classList.remove('hidden');
+            setTimeout(() => {
+                popup.classList.remove('opacity-0', 'scale-95');
+                popup.classList.add('opacity-100', 'scale-100');
+            }, 10);
+            
+            document.getElementById('valLeft').innerText = data.original_kb + " KB";
+            document.getElementById('valRight').innerText = data.new_kb + " KB";
+            
+            const dlLnk = document.getElementById('downloadLnk');
+            dlLnk.href = `data:${data.mime_type};base64,${data.file_data}`;
+            dlLnk.download = data.file_name;
+            
+            resetBtn();
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('successPopup');
+            popup.classList.remove('opacity-100', 'scale-100');
+            popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+                clearQueue();
+            }, 300);
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('startBtn');
+            btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-layer-group text-yellow-300"></i> MERGE FILES</span>`;
+            btn.classList.remove("opacity-80", "pointer-events-none");
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

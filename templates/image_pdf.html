@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image 🔄 PDF Converter - Premium Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Sleek Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Glassmorphism Background */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-50 via-slate-50 to-blue-50 min-h-screen flex items-center justify-center font-sans p-6 relative">
+
+    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-md text-slate-700 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:bg-white hover:shadow-md hover:text-sky-600 transition-all font-semibold text-sm">
+        <i class="fa-solid fa-arrow-left"></i> Dashboard
+    </a>
+
+    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
+        
+        <div class="text-center mb-8">
+            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest mb-4 border border-emerald-100 shadow-sm">
+                <i class="fa-solid fa-check-circle"></i> Zero Quality Loss Engine
+            </span>
+            <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 tracking-tight transition-all">Images to PDF</h1>
+            <p id="toolSub" class="text-sm text-slate-500 mt-2 font-medium">Merge high-resolution images into a perfectly structured PDF document.</p>
+        </div>
+
+        <div class="flex justify-center mb-8 relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-slate-200 border-dashed"></div>
+            </div>
+            <button onclick="toggleSwapMode()" class="relative group bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full shadow-lg hover:shadow-slate-500/30 transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700">
+                <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700 ease-in-out"></i> 
+                <span>Switch Conversion Mode</span>
+            </button>
+        </div>
+
+        <div id="targetBox" class="bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center mb-6 shadow-sm transition-all duration-300">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-100 p-2 rounded-lg text-sky-600"><i class="fa-solid fa-compress"></i></div>
+                <label class="font-bold text-slate-700 text-sm">Target Size (KB):</label>
+                <input type="number" id="target_kb" value="500" class="border border-slate-200 bg-slate-50 rounded-lg px-3 py-1.5 w-24 text-center focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white font-black text-slate-800 transition-all">
+            </div>
+            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-wider">Smart Padding</span>
+        </div>
+
+        <input type="file" id="fileInput" multiple class="hidden">
+
+        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 hover:bg-sky-50/30 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
+            <div class="text-5xl text-slate-300 group-hover:text-sky-500 group-hover:scale-110 transition-all duration-300 mb-4">
+                <i id="dropzoneIcon" class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 mb-1">Drag & Drop or Click to Upload</p>
+            <p class="text-xs text-slate-400 font-medium">Supports high-res JPG and PNG formats</p>
+        </div>
+
+        <div class="flex justify-between items-center px-2 mb-3">
+            <span class="font-extrabold text-slate-800 text-[11px] tracking-widest uppercase">Processing Queue</span>
+            <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">Clear All</button>
+        </div>
+
+        <div id="queueBox" class="bg-white border border-slate-100 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner">
+            <p id="emptyMsg" class="text-center text-slate-400 font-medium text-xs mt-10">No files selected yet.</p>
+        </div>
+
+        <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 h-full rounded-full w-0 transition-all duration-300 relative">
+                <div class="absolute top-0 left-0 bottom-0 right-0 bg-white/20 animate-pulse"></div>
+            </div>
+        </div>
+
+        <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-sky-500/30 transition-all duration-300 transform hover:-translate-y-1">
+            <span class="relative z-10 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION
+            </span>
+            <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
+        </button>
+
+        <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95">
+            
+            <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
+                <i class="fa-solid fa-check text-3xl"></i>
+            </div>
+            
+            <h2 class="text-2xl font-black text-slate-800 mb-6 text-center tracking-tight">Conversion Successful!</h2>
+            
+            <div class="flex space-x-4 w-full mb-6">
+                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
+                    <p id="lblLeft" class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Input Size</p>
+                    <p id="valLeft" class="text-slate-700 text-2xl font-black">0 KB</p>
+                </div>
+                <div class="flex-1 bg-sky-50 border border-sky-100 rounded-2xl p-4 text-center">
+                    <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Output Size</p>
+                    <p id="valRight" class="text-sky-700 text-2xl font-black">0 KB</p>
+                </div>
+            </div>
+
+            <div id="popSave" class="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 text-xs tracking-wide">
+                ✨ High Definition PDF File Matrix Ready!
+            </div>
+
+            <div class="flex w-full space-x-3" id="downloadLayout"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let currentMode = 'img_to_pdf';
+
+        function toggleSwapMode() {
+            const icon = document.getElementById('swapIcon');
+            // Smooth 180deg spin for the icon
+            icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+            
+            clearQueue();
+
+            const targetBox = document.getElementById('targetBox');
+
+            if (currentMode === 'img_to_pdf') {
+                currentMode = 'pdf_to_img';
+                document.getElementById('toolTitle').innerText = "PDF to Images";
+                document.getElementById('toolSub').innerText = "Extract each page of a PDF into high-quality standalone JPEGs.";
+                document.getElementById('dropzoneText').innerText = "Click to upload a single PDF document";
+                document.getElementById('dropzoneIcon').className = "fa-solid fa-file-pdf text-rose-400";
+                
+                // Smooth hide
+                targetBox.style.opacity = '0';
+                setTimeout(() => targetBox.classList.add('hidden'), 300);
+            } else {
+                currentMode = 'img_to_pdf';
+                document.getElementById('toolTitle').innerText = "Images to PDF";
+                document.getElementById('toolSub').innerText = "Merge high-resolution images into a perfectly structured PDF.";
+                document.getElementById('dropzoneText').innerText = "Drag & Drop or Click to Upload";
+                document.getElementById('dropzoneIcon').className = "fa-solid fa-cloud-arrow-up text-sky-400";
+                
+                // Smooth show
+                targetBox.classList.remove('hidden');
+                setTimeout(() => targetBox.style.opacity = '1', 50);
+            }
+        }
+
+        function triggerUpload() {
+            const input = document.getElementById('fileInput');
+            if (currentMode === 'img_to_pdf') {
+                input.setAttribute('accept', '.jpg,.jpeg,.png');
+            } else {
+                input.setAttribute('accept', '.pdf');
+            }
+            input.click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            for(let i=0; i<files.length; i++) {
+                if (currentMode === 'pdf_to_img') {
+                    selectedFiles = [files[i]]; // Limit to 1 for extraction
+                    break;
+                }
+                selectedFiles.push(files[i]);
+            }
+            updateQueueUI();
+        });
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateQueueUI();
+        }
+
+        function clearQueue() {
+            selectedFiles = [];
+            document.getElementById('fileInput').value = '';
+            document.getElementById('progressBar').style.width = '0%';
+            updateQueueUI();
+        }
+
+        function updateQueueUI() {
+            const box = document.getElementById('queueBox');
+            if (selectedFiles.length === 0) {
+                box.innerHTML = '<p class="text-center text-slate-400 font-medium text-xs mt-10">No files selected yet.</p>';
+                return;
+            }
+            box.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl p-2.5 mb-2 transition-colors';
+                let icon = currentMode === 'img_to_pdf' ? '<i class="fa-regular fa-image text-sky-500 mr-2"></i>' : '<i class="fa-regular fa-file-pdf text-rose-500 mr-2"></i>';
+                item.innerHTML = `
+                    <div class="flex items-center w-4/5">
+                        ${icon}
+                        <span class="text-xs font-bold text-slate-700 truncate">${file.name}</span>
+                    </div>
+                    <button onclick="removeFile(${index})" class="text-slate-300 hover:text-red-500 transition-colors px-2"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                box.appendChild(item);
+            });
+        }
+
+        function processEngine() {
+            if (selectedFiles.length === 0) {
+                alert("Please select files to proceed.");
+                return;
+            }
+            const btn = document.getElementById('startBtn');
+            const pBar = document.getElementById('progressBar');
+            
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> PROCESSING...";
+            btn.classList.add("opacity-80", "pointer-events-none");
+            pBar.style.width = '50%';
+
+            const formData = new FormData();
+            selectedFiles.forEach(f => formData.append('files', f));
+            
+            let endpoint = '';
+            if (currentMode === 'img_to_pdf') {
+                formData.append('target_kb', document.getElementById('target_kb').value);
+                endpoint = '/images_to_pdf';
+            } else {
+                endpoint = '/pdf_to_images';
+            }
+
+            fetch(endpoint, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                pBar.style.width = '100%';
+                if (data.success) {
+                    setTimeout(() => { showPopup(data); }, 600);
+                } else {
+                    alert("Error processing files: " + data.error);
+                    resetBtn();
+                }
+            })
+            .catch(() => {
+                alert("A system error occurred!");
+                resetBtn();
+            });
+        }
+
+        function showPopup(data) {
+            const popup = document.getElementById('successPopup');
+            popup.classList.remove('hidden');
+            // Slight delay for smooth scale-in animation
+            setTimeout(() => {
+                popup.classList.remove('opacity-0', 'scale-95');
+                popup.classList.add('opacity-100', 'scale-100');
+            }, 10);
+            
+            const dlLayout = document.getElementById('downloadLayout');
+
+            if (data.is_dual) {
+                document.getElementById('lblLeft').innerText = "Original Output";
+                document.getElementById('valLeft').innerText = data.generated_pdf_kb + " KB";
+                document.getElementById('lblRight').innerText = "Target Match";
+                document.getElementById('valRight').innerText = data.new_kb + " KB";
+                document.getElementById('popSave').innerText = "🔥 High-Quality conversion with dual size options ready!";
+
+                dlLayout.innerHTML = `
+                    <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="flex-1 flex flex-col items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl transition-colors text-xs border border-slate-200">
+                        <span>Original HD</span><span class="text-[9px] text-slate-500 mt-0.5">${data.generated_pdf_kb} KB</span>
+                    </a>
+                    <a href="data:${data.mime_type};base64,${data.file_data_comp}" download="${data.file_name_comp}" class="flex-1 flex flex-col items-center justify-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl shadow-lg transition-colors text-xs">
+                        <span>Target Match</span><span class="text-[9px] text-slate-400 mt-0.5">${data.new_kb} KB</span>
+                    </a>
+                `;
+            } else {
+                document.getElementById('lblLeft').innerText = "Input Size";
+                document.getElementById('valLeft').innerText = data.original_kb + " KB";
+                document.getElementById('lblRight').innerText = "Extracted ZIP";
+                document.getElementById('valRight').innerText = data.new_kb + " KB";
+                document.getElementById('popSave').innerText = "✨ Clean high-density image extraction finished perfectly!";
+
+                dlLayout.innerHTML = `
+                    <button onclick="closePopup()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200">Close</button>
+                    <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
+                        <i class="fa-solid fa-file-zipper text-lg"></i> Download ZIP
+                    </a>
+                `;
+            }
+            
+            // Add a close button for dual mode at the top right of popup
+            if(data.is_dual) {
+                dlLayout.innerHTML += `<button onclick="closePopup()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>`;
+            }
+
+            resetBtn();
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('successPopup');
+            popup.classList.remove('opacity-100', 'scale-100');
+            popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+                clearQueue();
+            }, 300); // Wait for transition to finish
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('startBtn');
+            btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION</span><div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>`;
+            btn.classList.remove("opacity-80", "pointer-events-none");
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
