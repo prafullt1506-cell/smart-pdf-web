@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Toolkit Pro - Enterprise Edition</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Dark Mode & Custom Config -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -55,51 +52,43 @@
 </head>
 <body class="bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-50 via-slate-50 to-indigo-50 text-slate-800 dark:bg-darkBg dark:from-slate-950 dark:via-darkBg dark:to-slate-900 dark:text-slate-200 transition-colors duration-500 min-h-screen flex flex-col font-sans">
 
-    <!-- Navbar -->
     <nav class="glass-nav py-4 px-8 sticky top-0 z-50 transition-all shadow-sm">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3 group cursor-pointer">
                 <div class="bg-gradient-to-tr from-red-500 to-rose-600 p-2 rounded-xl shadow-md shadow-red-500/20 group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-file-pdf text-white text-xl"></i>
                 </div>
-                <!-- 🔥 BRAND NAME UPDATED HERE -->
                 <h1 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 tracking-tight">PDF Toolkit <span class="text-sky-500 font-medium text-sm tracking-widest uppercase ml-1">Pro</span></h1>
             </div>
-            <!-- Theme Toggle -->
             <button id="theme-toggle" class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
                 <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400"></i>
             </button>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-12">
         
-        <!-- Premium Introduction / Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-16">
             <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-widest mb-6 border border-emerald-200 dark:border-emerald-900/30 shadow-sm animate-pulse">
-                <i class="fa-solid fa-gem text-emerald-500"></i> Next-Gen PDF Processing Engine
+                <i class="fa-solid fa-gem text-emerald-500"></i> Next-Gen Processing Engine
             </span>
             <h2 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4 leading-tight">
                 Enterprise-Grade <br class="sm:block hidden">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 dark:from-sky-400 dark:via-blue-400 dark:to-indigo-400">PDF Management Suite</span>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 dark:from-sky-400 dark:via-blue-400 dark:to-indigo-400">Management Suite</span>
             </h2>
             <p class="text-md font-medium text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
-                Welcome to the ultimate smart toolkit designed for secure, lightning-fast, and precise document management. Experience server-side multi-layer structural processing without losing a single pixel of clarity.
+                Welcome to the ultimate smart toolkit designed for secure, lightning-fast, and precise document & image management. Experience server-side multi-layer structural processing without losing a single pixel of clarity.
             </p>
             <div class="w-24 h-1 bg-gradient-to-r from-sky-400 to-indigo-500 mx-auto rounded-full"></div>
         </div>
 
-        <!-- Section Title -->
         <div class="mb-8 border-b border-slate-200/60 dark:border-slate-800/60 pb-3 flex items-center justify-between">
             <h3 class="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-slate-500">Available Core Engines</h3>
             <span class="text-xs text-slate-400 dark:text-slate-500 font-semibold"><i class="fa-solid fa-shield-halved mr-1 text-sky-500"></i> 100% Local & Secure Processing</span>
         </div>
 
-        <!-- Tools Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-            <!-- 1. Compress PDF -->
             <a href="/compress_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(14,165,233,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-blue-500 text-white flex items-center justify-center mb-6 shadow-lg shadow-sky-500/20 group-hover:scale-110 transition-transform">
@@ -107,8 +96,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Compress PDF</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Reduce heavy PDF byte payloads safely while maintaining absolute high-definition asset resolution.</p>
-                    
-                    <!-- Details Matrix -->
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-sky-500"></i> Smart DPI Downscaling</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-sky-500"></i> Custom KB Target Matching</li>
@@ -118,7 +105,6 @@
                 <span class="text-xs font-black text-sky-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
-            <!-- 2. Image to PDF / PDF to Image (Swap) -->
             <a href="/image_pdf_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(34,197,94,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div class="absolute top-6 right-6 bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-900/30">
                     <i class="fa-solid fa-shuffle mr-1"></i> Dual Mode
@@ -129,7 +115,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Image <i class="fa-solid fa-right-left text-sm mx-1 opacity-40"></i> PDF</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Convert bulk pictures into aligned PDF layers, or extract structural high-density JPEGs from any input PDF.</p>
-                    
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Zero-Stretch Auto Fitting</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> 200% HD Extract Rendering</li>
@@ -139,7 +124,6 @@
                 <span class="text-xs font-black text-emerald-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
-            <!-- 3. Word to PDF / PDF to Word (Swap) -->
             <a href="/word_pdf_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div class="absolute top-6 right-6 bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-900/30">
                     <i class="fa-solid fa-shuffle mr-1"></i> Dual Mode
@@ -150,7 +134,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Word <i class="fa-solid fa-right-left text-sm mx-1 opacity-40"></i> PDF</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Translate complex document block properties from Word to structured layout PDF and vice versa.</p>
-                    
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-indigo-500"></i> Smart Text Node Extractor</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-indigo-500"></i> Table & Block Layer Locking</li>
@@ -160,7 +143,6 @@
                 <span class="text-xs font-black text-indigo-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
-            <!-- 4. Merge PDF -->
             <a href="/merge_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(168,85,247,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-400 to-indigo-500 text-white flex items-center justify-center mb-6 shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
@@ -168,7 +150,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Merge PDF</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Combine multiple separate PDF file trees into one single, fully unified compilation record cleanly.</p>
-                    
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-purple-500"></i> Smart Document Appending</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-purple-500"></i> Dynamic Sequential Queue</li>
@@ -178,7 +159,6 @@
                 <span class="text-xs font-black text-purple-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
-            <!-- 5. Split PDF -->
             <a href="/split_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(249,115,22,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-400 to-amber-500 text-white flex items-center justify-center mb-6 shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform">
@@ -186,7 +166,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Split PDF</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Extract custom specific page nodes or slicing clusters from an uploaded PDF into a fresh file.</p>
-                    
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-orange-500"></i> Multi-Range Parser (1-5, 8)</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-orange-500"></i> Active Page Out-of-Bound Filter</li>
@@ -196,7 +175,6 @@
                 <span class="text-xs font-black text-orange-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
-            <!-- 6. Protect & Unlock (Swap) -->
             <a href="/security_page" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(239,68,68,0.15)] hover:-translate-y-1.5 transition-all duration-300">
                 <div class="absolute top-6 right-6 bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-900/30">
                     <i class="fa-solid fa-shuffle mr-1"></i> Dual Mode
@@ -207,7 +185,6 @@
                     </div>
                     <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Protect <i class="fa-solid fa-right-left text-sm mx-1 opacity-40"></i> Unlock</h4>
                     <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Inject unbreakable encryption algorithms to password lock PDFs, or safely strip existing keys.</p>
-                    
                     <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-rose-500"></i> Strong 128-Bit Encryption</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-rose-500"></i> Accessibility Constraint Guarding</li>
@@ -217,15 +194,32 @@
                 <span class="text-xs font-black text-rose-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
             </a>
 
+            <a href="/image-crop" class="group relative flex flex-col justify-between glass-card rounded-[2rem] p-8 shadow-sm hover:shadow-[0_20px_50px_-12px_rgba(236,72,153,0.15)] hover:-translate-y-1.5 transition-all duration-300">
+                <div class="absolute top-6 right-6 bg-pink-100 dark:bg-pink-950/30 text-pink-700 dark:text-pink-400 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border border-pink-200 dark:border-pink-900/30 animate-pulse">
+                    🔥 New Feature
+                </div>
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-500 text-white flex items-center justify-center mb-6 shadow-lg shadow-pink-500/20 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-crop-simple text-2xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-extrabold text-slate-800 dark:text-white mb-3">Image Cropper</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-5 leading-relaxed">Crop, Auto-Enhance, and resize images with precise Pixel and KB output control.</p>
+                    <ul class="space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-4 mb-6 text-xs font-bold text-slate-600 dark:text-slate-400">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-pink-500"></i> Interactive Mouse Cropping</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-pink-500"></i> Magic Auto-Enhance Layer</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-pink-500"></i> Strict KB/Pixel Resampling</li>
+                    </ul>
+                </div>
+                <span class="text-xs font-black text-pink-500 group-hover:translate-x-1.5 transition-transform flex items-center gap-1">LAUNCH ENGINE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+            </a>
+
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md py-6 text-center border-t border-slate-200/50 dark:border-slate-800/50 transition-colors">
-        <p class="text-slate-400 dark:text-slate-500 text-xs font-bold tracking-wider uppercase">✨ Powered by PDF Toolkit Pro Architecture</p>
+        <p class="text-slate-400 dark:text-slate-500 text-xs font-bold tracking-wider uppercase">✨ Powered by Secure Architecture Framework Layer</p>
     </footer>
 
-    <!-- Dark Mode Logic Script -->
     <script>
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
