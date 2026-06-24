@@ -453,7 +453,6 @@ def process_image_crop():
         raw_h = request.form.get('target_h', '')
         raw_dpi = request.form.get('target_dpi', '')
 
-        # जर युजरने DPI दिला नसेल तर Default 300 DPI सेट करणे
         try:
             target_dpi = int(raw_dpi) if raw_dpi else 300
         except ValueError:
@@ -464,7 +463,6 @@ def process_image_crop():
         if raw_w and raw_h:
             try:
                 if unit == 'cm':
-                    # CM to Pixel Formula based on Custom DPI: Pixels = (CM / 2.54) * DPI
                     target_w = int((float(raw_w) / 2.54) * target_dpi)
                     target_h = int((float(raw_h) / 2.54) * target_dpi)
                 else:
@@ -487,17 +485,17 @@ def process_image_crop():
             while quality > 15:
                 img_byte_arr.seek(0)
                 img_byte_arr.truncate()
-                # DPI मेटाडेटा इमेजमध्ये सेव्ह करणे
                 img.save(img_byte_arr, format=original_format, quality=quality, optimize=True, dpi=(target_dpi, target_dpi))
                 if img_byte_arr.tell() <= target_bytes:
                     break
                 quality -= 5
         else:
-            # जर KB सेट केलं नसेल तर Best Quality सोबत DPI सेव्ह करणे
             img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
         img_byte_arr.seek(0)
-        return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Pro_Studio_Render.{original_format.lower()}")
+        
+        # डाऊनलोड होणाऱ्या फोटोचं साधं नाव:
+        return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Edited_Image.{original_format.lower()}")
 
     except Exception as e:
         print("Error System Core Grid Failure:", e)
