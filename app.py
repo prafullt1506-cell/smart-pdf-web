@@ -1,18 +1,18 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_file
 import fitz
 import io
 import os
 import zipfile
 import base64
 import tempfile
-from PIL import Image
+from PIL import Image, ImageEnhance
 from werkzeug.utils import secure_filename
 from pdf2docx import Converter
 from docx import Document
 
 app = Flask(__name__)
 
-# 🛡️ ANTI-HANG SECURITY: ५० MB ची फाईल साईझ लिमिट (सर्व्हर क्रॅश होऊ नये म्हणून)
+# 🛡️ ANTI-HANG SECURITY: ५० MB ची फाईल साईझ लिमिट
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
 # ==========================================
@@ -45,6 +45,10 @@ def split_page():
 @app.route('/security_page', methods=['GET'])
 def security_page():
     return render_template('protect.html')
+
+@app.route('/image-crop', methods=['GET'])
+def image_crop():
+    return render_template('image_crop.html')
 
 # ==========================================
 # 🗜️ ENGINE 1: PDF COMPRESSOR
@@ -407,6 +411,71 @@ def protect_pdf():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# ==========================================
+# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (NEW!)
+# ==========================================
+@app.route('/process-image-crop', methods=['POST'])
+def process_image_crop():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file uploaded'}), 400
+            
+        file = request.files['file']
+        img = Image.open(file)
+        
+        original_format = img.format if img.format else 'JPEG'
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+            original_format = 'JPEG'
+
+        # 1. Cropping Coordinates
+        x = int(float(request.form.get('x', 0)))
+        y = int(float(request.form.get('y', 0)))
+        w = int(float(request.form.get('width', img.width)))
+        h = int(float(request.form.get('height', img.height)))
+        
+        if w > 0 and h > 0:
+            img = img.crop((x, y, x + w, y + h))
+
+        # 2. Magic Enhance
+        if request.form.get('enhance') == 'true':
+            enhancer = ImageEnhance.Sharpness(img)
+            img = enhancer.enhance(1.5)
+            enhancer_contrast = ImageEnhance.Contrast(img)
+            img = enhancer_contrast.enhance(1.1)
+            enhancer_color = ImageEnhance.Color(img)
+            img = enhancer_color.enhance(1.1)
+
+        # 3. Target Pixels (Resizing with LANCZOS)
+        target_w = request.form.get('target_w')
+        target_h = request.form.get('target_h')
+        if target_w and target_h and target_w.isdigit() and target_h.isdigit():
+            img = img.resize((int(target_w), int(target_h)), Image.Resampling.LANCZOS)
+
+        # 4. Target KB (Compression)
+        target_kb = request.form.get('target_kb')
+        img_byte_arr = io.BytesIO()
+        
+        if target_kb and target_kb.isdigit():
+            target_bytes = int(target_kb) * 1024
+            quality = 100
+            while quality > 10:
+                img_byte_arr.seek(0)
+                img_byte_arr.truncate()
+                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True)
+                if img_byte_arr.tell() <= target_bytes:
+                    break
+                quality -= 5
+        else:
+            img.save(img_byte_arr, format=original_format, quality=95, optimize=True)
+
+        img_byte_arr.seek(0)
+        return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Pro_Cropped.{original_format.lower()}")
+
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
