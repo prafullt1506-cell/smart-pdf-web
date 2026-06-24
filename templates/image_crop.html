@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Image Cropper - PDF Toolkit Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <style>
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .img-container { max-height: 500px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 0.5rem; overflow: hidden; }
+        img { display: block; max-width: 100%; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-sans">
+    
+    <!-- Navbar -->
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+        <a href="/" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">PDF Toolkit Pro</a>
+        <a href="/" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all border border-gray-600">Home</a>
+    </nav>
+
+    <div class="container mx-auto px-4 py-10 max-w-6xl">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold mb-3">Pro Image <span class="text-blue-500">Cropper & Enhancer</span></h1>
+            <p class="text-gray-400">Crop, Auto-Clean, and Resize images with Pixel & KB control.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Left Panel: Upload & Preview -->
+            <div class="md:col-span-2 glass-panel p-6 rounded-2xl shadow-xl">
+                <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer mb-4 bg-gray-800 rounded-full border border-gray-700">
+                
+                <div class="img-container shadow-inner border border-gray-700">
+                    <img id="image" src="" alt="Upload an image to start" style="display: none;">
+                </div>
+
+                <!-- Aspect Ratio Buttons -->
+                <div class="flex flex-wrap gap-2 mt-4 justify-center" id="ratio-buttons" style="display: none;">
+                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(16/9)">16:9 (Desktop)</button>
+                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(4/3)">4:3 (Standard)</button>
+                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(1)">1:1 (Square)</button>
+                    <button class="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm transition" onclick="setRatio(NaN)">Free Crop</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Controls -->
+            <div class="glass-panel p-6 rounded-2xl shadow-xl flex flex-col gap-6">
+                
+                <!-- Magic Enhance -->
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <label class="flex items-center cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" id="magicEnhance" class="sr-only">
+                            <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
+                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div>
+                        </div>
+                        <div class="ml-3 font-semibold text-purple-400 flex items-center gap-2">
+                            ✨ Magic Auto-Enhance
+                        </div>
+                    </label>
+                    <p class="text-xs text-gray-400 mt-2">Automatically fixes blur, brightness, and contrast.</p>
+                </div>
+
+                <!-- Targeted Output -->
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <h3 class="font-bold text-gray-300 mb-3 border-b border-gray-700 pb-2">Target Output (Optional)</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="text-xs text-gray-400">Width (px)</label>
+                            <input type="number" id="targetW" placeholder="e.g. 1920" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400">Height (px)</label>
+                            <input type="number" id="targetH" placeholder="e.g. 1080" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-gray-400">Max File Size (KB)</label>
+                        <input type="number" id="targetKB" placeholder="e.g. 50 (for forms)" class="w-full bg-gray-900 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-1">*Leave blank to keep original size/quality.</p>
+                </div>
+
+                <!-- Process Button -->
+                <button id="processBtn" class="w-full py-4 mt-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-bold text-lg shadow-lg transform transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Crop & Download 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS for Pro Functionality -->
+    <script>
+        let cropper;
+        const imageElement = document.getElementById('image');
+        const uploadInput = document.getElementById('imageUpload');
+        const processBtn = document.getElementById('processBtn');
+        const ratioButtons = document.getElementById('ratio-buttons');
+
+        // Checkbox Toggle CSS Logic
+        const magicToggle = document.getElementById('magicEnhance');
+        magicToggle.addEventListener('change', function() {
+            const dot = this.parentElement.querySelector('.dot');
+            const bg = this.parentElement.querySelector('.block');
+            if(this.checked) {
+                dot.style.transform = 'translateX(100%)';
+                bg.classList.replace('bg-gray-600', 'bg-purple-500');
+            } else {
+                dot.style.transform = 'translateX(0)';
+                bg.classList.replace('bg-purple-500', 'bg-gray-600');
+            }
+        });
+
+        // Initialize Cropper when file is uploaded
+        uploadInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                const url = URL.createObjectURL(file);
+                
+                imageElement.src = url;
+                imageElement.style.display = 'block';
+                ratioButtons.style.display = 'flex';
+                processBtn.disabled = false;
+
+                if (cropper) { cropper.destroy(); }
+                
+                cropper = new Cropper(imageElement, {
+                    viewMode: 2,
+                    autoCropArea: 1,
+                    responsive: true,
+                    background: false,
+                });
+            }
+        });
+
+        // Aspect Ratio buttons function
+        function setRatio(ratio) {
+            if(cropper) { cropper.setAspectRatio(ratio); }
+        }
+
+        // Process and Send Data to Backend
+        processBtn.addEventListener('click', async function() {
+            if (!cropper) return;
+
+            processBtn.innerHTML = 'Processing... <span class="animate-pulse">⏳</span>';
+            processBtn.disabled = true;
+
+            // Get Cropping Coordinates
+            const cropData = cropper.getData(true);
+            const formData = new FormData();
+            formData.append('file', uploadInput.files[0]);
+            formData.append('x', cropData.x);
+            formData.append('y', cropData.y);
+            formData.append('width', cropData.width);
+            formData.append('height', cropData.height);
+            
+            // Get Enhancement & Targeting Data
+            formData.append('enhance', magicToggle.checked);
+            formData.append('target_w', document.getElementById('targetW').value);
+            formData.append('target_h', document.getElementById('targetH').value);
+            formData.append('target_kb', document.getElementById('targetKB').value);
+
+            try {
+                const response = await fetch('/process-image-crop', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `Pro_Cropped_${new Date().getTime()}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                } else {
+                    alert('Error processing image!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            } finally {
+                processBtn.innerHTML = 'Crop & Download 🚀';
+                processBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
