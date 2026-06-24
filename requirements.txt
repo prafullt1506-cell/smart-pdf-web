@@ -1,4 +1,0 @@
-flask
-pymupdf
-pillow
-werkzeug
