@@ -3,213 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Print Studio - PDF Toolkit Pro</title>
+    <title>Pro Print Studio - Enterprise Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        studioDark: '#0b1324',
+                        studioCard: '#111c30',
+                        studioBorder: '#1e2d4a',
+                        studioCyan: '#06b6d4'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        body { background-color: #070c16; }
+        .studio-panel {
+            background-color: var(--tw-colors-studioCard);
+            border: 1px solid var(--tw-colors-studioBorder);
+        }
+        /* Glowing effects from preview mockup */
+        .cyan-glow-btn {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s ease;
+        }
+        .cyan-glow-btn:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.7);
+            transform: translateY(-1px);
+        }
+        .active-tab {
+            border: 2px solid #06b6d4;
+            box-shadow: inset 0 0 12px rgba(6, 182, 212, 0.2);
+            background-color: rgba(6, 182, 212, 0.05);
+        }
+        /* Canvas sheet styling */
+        #paperPreview {
+            background-color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .card-face-preview {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .card-face-preview img {
+            width: 100%; height: 100%; object-fit: cover;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen font-sans antialiased">
+<body class="text-slate-200 min-h-screen font-sans flex flex-col">
     
-    <nav class="glass-panel sticky top-0 z-50 px-8 py-4 flex justify-between items-center shadow-xl">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl">🖨️</span>
-            <a href="/" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">PDF Toolkit Pro</a>
+    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur px-8 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-3">
+            <span class="text-cyan-400 text-xl"><i class="fa-solid fa-print"></i></span>
+            <h1 class="text-md font-black tracking-widest text-slate-100 uppercase">Pro Print Studio <span class="text-cyan-500 font-medium text-xs ml-1 opacity-70">- Enterprise Edition</span></h1>
         </div>
-        <a href="/" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 font-bold rounded-full transition-all border border-slate-600 text-sm shadow-md">Dashboard</a>
-    </nav>
+        <a href="/" class="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-xs font-bold rounded-lg border border-slate-800 transition-all text-slate-300">Dashboard</a>
+    </header>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <div class="text-center mb-10">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-cyan-500/20">
-                ✨ 300 DPI Ultra-HD Printing Engine
-            </span>
-            <h1 class="text-4xl font-black tracking-tight mb-2">Smart ID & Photo <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Print Studio</span></h1>
-            <p class="text-sm text-slate-400 max-w-xl mx-auto">Zero-configuration layout mapper with automated folding and smart grid array generation.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 flex flex-col gap-6">
-                <div class="glass-panel p-6 rounded-3xl shadow-xl flex flex-col gap-5">
-                    
-                    <div>
-                        <label class="text-xs font-black tracking-widest text-slate-400 uppercase block mb-2">Select Print Job</label>
-                        <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                            <button type="button" id="jobIdCard" onclick="setJobType('id_card')" class="py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md">ID Card (Aadhar)</button>
-                            <button type="button" id="jobPassport" onclick="setJobType('passport')" class="py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white">Photo Maker</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-black tracking-widest text-slate-400 uppercase block mb-2">Paper Configuration</label>
-                        <select id="paperSize" onchange="updateDynamicUI()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-cyan-500 text-white transition-colors">
-                            <option value="4x6">4" x 6" Photo Paper (Cyber Cafe Style)</option>
-                            <option value="a4">A4 Standard Printing Sheet</option>
-                        </select>
-                    </div>
-
-                    <div id="laminationBox" class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800/80">
-                        <label class="flex items-center justify-between cursor-pointer">
-                            <div class="font-extrabold text-slate-200 text-xs flex flex-col gap-0.5">
-                                <span class="text-sm">🔄 Lamination Fold Mode</span>
-                                <span class="text-[11px] font-medium text-slate-400 normal-case" id="laminationDesc">For 4x6: Top-Bottom alignment with 180° Back-Flip.</span>
-                            </div>
-                            <div class="relative">
-                                <input type="checkbox" id="laminationMode" class="sr-only">
-                                <div class="block bg-slate-800 w-12 h-6 rounded-full border border-slate-700 transition-colors"></div>
-                                <div class="dot absolute left-1 top-1 bg-slate-400 w-4 h-4 rounded-full transition-all duration-300"></div>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div id="passportConfigBox" class="hidden flex flex-col gap-4">
-                        <div>
-                            <label class="text-xs font-black tracking-widest text-slate-400 uppercase block mb-2">Select Photo Size</label>
-                            <select id="photoSize" onchange="updateDynamicUI()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-cyan-500 text-white transition-colors">
-                                <option value="passport">Standard Passport (3.5 x 4.5 cm)</option>
-                                <option value="stamp">Stamp Size (2.0 x 2.5 cm)</option>
-                                <option value="visa">US Visa / Square (5 x 5 cm)</option>
-                                <option value="wallet">Wallet Size (2.5 x 3.5 inch)</option>
-                                <option value="4x6">Full 4x6 Jumbo Size</option>
-                            </select>
-                        </div>
-                        
-                        <div class="bg-blue-950/30 p-3 rounded-xl border border-blue-900/50">
-                            <p id="smartHint" class="text-xs font-medium text-blue-300">💡 Hint loading...</p>
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-black tracking-widest text-slate-400 uppercase block mb-2">Exact Quantity Needed</label>
-                            <input type="number" id="photoCount" value="5" min="1" max="100" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-cyan-500 text-white transition-colors" placeholder="Enter number of photos">
-                        </div>
+    <main class="container mx-auto px-6 py-6 flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-6">
+        
+        <section class="lg:col-span-4 flex flex-col gap-4">
+            <div class="studio-panel p-5 rounded-xl flex flex-col gap-4 h-full shadow-xl">
+                <h2 class="text-xs font-black tracking-wider text-slate-400 uppercase border-b border-slate-800/60 pb-2">Workspace Controls</h2>
+                
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5 tracking-wider">Select Print Job</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" id="jobIdCard" onclick="setJobType('id_card')" class="active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group">
+                            <span class="text-sm font-black text-slate-100 group-hover:text-cyan-400">ID CARD STUDIO</span>
+                            <span class="text-[9px] font-medium text-slate-400 mt-0.5">(Aadhar, PAN, Voter ID)</span>
+                        </button>
+                        <button type="button" id="jobPassport" onclick="setJobType('passport')" class="py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40">
+                            <span class="text-sm font-black text-slate-400 group-hover:text-cyan-400">PHOTO STUDIO</span>
+                            <span class="text-[9px] font-medium text-slate-500 mt-0.5">(Passport, Stamp, Visa)</span>
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div class="lg:col-span-7 flex flex-col gap-6">
-                <div class="glass-panel p-6 rounded-3xl shadow-xl flex flex-col gap-6 h-full justify-between">
+                <div id="uploadSection" class="flex flex-col gap-3 bg-slate-950/40 p-3 rounded-xl border border-slate-900">
                     
-                    <div id="idUploadGroup" class="flex flex-col gap-4">
-                        <h3 class="text-xs font-black tracking-widest uppercase text-slate-400"><i class="fa-solid fa-address-card text-cyan-500 mr-1"></i> Upload Card Faces</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-slate-900/40 p-4 rounded-2xl border border-dashed border-slate-800 flex flex-col items-center justify-center text-center">
-                                <i class="fa-solid fa-id-card-clip text-2xl text-slate-500 mb-2"></i>
-                                <span class="text-xs font-bold text-slate-300 mb-2">Front Side (Pudhchi Baju)</span>
-                                <input type="file" id="idFront" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-bold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
-                            </div>
-                            <div class="bg-slate-900/40 p-4 rounded-2xl border border-dashed border-slate-800 flex flex-col items-center justify-center text-center">
-                                <i class="fa-solid fa-id-card text-2xl text-slate-500 mb-2"></i>
-                                <span class="text-xs font-bold text-slate-300 mb-2">Back Side (Magchi Baju)</span>
-                                <input type="file" id="idBack" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-bold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
-                            </div>
+                    <div id="idUploadGroup" class="grid grid-cols-2 gap-3">
+                        <div class="flex flex-col items-center">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Front Image</label>
+                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
+                                <input type="file" id="idFront" accept="image/*" onchange="handleFileChange('front')" class="sr-only">
+                                <div id="frontPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
+                                    <span class="text-[10px] font-bold">Upload</span>
+                                </div>
+                                <img id="frontThumb" class="hidden w-full h-full object-cover rounded-md">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Back Image</label>
+                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
+                                <input type="file" id="idBack" accept="image/*" onchange="handleFileChange('back')" class="sr-only">
+                                <div id="backPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
+                                    <span class="text-[10px] font-bold">Upload</span>
+                                </div>
+                                <img id="backThumb" class="hidden w-full h-full object-cover rounded-md">
+                            </label>
                         </div>
                     </div>
 
-                    <div id="passportUploadGroup" class="flex flex-col gap-4 hidden">
-                        <h3 class="text-xs font-black tracking-widest uppercase text-slate-400"><i class="fa-solid fa-camera text-cyan-500 mr-1"></i> Upload Single Photo</h3>
-                        <div class="bg-slate-900/40 p-6 rounded-2xl border border-dashed border-slate-800 flex flex-col items-center justify-center text-center">
-                            <i class="fa-solid fa-image text-3xl text-slate-500 mb-3"></i>
-                            <span class="text-sm font-bold text-slate-300 mb-2">Select a cropped image to generate grid</span>
-                            <input type="file" id="passportPhoto" accept="image/*" class="max-w-xs text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
-                        </div>
+                    <div id="passportUploadGroup" class="hidden flex-col items-center w-full">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Master Portrait Image</label>
+                        <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
+                            <input type="file" id="passportPhoto" accept="image/*" onchange="handleFileChange('photo')" class="sr-only">
+                            <div id="photoPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
+                                <i class="fa-solid fa-user-plus text-lg mb-1"></i>
+                                <span class="text-[10px] font-bold">Select Image</span>
+                            </div>
+                            <img id="photoThumb" class="hidden w-16 h-full object-cover rounded-md">
+                        </label>
                     </div>
+                </div>
 
-                    <button type="button" id="generateBtn" onclick="executePrintJob()" class="w-full py-4 mt-auto bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-cyan-500/10 transform hover:-translate-y-0.5 transition-all">
-                        🖨️ GENERATE PRINT SHEET
+                <div id="cardTypeGroup">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Card Type</label>
+                    <input type="text" id="cardType" placeholder="CARD TYPE (e.g., Aadhar, PAN)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold text-slate-300 focus:outline-none focus:border-cyan-500 placeholder-slate-600">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Paper Configuration</label>
+                    <select id="paperSize" onchange="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-cyan-500 text-slate-200 cursor-pointer">
+                        <option value="a4">A4 STANDARD</option>
+                        <option value="4x6">4x6 PHOTO PAPER</option>
+                        <option value="5x7">5x7 PHOTO PAPER</option>
+                        <option value="8x10">8x10 PHOTO PAPER</option>
+                    </select>
+                </div>
+
+                <div id="passportConfigBox" class="hidden flex-col gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Photo Size</label>
+                        <select id="photoSize" onchange="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-cyan-500 text-slate-200">
+                            <option value="passport">Passport 3.5x4.5cm</option>
+                            <option value="stamp">Stamp 2x2.5cm</option>
+                            <option value="visa">Visa 5x5cm</option>
+                            <option value="wallet">Wallet 2.5x3.5in</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Quantity</label>
+                        <input type="number" id="photoCount" value="16" min="1" max="100" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-cyan-500 text-white">
+                    </div>
+                </div>
+
+                <div id="laminationBox" class="mt-2">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" id="laminationMode" onchange="updatePreview()" class="sr-only">
+                            <div class="block bg-slate-800 w-11 h-6 rounded-full border border-slate-700 transition-colors"></div>
+                            <div class="dot absolute left-1 top-1 bg-slate-400 w-4 h-4 rounded-full transition-all duration-300"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Lamination Fold Mode</span>
+                            <span class="text-[9px] text-slate-500 font-medium leading-tight">Auto-flip back card for seamless folding.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="lg:col-span-8 flex flex-col">
+            <div class="studio-panel rounded-xl shadow-xl h-full flex flex-col overflow-hidden">
+                
+                <div class="bg-slate-950/60 border-b border-slate-800/80 px-5 py-3.5">
+                    <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase"><i class="fa-solid fa-eye text-cyan-500 mr-2"></i>Live Print Preview</h2>
+                </div>
+                
+                <div class="flex-grow bg-[#090f1c] p-8 flex items-center justify-center overflow-auto relative min-h-[480px]">
+                    <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+                    
+                    <div id="paperPreview" class="p-6 flex shadow-2xl transition-all duration-300">
+                        </div>
+                </div>
+
+                <div class="bg-slate-950/60 border-t border-slate-800/60 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 
+                        300 DPI - High Definition Render Active
+                    </div>
+                    <button type="button" id="generateBtn" onclick="executePrintJob()" class="cyan-glow-btn text-white font-black text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Generate Print-Ready Sheet
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
         let activeJob = 'id_card';
-        const lamToggle = document.getElementById('laminationMode');
+        let frontImgData = '';
+        let backImgData = '';
+        let photoImgData = '';
 
-        lamToggle.addEventListener('change', function() {
+        const paperRatios = {
+            'a4': { w: 210, h: 297 },
+            '4x6': { w: 4, h: 6 },
+            '5x7': { w: 5, h: 7 },
+            '8x10': { w: 8, h: 10 }
+        };
+
+        // File upload thumbnail rendering
+        function handleFileChange(type) {
+            const input = document.getElementById(type === 'front' ? 'idFront' : (type === 'back' ? 'idBack' : 'passportPhoto'));
+            const thumb = document.getElementById(type === 'front' ? 'frontThumb' : (type === 'back' ? 'backThumb' : 'photoThumb'));
+            const placeholder = document.getElementById(type === 'front' ? 'frontPlaceholder' : (type === 'back' ? 'backPlaceholder' : 'photoPlaceholder'));
+            
+            if(input.files && input.files[0]) {
+                const url = URL.createObjectURL(input.files[0]);
+                if(type === 'front') frontImgData = url;
+                if(type === 'back') backImgData = url;
+                if(type === 'photo') photoImgData = url;
+                
+                thumb.src = url;
+                thumb.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                updatePreview();
+            }
+        }
+
+        // Lamination toggle style update
+        document.getElementById('laminationMode').addEventListener('change', function() {
             const dot = this.parentElement.querySelector('.dot');
             const bg = this.parentElement.querySelector('.block');
             if(this.checked) {
                 dot.style.transform = 'translateX(100%)';
                 dot.classList.replace('bg-slate-400', 'bg-white');
                 bg.classList.replace('bg-slate-800', 'bg-cyan-600');
-                bg.classList.replace('border-slate-700', 'border-cyan-500');
             } else {
                 dot.style.transform = 'translateX(0)';
                 dot.classList.replace('bg-white', 'bg-slate-400');
                 bg.classList.replace('bg-cyan-600', 'bg-slate-800');
-                bg.classList.replace('border-cyan-500', 'border-slate-700');
             }
         });
 
         function setJobType(job) {
             activeJob = job;
-            const btnId = document.getElementById('jobIdCard');
-            const btnPass = document.getElementById('jobPassport');
-            const idGroup = document.getElementById('idUploadGroup');
-            const passGroup = document.getElementById('passportUploadGroup');
-            const lamBox = document.getElementById('laminationBox');
-            const configBox = document.getElementById('passportConfigBox');
+            document.getElementById('jobIdCard').className = job === 'id_card' ? "active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group" : "py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40";
+            document.getElementById('jobPassport').className = job === 'passport' ? "active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group" : "py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40";
             
-            if(job === 'id_card') {
-                btnId.className = "py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md";
-                btnPass.className = "py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
-                idGroup.classList.remove('hidden');
-                passGroup.classList.add('hidden');
-                lamBox.classList.remove('hidden');
-                configBox.classList.add('hidden');
-            } else {
-                btnPass.className = "py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md";
-                btnId.className = "py-2.5 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
-                idGroup.classList.add('hidden');
-                passGroup.classList.remove('hidden');
-                lamBox.classList.add('hidden');
-                configBox.classList.remove('hidden');
-                configBox.classList.add('flex');
-            }
-            updateDynamicUI();
+            document.getElementById('idUploadGroup').style.display = job === 'id_card' ? 'grid' : 'none';
+            document.getElementById('cardTypeGroup').style.display = job === 'id_card' ? 'block' : 'none';
+            document.getElementById('laminationBox').style.display = job === 'id_card' ? 'block' : 'none';
+            
+            document.getElementById('passportUploadGroup').style.display = job === 'passport' ? 'flex' : 'none';
+            document.getElementById('passportConfigBox').style.display = job === 'passport' ? 'flex' : 'none';
+            
+            updatePreview();
         }
 
-        function updateDynamicUI() {
+        function updatePreview() {
             const paper = document.getElementById('paperSize').value;
-            const size = document.getElementById('photoSize').value;
-            const lamDesc = document.getElementById('laminationDesc');
-            const hint = document.getElementById('smartHint');
+            const paperDiv = document.getElementById('paperPreview');
+            const lamination = document.getElementById('laminationMode').checked;
+            
+            const ratio = paperRatios[paper];
+            const maxH = 400; // Fixed canvas render bounds
+            const finalH = maxH;
+            const finalW = (ratio.w / ratio.h) * finalH;
+            
+            paperDiv.style.height = `${finalH}px`;
+            paperDiv.style.width = `${finalW}px`;
+            paperDiv.innerHTML = ''; 
 
-            // Lamination Description Update
-            if(paper === 'a4') {
-                lamDesc.innerText = "For A4: Side-by-Side Left-Right alignment with upright layout.";
-            } else {
-                lamDesc.innerText = "For 4x6: Top-Bottom alignment with 180° Back-Flip.";
-            }
+            if(activeJob === 'id_card') {
+                // Layout Direction mapping: A4 is Left-Right side, smaller photo papers are Top-Bottom
+                const isVerticalPaper = (paper === '4x6' || paper === '5x7' || paper === '8x10');
+                paperDiv.style.flexDirection = isVerticalPaper ? 'column' : 'row';
+                paperDiv.style.alignItems = 'center';
+                paperDiv.style.justifyContent = 'center';
+                paperDiv.style.gap = '12px';
 
-            // Smart Hint Generator
-            let msg = "";
-            if (paper === 'a4') {
-                if (size === 'stamp') msg = "💡 Stamp Size: एका लाईनमध्ये साधारण 8 फोटो बसतात. (पूर्ण पानावर 40+)";
-                else if (size === 'passport') msg = "💡 Passport Size: एका लाईनमध्ये 5 फोटो बसतात. (पूर्ण पानावर 30+)";
-                else if (size === 'visa') msg = "💡 US Visa (2x2): एका लाईनमध्ये 3 फोटो बसतात.";
-                else if (size === 'wallet') msg = "💡 Wallet Size: एका लाईनमध्ये 3 फोटो बसतात.";
-                else if (size === '4x6') msg = "💡 4x6 Jumbo: एका लाईनमध्ये 1 फोटो (पूर्ण पानावर 3) बसतात.";
+                const cardW = finalW * (isVerticalPaper ? 0.75 : 0.42);
+                const cardH = cardW * (5.4 / 8.5);
+
+                const frontCard = document.createElement('div');
+                frontCard.className = 'card-face-preview shadow-sm';
+                frontCard.style.width = `${cardW}px`; frontCard.style.height = `${cardH}px`;
+                frontCard.innerHTML = frontImgData ? `<img src="${frontImgData}">` : '<span class="text-[9px] font-bold text-slate-300 tracking-wider">FRONT FACE</span>';
+
+                const backCard = document.createElement('div');
+                backCard.className = 'card-face-preview shadow-sm';
+                backCard.style.width = `${cardW}px`; backCard.style.height = `${cardH}px`;
+                backCard.innerHTML = backImgData ? `<img src="${backImgData}">` : '<span class="text-[9px] font-bold text-slate-300 tracking-wider">BACK FACE</span>';
+
+                if(lamination) {
+                    if(isVerticalPaper) {
+                        backCard.style.transform = 'rotate(180deg)';
+                        const line = document.createElement('div');
+                        line.className = 'w-[90%] border-t border-dashed border-slate-400 my-1 relative text-center';
+                        line.innerHTML = '<span class="absolute left-1/2 -top-2 bg-white px-1 text-[7px] text-slate-500 -translate-x-1/2"><i class="fa-solid fa-scissors"></i> Fold Line</span>';
+                        paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
+                    } else {
+                        const line = document.createElement('div');
+                        line.className = 'h-[90%] border-l border-dashed border-slate-400 mx-1 relative';
+                        paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
+                    }
+                } else {
+                    paperDiv.appendChild(frontCard); paperDiv.appendChild(backCard);
+                }
             } else {
-                // 4x6 paper
-                if (size === 'stamp') msg = "💡 Stamp Size: एका लाईनमध्ये साधारण 6 फोटो बसतात.";
-                else if (size === 'passport') msg = "💡 Passport Size: एका लाईनमध्ये 4 फोटो बसतात. (एकूण 8 फोटो)";
-                else if (size === 'visa') msg = "💡 US Visa: एका लाईनमध्ये 2 फोटो बसतात.";
-                else if (size === 'wallet') msg = "💡 Wallet Size: एका लाईनमध्ये 2 फोटो बसतात.";
-                else if (size === '4x6') msg = "💡 4x6 Jumbo: पूर्ण 4x6 च्या पानावर फक्त 1 फोटो बसेल.";
+                // Photo Studio Mode Rendering Loop
+                paperDiv.style.display = 'flex';
+                paperDiv.style.flexWrap = 'wrap';
+                paperDiv.style.alignContent = 'flex-start';
+                paperDiv.style.justifyContent = 'center';
+                paperDiv.style.gap = '4px';
+                paperDiv.style.padding = '16px';
+
+                const sizeType = document.getElementById('photoSize').value;
+                const count = parseInt(document.getElementById('photoCount').value) || 1;
+
+                let pw = finalW * 0.16; let ph = pw * (4.5 / 3.5);
+                if(sizeType === 'stamp') { pw = finalW * 0.11; ph = pw * (2.5 / 2); }
+                if(sizeType === 'visa') { pw = finalW * 0.22; ph = pw; }
+                if(sizeType === 'wallet') { pw = finalW * 0.28; ph = pw * (3.5 / 2.5); }
+
+                for(let i=0; i<count; i++) {
+                    const gridPhoto = document.createElement('div');
+                    gridPhoto.className = 'card-face-preview border border-slate-300';
+                    gridPhoto.style.width = `${pw}px`; gridPhoto.style.height = `${ph}px`;
+                    gridPhoto.innerHTML = photoImgData ? `<img src="${photoImgData}">` : '<i class="fa-solid fa-user text-slate-300 text-[9px]"></i>';
+                    paperDiv.appendChild(gridPhoto);
+                    if(i >= 48) break; // Visual cap protection
+                }
             }
-            hint.innerText = msg;
         }
 
-        // Run once on load
-        updateDynamicUI();
+        updatePreview();
 
         async function executePrintJob() {
             const generateBtn = document.getElementById('generateBtn');
@@ -224,18 +361,18 @@
             if (activeJob === 'id_card') {
                 const front = document.getElementById('idFront').files[0];
                 const back = document.getElementById('idBack').files[0];
-                if(!front || !back) { alert('Please upload both Front and Back sides!'); return; }
+                if(!front || !back) { alert('Please upload both Front and Back card face images.'); return; }
                 formData.append('front_file', front);
                 formData.append('back_file', back);
             } else {
                 const photo = document.getElementById('passportPhoto').files[0];
-                if(!photo) { alert('Please upload a photo!'); return; }
+                if(!photo) { alert('Please upload a portrait image.'); return; }
                 formData.append('passport_file', photo);
                 formData.append('photo_size', document.getElementById('photoSize').value);
                 formData.append('photo_count', document.getElementById('photoCount').value);
             }
 
-            generateBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> COMPILING GRID...";
+            generateBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> COMPILING SHEET...";
             generateBtn.disabled = true;
 
             try {
@@ -250,12 +387,12 @@
                     a.click();
                     a.remove();
                 } else {
-                    alert('Error creating print layout matrix.');
+                    alert('Error creating print layout.');
                 }
             } catch {
-                alert('Connection error occurred.');
+                alert('Network connection error occurred.');
             } finally {
-                generateBtn.innerHTML = '🖨️ GENERATE PRINT SHEET';
+                generateBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Print-Ready Sheet';
                 generateBtn.disabled = false;
             }
         }
