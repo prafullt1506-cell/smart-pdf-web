@@ -499,28 +499,33 @@ def process_image_crop():
         return jsonify({'error': str(e)}), 500
 
 # ==========================================
-# 🖨️👑 ENGINE 10: PRO PRINT STUDIO (Dynamic Sizes)
+# 🖨️👑 ENGINE 10: PRO PRINT STUDIO (Dynamic Sizes & Live Preview Sync)
 # ==========================================
 @app.route('/process-print-studio', methods=['POST'])
 def process_print_studio():
     try:
         job_type = request.form.get('job_type', 'id_card')
-        paper_size = request.form.get('paper_size', '4x6')
+        paper_size = request.form.get('paper_size', 'a4')
         lamination_mode = request.form.get('lamination_mode', 'false') == 'true'
 
-        if paper_size == '4x6':
-            if job_type == 'id_card':
-                canvas_w, canvas_h = 1200, 1800  
-            else:
-                canvas_w, canvas_h = 1800, 1200  
-        else:
-            canvas_w, canvas_h = 2480, 3508  # A4 Portrait
+        # Canvas Mapping Matrix @ exact 300 DPI (Strict Bounds)
+        paper_dims = {
+            'a4': (2480, 3508),
+            'letter': (2550, 3300),  
+            'legal': (2550, 4200),   
+            '4x6': (1200, 1800),     
+            '5x7': (1500, 2100),     
+            '8x10': (2400, 3000)     
+        }
+        
+        canvas_w, canvas_h = paper_dims.get(paper_size, (2480, 3508))
 
         canvas = Image.new("RGB", (canvas_w, canvas_h), "white")
         draw = ImageDraw.Draw(canvas)
 
+        # A] ID CARD MULTI-LAYOUT ENGINES
         if job_type == 'id_card':
-            id_w, id_h = 1004, 638  # 8.5cm x 5.4cm at 300 DPI
+            id_w, id_h = 1004, 638  # 8.5cm x 5.4cm Standard Card Dimensions
             
             front = Image.open(request.files['front_file']).convert("RGB")
             back = Image.open(request.files['back_file']).convert("RGB")
@@ -528,17 +533,20 @@ def process_print_studio():
             front = front.resize((id_w, id_h), Image.Resampling.LANCZOS)
             back = back.resize((id_w, id_h), Image.Resampling.LANCZOS)
 
+            # High contrast layout mapping line borders
             ImageDraw.Draw(front).rectangle([(0,0), (id_w-1, id_h-1)], outline="#d1d5db", width=2)
             ImageDraw.Draw(back).rectangle([(0,0), (id_w-1, id_h-1)], outline="#d1d5db", width=2)
 
-            if paper_size == '4x6':
+            # Slicing Logic based on physical paper sizing
+            if paper_size in ['4x6', '5x7', '8x10']:
+                # Portrait Photo Papers: Top-Bottom (Var-Khali Setup)
                 fx = (canvas_w - id_w) // 2
                 fy = 200
                 bx = fx
                 by = fy + id_h + 100
 
                 if lamination_mode:
-                    back = back.rotate(180)
+                    back = back.rotate(180) # 180 Degree flip transformation
                     mid_y = fy + id_h + 50
                     for x_dash in range(50, canvas_w - 50, 20):
                         draw.line([(x_dash, mid_y), (x_dash + 10, mid_y)], fill="#94a3b8", width=3)
@@ -546,6 +554,7 @@ def process_print_studio():
                 canvas.paste(front, (fx, fy))
                 canvas.paste(back, (bx, by))
             else:
+                # Large Sheets (A4, Letter, Legal): Left-Right (Shejari-Shejari Setup)
                 fy = 400
                 fx = (canvas_w // 2) - id_w - 50
                 bx = (canvas_w // 2) + 50
@@ -558,52 +567,51 @@ def process_print_studio():
                 canvas.paste(front, (fx, fy))
                 canvas.paste(back, (bx, fy))
 
+        # B] MULTI-SIZE PHOTO GENERATOR GRID
         else:
             photo_size_key = request.form.get('photo_size', 'passport')
-            total_photos = int(request.form.get('photo_count', 5))
+            total_photos = int(request.form.get('photo_count', 8))
             
+            # Universal Studio Size Dictionary (@ 300 DPI Blueprint Mapping)
             sizes_map = {
                 'stamp': (236, 295),      # 2 x 2.5 cm
                 'passport': (413, 531),   # 3.5 x 4.5 cm
-                'visa': (590, 590),       # 5 x 5 cm
-                'wallet': (750, 1050),    # 2.5 x 3.5 inch
-                '4x6': (1800, 1200)       
+                'visa': (590, 590),       # 2 x 2 inches
+                'wallet': (750, 1050),    # 2.5 x 3.5 inches
             }
             
             pass_w, pass_h = sizes_map.get(photo_size_key, (413, 531))
             photo = Image.open(request.files['passport_file']).convert("RGB")
             
-            if photo_size_key == '4x6' and paper_size == '4x6':
-                 photo = photo.resize((canvas_w, canvas_h), Image.Resampling.LANCZOS)
-                 canvas.paste(photo, (0, 0))
-            else:
-                photo = photo.resize((pass_w, pass_h), Image.Resampling.LANCZOS)
-                ImageDraw.Draw(photo).rectangle([(0,0), (pass_w-1, pass_h-1)], outline="#cbd5e1", width=2)
+            photo = photo.resize((pass_w, pass_h), Image.Resampling.LANCZOS)
+            ImageDraw.Draw(photo).rectangle([(0,0), (pass_w-1, pass_h-1)], outline="#cbd5e1", width=2)
 
-                gap_x, gap_y = 40, 50
-                start_y = 100
+            gap_x, gap_y = 40, 50
+            start_y = 100
+            
+            # Smart Grid Columns & Math Matrix Centering
+            cols_per_row = max(1, (canvas_w - 100) // (pass_w + gap_x))
+            actual_grid_width = cols_per_row * pass_w + (cols_per_row - 1) * gap_x
+            start_x = max(50, (canvas_w - actual_grid_width) // 2)
+
+            for index in range(total_photos):
+                row = index // cols_per_row
+                col = index % cols_per_row
                 
-                cols_per_row = max(1, (canvas_w - 100) // (pass_w + gap_x))
-                actual_grid_width = cols_per_row * pass_w + (cols_per_row - 1) * gap_x
-                start_x = max(50, (canvas_w - actual_grid_width) // 2)
+                x = start_x + col * (pass_w + gap_x)
+                y = start_y + row * (pass_h + gap_y)
 
-                for index in range(total_photos):
-                    row = index // cols_per_row
-                    col = index % cols_per_row
-                    
-                    x = start_x + col * (pass_w + gap_x)
-                    y = start_y + row * (pass_h + gap_y)
+                # Page clamping layout protector
+                if y + pass_h > canvas_h - 50:
+                    break 
 
-                    if y + pass_h > canvas_h - 50:
-                        break 
-
-                    canvas.paste(photo, (x, y))
+                canvas.paste(photo, (x, y))
 
         img_byte_arr = io.BytesIO()
         canvas.save(img_byte_arr, format='JPEG', quality=98, dpi=(300, 300))
         img_byte_arr.seek(0)
 
-        return send_file(img_byte_arr, mimetype='image/jpeg', as_attachment=True, download_name=f"Print_Studio_Ready.jpg")
+        return send_file(img_byte_arr, mimetype='image/jpeg', as_attachment=True, download_name=f"Print_Ready_Sheet.jpg")
 
     except Exception as e:
         print("Print Studio System Error:", e)
