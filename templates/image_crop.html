@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- FontAwesome Added for Pro Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .glass-panel {
             background: rgba(30, 41, 59, 0.75);
@@ -14,13 +16,17 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .img-workspace { max-height: 450px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 1rem; overflow: hidden; }
+        .img-workspace { max-height: 500px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 1rem; overflow: hidden; position: relative; }
         img { display: block; max-width: 100%; }
         .preview-box { background: #1e293b; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* Toolbar Button Hover Glow */
+        .tool-btn { transition: all 0.3s ease; }
+        .tool-btn:hover { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); transform: translateY(-2px); }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen font-sans antialiased">
     
+    <!-- Navigation -->
     <nav class="glass-panel sticky top-0 z-50 px-8 py-4 flex justify-between items-center shadow-xl">
         <div class="flex items-center gap-2">
             <span class="text-2xl">✂️</span>
@@ -30,17 +36,20 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Top Info Header -->
         <div class="text-center mb-8">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-pink-500/20">
-                ✨ Live Editor Active
+                ✨ Pro Studio Editor Active
             </span>
             <h1 class="text-4xl font-black tracking-tight mb-2">Advanced Image <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">Cropper</span></h1>
-            <p class="text-sm text-slate-400 max-w-xl mx-auto">Real-time live preview, multi-unit dimension scaling, and dynamic size clamping workspace.</p>
+            <p class="text-sm text-slate-400 max-w-xl mx-auto">Ultra-smooth cropping, rotation, zoom, and dynamic size clamping workspace.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
+            <!-- LEFT WORKSPACE: CROP MATRIX & LIVE PREVIEW (8 Cols) -->
             <div class="lg:col-span-8 flex flex-col gap-6">
+                <!-- Cropper Input/Display Grid -->
                 <div class="glass-panel p-6 rounded-3xl shadow-xl">
                     <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer mb-5 bg-slate-900 rounded-full border border-slate-800 p-1">
                     
@@ -48,14 +57,44 @@
                         <img id="image" src="" alt="Upload an image to start" style="display: none;">
                     </div>
 
+                    <!-- 🛠️ PRO TOOLBAR (Zoom, Rotate, Move) -->
+                    <div class="flex flex-wrap gap-3 mt-5 justify-center hidden bg-slate-900 p-3 rounded-2xl border border-slate-800" id="cropper-controls">
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="setDragMode('move')" title="Move Image">
+                            <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                        </button>
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="setDragMode('crop')" title="Draw Crop Box">
+                            <i class="fa-solid fa-crop-simple"></i>
+                        </button>
+                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="zoomIn()" title="Zoom In">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        </button>
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="zoomOut()" title="Zoom Out">
+                            <i class="fa-solid fa-magnifying-glass-minus"></i>
+                        </button>
+                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-emerald-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="rotateLeft()" title="Rotate Left">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-emerald-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="rotateRight()" title="Rotate Right">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
+                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-red-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="resetCrop()" title="Reset All">
+                            <i class="fa-solid fa-arrow-rotate-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Ratio Presets -->
                     <div class="flex flex-wrap gap-2 mt-4 justify-center hidden" id="ratio-buttons">
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(16/9)">16:9 Desktop</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(4/3)">4:3 Frame</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(1)">1:1 Square</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-pink-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(NaN)">Free Form</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(16/9)">16:9 Desktop</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(4/3)">4:3 Frame</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(1)">1:1 Square</button>
+                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(NaN)">Free Form</button>
                     </div>
                 </div>
 
+                <!-- 🌟 SINGLE LIVE PREVIEW PANEL -->
                 <div id="previewPanel" class="glass-panel p-6 rounded-3xl shadow-xl hidden">
                     <h3 class="text-xs font-black tracking-widest uppercase text-slate-400 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-eye text-pink-500"></i> Final Live Preview
@@ -71,7 +110,9 @@
                 </div>
             </div>
 
+            <!-- RIGHT PANEL: CONTROLS (4 Cols) -->
             <div class="lg:col-span-4 flex flex-col gap-6">
+                <!-- Magic Enhance Control Toggle -->
                 <div class="glass-panel p-5 rounded-3xl border border-slate-800">
                     <label class="flex items-center justify-between cursor-pointer">
                         <div class="font-extrabold text-slate-200 text-sm flex items-center gap-2">
@@ -86,18 +127,21 @@
                     <p class="text-xs text-slate-400 mt-2 font-medium">Instantly fixes blur, increases sharpness, and balances contrast.</p>
                 </div>
 
+                <!-- Resizing & Scaling Unit Grid -->
                 <div class="glass-panel p-5 rounded-3xl border border-slate-800 flex flex-col gap-5">
                     <div>
                         <h3 class="font-black text-xs text-slate-400 uppercase tracking-widest mb-3 pb-1 border-b border-slate-800/60 flex items-center justify-between">
                             <span>Target Dimension Unit</span>
                         </h3>
                         
+                        <!-- Unit Type Switcher Buttons -->
                         <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
                             <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10">Pixels (PX)</button>
                             <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white">Centimeters (CM)</button>
                         </div>
                     </div>
 
+                    <!-- Input Parameters Form Field (Width & Height) -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label id="lblWidth" class="text-xs font-bold text-slate-400 block mb-1">Target Width (px)</label>
@@ -109,6 +153,7 @@
                         </div>
                     </div>
 
+                    <!-- Input Parameters Form Field (KB & DPI) -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-xs font-bold text-slate-400 block mb-1">Max Size (KB)</label>
@@ -121,6 +166,7 @@
                     </div>
                 </div>
 
+                <!-- Core Download Execute Trigger -->
                 <button id="processBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-pink-500/20 transform hover:-translate-y-1 transition-all disabled:opacity-40 disabled:pointer-events-none" disabled>
                     ⚡ CROP & DOWNLOAD
                 </button>
@@ -128,6 +174,7 @@
         </div>
     </div>
 
+    <!-- JS For Pro Tools -->
     <script>
         let cropper;
         let currentUnit = 'px';
@@ -135,9 +182,18 @@
         const uploadInput = document.getElementById('imageUpload');
         const processBtn = document.getElementById('processBtn');
         const ratioButtons = document.getElementById('ratio-buttons');
+        const controlsToolbar = document.getElementById('cropper-controls');
         const previewPanel = document.getElementById('previewPanel');
         const magicToggle = document.getElementById('magicEnhance');
         const liveEnhancedPreview = document.getElementById('liveEnhancedPreview');
+
+        // Toolbar Functions
+        function setDragMode(mode) { if(cropper) { cropper.setDragMode(mode); } }
+        function zoomIn() { if(cropper) { cropper.zoom(0.1); } }
+        function zoomOut() { if(cropper) { cropper.zoom(-0.1); } }
+        function rotateLeft() { if(cropper) { cropper.rotate(-45); triggerLivePreviewGeneration(); } }
+        function rotateRight() { if(cropper) { cropper.rotate(45); triggerLivePreviewGeneration(); } }
+        function resetCrop() { if(cropper) { cropper.reset(); triggerLivePreviewGeneration(); } }
 
         function switchUnit(unit) {
             currentUnit = unit;
@@ -163,7 +219,6 @@
                 wInput.placeholder = "Auto";
                 hInput.placeholder = "Auto";
             }
-            triggerLivePreviewGeneration();
         }
 
         magicToggle.addEventListener('change', function() {
@@ -195,18 +250,25 @@
                 imageElement.src = url;
                 imageElement.style.display = 'block';
                 ratioButtons.classList.remove('hidden');
+                controlsToolbar.classList.remove('hidden');
+                controlsToolbar.classList.add('flex');
                 previewPanel.classList.remove('hidden');
                 processBtn.disabled = false;
 
                 if (cropper) { cropper.destroy(); }
                 
+                // 🌟 Pro Configuration for Smoothness
                 cropper = new Cropper(imageElement, {
-                    viewMode: 2,
-                    autoCropArea: 0.9,
+                    viewMode: 1, // बॉक्स इमेजच्या बाहेर जाणार नाही
+                    dragMode: 'move', // बाय-डिफॉल्ट इमेज हलवता येईल
+                    autoCropArea: 0.8,
                     responsive: true,
-                    background: false,
+                    background: true,
+                    highlight: true,
+                    wheelZoomRatio: 0.1, // माऊस व्हीलने एकदम स्मूथ झूम
                     cropend() { triggerLivePreviewGeneration(); },
-                    ready() { triggerLivePreviewGeneration(); }
+                    ready() { triggerLivePreviewGeneration(); },
+                    zoom() { setTimeout(triggerLivePreviewGeneration, 100); }
                 });
             }
         });
