@@ -13,14 +13,7 @@
     <script>
         tailwind.config = {
             theme: {
-                extend: {
-                    colors: {
-                        studioDark: '#0b1324',
-                        studioCard: '#111c30',
-                        studioBorder: '#1e2d4a',
-                        studioCyan: '#06b6d4'
-                    }
-                }
+                extend: { colors: { studioDark: '#0b1324', studioCard: '#111c30', studioBorder: '#1e2d4a', studioCyan: '#06b6d4' } }
             }
         }
     </script>
@@ -29,17 +22,16 @@
         .studio-panel { background-color: var(--tw-colors-studioCard); border: 1px solid var(--tw-colors-studioBorder); }
         .cyan-glow-btn {
             background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); transition: all 0.3s ease; color: white; border: none;
         }
         .cyan-glow-btn:hover { box-shadow: 0 0 30px rgba(6, 182, 212, 0.7); transform: translateY(-1px); }
-        .active-tab { border: 2px solid #06b6d4; background-color: rgba(6, 182, 212, 0.05); }
+        .inactive-tab { background-color: #0f172a; color: #64748b; border: 1px solid #1e293b; transition: all 0.3s ease; }
+        .inactive-tab:hover { background-color: #1e293b; color: #94a3b8; }
         
-        /* Canvas sheet styling */
         #paperPreview { background-color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s ease; position: relative; }
         .card-face-preview { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .card-face-preview img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Cropper Customization */
         .cropper-modal { background-color: rgba(0,0,0,0.85); }
         .cropper-view-box { outline: 2px solid #06b6d4; }
     </style>
@@ -63,11 +55,11 @@
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5 tracking-wider">Select Print Job</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" id="jobIdCard" onclick="setJobType('id_card')" class="active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group">
-                            <span class="text-sm font-black text-slate-100 group-hover:text-cyan-400">ID CARD STUDIO</span>
+                        <button type="button" id="jobIdCard" onclick="setJobType('id_card')" class="cyan-glow-btn py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group">
+                            <span class="text-sm font-black tracking-wider">ID CARD STUDIO</span>
                         </button>
-                        <button type="button" id="jobPassport" onclick="setJobType('passport')" class="py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40">
-                            <span class="text-sm font-black text-slate-400 group-hover:text-cyan-400">PHOTO STUDIO</span>
+                        <button type="button" id="jobPassport" onclick="setJobType('passport')" class="inactive-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group">
+                            <span class="text-sm font-black tracking-wider">PHOTO STUDIO</span>
                         </button>
                     </div>
                 </div>
@@ -142,6 +134,7 @@
                         </div>
                         <div class="flex flex-col">
                             <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Lamination Fold Mode</span>
+                            <span class="text-[9px] text-slate-500 font-medium">Changes layout for seamless physical folding.</span>
                         </div>
                     </label>
                 </div>
@@ -152,19 +145,16 @@
             <div class="studio-panel rounded-xl shadow-xl h-full flex flex-col overflow-hidden">
                 <div class="bg-slate-950/60 border-b border-slate-800/80 px-5 py-3.5 flex justify-between">
                     <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase"><i class="fa-solid fa-eye text-cyan-500 mr-2"></i>Live Print Preview</h2>
-                    <span class="text-[9px] text-cyan-500 font-bold tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> TOP-LEFT ALIGNED (SAVES PAPER)</span>
+                    <span class="text-[9px] text-cyan-500 font-bold tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> OPTIMIZED MARGINS</span>
                 </div>
                 
-                <div class="flex-grow bg-[#090f1c] p-8 flex items-start justify-start overflow-auto relative min-h-[480px]">
+                <div class="flex-grow bg-[#090f1c] p-8 flex items-start justify-center overflow-auto relative min-h-[480px]">
                     <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
-                    <div id="paperPreview" class="flex shadow-2xl transition-all duration-300 mx-auto lg:mx-0"></div>
+                    <div id="paperPreview" class="flex shadow-2xl transition-all duration-300 mx-auto"></div>
                 </div>
 
-                <div class="bg-slate-950/60 border-t border-slate-800/60 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 300 DPI Rendering
-                    </div>
-                    <button type="button" id="generateBtn" onclick="executePrintJob()" class="cyan-glow-btn text-white font-black text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl flex items-center gap-2">
+                <div class="bg-slate-950/60 border-t border-slate-800/60 px-6 py-4 flex justify-between items-center">
+                    <button type="button" id="generateBtn" onclick="executePrintJob()" class="cyan-glow-btn text-white font-black text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl flex items-center gap-2 w-full justify-center">
                         <i class="fa-solid fa-bolt"></i> Generate Sheet
                     </button>
                 </div>
@@ -174,8 +164,8 @@
         <div id="cropModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-300">
             <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col">
                 <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-200"><i class="fa-solid fa-crop-simple text-cyan-500 mr-2"></i> Pro Image Adjustment</h3>
-                    <button onclick="closeCropModal()" class="text-slate-500 hover:text-rose-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-200"><i class="fa-solid fa-crop-simple text-cyan-500 mr-2"></i> Adjust Image</h3>
+                    <button onclick="closeCropModal()" class="text-slate-500 hover:text-rose-500"><i class="fa-solid fa-xmark text-xl"></i></button>
                 </div>
                 <div class="p-6 bg-[#090f1c] flex justify-center items-center h-[50vh]">
                     <div class="w-full h-full flex justify-center items-center">
@@ -193,17 +183,12 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <script>
         let activeJob = 'id_card';
-        let cropper = null;
-        let currentCropType = '';
-        
-        // Final blobs ready to be sent to backend
+        let cropper = null; let currentCropType = '';
         let printBlobs = { front: null, back: null, photo: null };
-        // Base64 object URLs for Live Preview
         let previewUrls = { front: '', back: '', photo: '' };
 
         const paperRatios = { 'a4': { w: 210, h: 297 }, '4x6': { w: 4, h: 6 }, '5x7': { w: 5, h: 7 }, '8x10': { w: 8, h: 10 } };
@@ -214,10 +199,19 @@
             else { dot.style.transform = 'translateX(0)'; dot.classList.replace('bg-white', 'bg-slate-400'); bg.classList.replace('bg-cyan-600', 'bg-slate-800'); }
         });
 
+        // 🎯 TABS UI FIX
         function setJobType(job) {
             activeJob = job;
-            document.getElementById('jobIdCard').className = job === 'id_card' ? "active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group" : "py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40";
-            document.getElementById('jobPassport').className = job === 'passport' ? "active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group" : "py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40";
+            const btnId = document.getElementById('jobIdCard');
+            const btnPass = document.getElementById('jobPassport');
+            
+            if(job === 'id_card') {
+                btnId.className = "cyan-glow-btn py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group";
+                btnPass.className = "inactive-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group";
+            } else {
+                btnPass.className = "cyan-glow-btn py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group";
+                btnId.className = "inactive-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center group";
+            }
             
             document.getElementById('idUploadGroup').style.display = job === 'id_card' ? 'grid' : 'none';
             document.getElementById('laminationBox').style.display = job === 'id_card' ? 'block' : 'none';
@@ -226,20 +220,15 @@
             updatePreview();
         }
 
-        // ✂️ Crop Modal Logic
         function triggerCropModal(event, type) {
-            const file = event.target.files[0];
-            if(!file) return;
+            const file = event.target.files[0]; if(!file) return;
             currentCropType = type;
-            const url = URL.createObjectURL(file);
             const image = document.getElementById('cropTargetImage');
-            image.src = url;
+            image.src = URL.createObjectURL(file);
 
             const modal = document.getElementById('cropModal');
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            modal.classList.remove('hidden'); setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
-            // Set Aspect Ratio (ID Card = 8.5/5.4, Passport = dynamically based on size)
             let ratio = NaN;
             if(activeJob === 'id_card') { ratio = 8.5 / 5.4; } 
             else {
@@ -250,16 +239,13 @@
             }
 
             if(cropper) cropper.destroy();
-            cropper = new Cropper(image, {
-                aspectRatio: ratio, viewMode: 1, dragMode: 'move', autoCropArea: 1, background: false
-            });
-            event.target.value = ''; // Reset input
+            cropper = new Cropper(image, { aspectRatio: ratio, viewMode: 1, dragMode: 'move', autoCropArea: 1, background: false });
+            event.target.value = ''; 
         }
 
         function closeCropModal() {
             const modal = document.getElementById('cropModal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 300);
+            modal.classList.add('opacity-0'); setTimeout(() => modal.classList.add('hidden'), 300);
             if(cropper) cropper.destroy();
         }
 
@@ -267,21 +253,16 @@
             if(!cropper) return;
             cropper.getCroppedCanvas({ imageSmoothingQuality: 'high' }).toBlob((blob) => {
                 const newUrl = URL.createObjectURL(blob);
-                printBlobs[currentCropType] = blob;
-                previewUrls[currentCropType] = newUrl;
-
+                printBlobs[currentCropType] = blob; previewUrls[currentCropType] = newUrl;
                 const thumb = document.getElementById(currentCropType + 'Thumb');
                 const placeholder = document.getElementById(currentCropType + 'Placeholder');
-                thumb.src = newUrl;
-                thumb.classList.remove('hidden');
+                thumb.src = newUrl; thumb.classList.remove('hidden');
                 if(placeholder) placeholder.classList.add('hidden');
-
-                closeCropModal();
-                updatePreview();
+                closeCropModal(); updatePreview();
             }, 'image/jpeg', 0.95);
         }
 
-        // 🖨️ Top-Left Live Preview Engine
+        // 🎯 NEW LIVE PREVIEW LOGIC
         function updatePreview() {
             const paper = document.getElementById('paperSize').value;
             const paperDiv = document.getElementById('paperPreview');
@@ -293,49 +274,61 @@
             paperDiv.style.height = `${finalH}px`; paperDiv.style.width = `${finalW}px`;
             paperDiv.innerHTML = ''; 
 
-            // PAPER SAVING ALIGNMENT (Top-Left Origin Padding)
-            paperDiv.style.padding = '5%';
-            paperDiv.style.alignContent = 'flex-start';
-            paperDiv.style.alignItems = 'flex-start';
+            // Smaller Margins!
+            paperDiv.style.padding = '3%';
 
             if(activeJob === 'id_card') {
-                const isVerticalPaper = (paper === '4x6' || paper === '5x7' || paper === '8x10');
-                paperDiv.style.flexDirection = isVerticalPaper ? 'column' : 'row';
-                paperDiv.style.justifyContent = 'flex-start'; // TOP LEFT
-                paperDiv.style.gap = '12px';
-
-                const cardW = finalW * (isVerticalPaper ? 0.75 : 0.42);
-                const cardH = cardW * (5.4 / 8.5);
-
                 const createCard = (type, text) => {
-                    const d = document.createElement('div');
-                    d.className = 'card-face-preview shadow-sm shrink-0';
+                    const d = document.createElement('div'); d.className = 'card-face-preview shadow-sm shrink-0';
                     d.style.width = `${cardW}px`; d.style.height = `${cardH}px`;
                     d.innerHTML = previewUrls[type] ? `<img src="${previewUrls[type]}">` : `<span class="text-[9px] font-bold text-slate-300">${text}</span>`;
                     return d;
                 };
 
-                const frontCard = createCard('front', 'FRONT FACE');
-                const backCard = createCard('back', 'BACK FACE');
+                const isA4 = (paper === 'a4');
+                const cardW = finalW * (isA4 ? 0.42 : 0.75);
+                const cardH = cardW * (5.4 / 8.5);
+                const frontCard = createCard('front', 'FRONT');
+                const backCard = createCard('back', 'BACK');
 
-                if(lamination) {
-                    if(isVerticalPaper) {
-                        backCard.style.transform = 'rotate(180deg)';
-                        const line = document.createElement('div');
-                        line.className = 'w-full border-t border-dashed border-slate-400 my-1 relative text-center shrink-0';
-                        paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
-                    } else {
+                if (isA4) {
+                    if (lamination) {
+                        // A4 + Lamination: TOP-CENTER, SIDE-BY-SIDE
+                        paperDiv.style.flexDirection = 'row';
+                        paperDiv.style.justifyContent = 'center';
+                        paperDiv.style.alignItems = 'flex-start';
+                        paperDiv.style.gap = '15px';
+                        
                         const line = document.createElement('div');
                         line.className = 'h-full border-l border-dashed border-slate-400 mx-1 shrink-0';
                         paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
+                    } else {
+                        // A4 + Normal: TOP-CENTER, ONE BELOW ANOTHER
+                        paperDiv.style.flexDirection = 'column';
+                        paperDiv.style.justifyContent = 'flex-start';
+                        paperDiv.style.alignItems = 'center';
+                        paperDiv.style.gap = '20px';
+                        paperDiv.appendChild(frontCard); paperDiv.appendChild(backCard);
                     }
                 } else {
-                    paperDiv.appendChild(frontCard); paperDiv.appendChild(backCard);
+                    // Small Papers (4x6, 5x7): TOP-LEFT, ONE BELOW ANOTHER
+                    paperDiv.style.flexDirection = 'column';
+                    paperDiv.style.justifyContent = 'flex-start';
+                    paperDiv.style.alignItems = 'flex-start';
+                    paperDiv.style.gap = '12px';
+                    
+                    if(lamination) {
+                        backCard.style.transform = 'rotate(180deg)';
+                        const line = document.createElement('div');
+                        line.className = 'w-full border-t border-dashed border-slate-400 my-1 shrink-0 text-center relative';
+                        paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
+                    } else {
+                        paperDiv.appendChild(frontCard); paperDiv.appendChild(backCard);
+                    }
                 }
             } else {
-                paperDiv.style.display = 'flex';
-                paperDiv.style.flexWrap = 'wrap';
-                paperDiv.style.justifyContent = 'flex-start'; // TOP LEFT
+                paperDiv.style.display = 'flex'; paperDiv.style.flexWrap = 'wrap';
+                paperDiv.style.justifyContent = 'flex-start'; paperDiv.style.alignContent = 'flex-start';
                 paperDiv.style.gap = '4px';
 
                 const sizeType = document.getElementById('photoSize').value;
@@ -385,8 +378,7 @@
                 const response = await fetch('/process-print-studio', { method: 'POST', body: formData });
                 if(response.ok) {
                     const blob = await response.blob();
-                    const a = document.createElement('a');
-                    a.href = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = window.URL.createObjectURL(blob);
                     a.download = `Print_Sheet_${activeJob}_${new Date().getTime()}.jpg`;
                     document.body.appendChild(a); a.click(); a.remove();
                 } else alert('Error creating layout.');
