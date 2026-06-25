@@ -6,6 +6,10 @@
     <title>Pro Print Studio - Enterprise Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -22,44 +26,22 @@
     </script>
     <style>
         body { background-color: #070c16; }
-        .studio-panel {
-            background-color: var(--tw-colors-studioCard);
-            border: 1px solid var(--tw-colors-studioBorder);
-        }
-        /* Glowing effects from preview mockup */
+        .studio-panel { background-color: var(--tw-colors-studioCard); border: 1px solid var(--tw-colors-studioBorder); }
         .cyan-glow-btn {
             background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); transition: all 0.3s ease;
         }
-        .cyan-glow-btn:hover {
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.7);
-            transform: translateY(-1px);
-        }
-        .active-tab {
-            border: 2px solid #06b6d4;
-            box-shadow: inset 0 0 12px rgba(6, 182, 212, 0.2);
-            background-color: rgba(6, 182, 212, 0.05);
-        }
+        .cyan-glow-btn:hover { box-shadow: 0 0 30px rgba(6, 182, 212, 0.7); transform: translateY(-1px); }
+        .active-tab { border: 2px solid #06b6d4; background-color: rgba(6, 182, 212, 0.05); }
+        
         /* Canvas sheet styling */
-        #paperPreview {
-            background-color: white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .card-face-preview {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .card-face-preview img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        #paperPreview { background-color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s ease; position: relative; }
+        .card-face-preview { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-face-preview img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Cropper Customization */
+        .cropper-modal { background-color: rgba(0,0,0,0.85); }
+        .cropper-view-box { outline: 2px solid #06b6d4; }
     </style>
 </head>
 <body class="text-slate-200 min-h-screen font-sans flex flex-col">
@@ -72,7 +54,7 @@
         <a href="/" class="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-xs font-bold rounded-lg border border-slate-800 transition-all text-slate-300">Dashboard</a>
     </header>
 
-    <main class="container mx-auto px-6 py-6 flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-6">
+    <main class="container mx-auto px-6 py-6 flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-6 relative">
         
         <section class="lg:col-span-4 flex flex-col gap-4">
             <div class="studio-panel p-5 rounded-xl flex flex-col gap-4 h-full shadow-xl">
@@ -83,36 +65,31 @@
                     <div class="grid grid-cols-2 gap-3">
                         <button type="button" id="jobIdCard" onclick="setJobType('id_card')" class="active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group">
                             <span class="text-sm font-black text-slate-100 group-hover:text-cyan-400">ID CARD STUDIO</span>
-                            <span class="text-[9px] font-medium text-slate-400 mt-0.5">(Aadhar, PAN, Voter ID)</span>
                         </button>
                         <button type="button" id="jobPassport" onclick="setJobType('passport')" class="py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40">
                             <span class="text-sm font-black text-slate-400 group-hover:text-cyan-400">PHOTO STUDIO</span>
-                            <span class="text-[9px] font-medium text-slate-500 mt-0.5">(Passport, Stamp, Visa)</span>
                         </button>
                     </div>
                 </div>
 
                 <div id="uploadSection" class="flex flex-col gap-3 bg-slate-950/40 p-3 rounded-xl border border-slate-900">
-                    
                     <div id="idUploadGroup" class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col items-center">
-                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Front Image</label>
-                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
-                                <input type="file" id="idFront" accept="image/*" onchange="handleFileChange('front')" class="sr-only">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Front Face</label>
+                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group overflow-hidden">
+                                <input type="file" id="idFront" accept="image/*" onchange="triggerCropModal(event, 'front')" class="sr-only">
                                 <div id="frontPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
-                                    <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
-                                    <span class="text-[10px] font-bold">Upload</span>
+                                    <i class="fa-solid fa-crop-simple text-lg mb-1"></i><span class="text-[10px] font-bold">Crop & Set</span>
                                 </div>
                                 <img id="frontThumb" class="hidden w-full h-full object-cover rounded-md">
                             </label>
                         </div>
                         <div class="flex flex-col items-center">
-                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Back Image</label>
-                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
-                                <input type="file" id="idBack" accept="image/*" onchange="handleFileChange('back')" class="sr-only">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Back Face</label>
+                            <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group overflow-hidden">
+                                <input type="file" id="idBack" accept="image/*" onchange="triggerCropModal(event, 'back')" class="sr-only">
                                 <div id="backPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
-                                    <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
-                                    <span class="text-[10px] font-bold">Upload</span>
+                                    <i class="fa-solid fa-crop-simple text-lg mb-1"></i><span class="text-[10px] font-bold">Crop & Set</span>
                                 </div>
                                 <img id="backThumb" class="hidden w-full h-full object-cover rounded-md">
                             </label>
@@ -121,26 +98,20 @@
 
                     <div id="passportUploadGroup" class="hidden flex-col items-center w-full">
                         <label class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wide">Upload Master Portrait Image</label>
-                        <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group relative overflow-hidden">
-                            <input type="file" id="passportPhoto" accept="image/*" onchange="handleFileChange('photo')" class="sr-only">
+                        <label class="w-full h-20 border border-dashed border-slate-800 rounded-lg bg-slate-900/60 hover:bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-all p-1 group overflow-hidden">
+                            <input type="file" id="passportPhoto" accept="image/*" onchange="triggerCropModal(event, 'photo')" class="sr-only">
                             <div id="photoPlaceholder" class="flex flex-col items-center text-slate-500 group-hover:text-cyan-400">
-                                <i class="fa-solid fa-user-plus text-lg mb-1"></i>
-                                <span class="text-[10px] font-bold">Select Image</span>
+                                <i class="fa-solid fa-crop-simple text-lg mb-1"></i><span class="text-[10px] font-bold">Crop & Adjust</span>
                             </div>
                             <img id="photoThumb" class="hidden w-16 h-full object-cover rounded-md">
                         </label>
                     </div>
                 </div>
 
-                <div id="cardTypeGroup">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Card Type</label>
-                    <input type="text" id="cardType" placeholder="CARD TYPE (e.g., Aadhar, PAN)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold text-slate-300 focus:outline-none focus:border-cyan-500 placeholder-slate-600">
-                </div>
-
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1 tracking-wider">Paper Configuration</label>
                     <select id="paperSize" onchange="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-cyan-500 text-slate-200 cursor-pointer">
-                        <option value="a4">A4 STANDARD</option>
+                        <option value="a4">A4 STANDARD (Save Paper)</option>
                         <option value="4x6">4x6 PHOTO PAPER</option>
                         <option value="5x7">5x7 PHOTO PAPER</option>
                         <option value="8x10">8x10 PHOTO PAPER</option>
@@ -154,7 +125,6 @@
                             <option value="passport">Passport 3.5x4.5cm</option>
                             <option value="stamp">Stamp 2x2.5cm</option>
                             <option value="visa">Visa 5x5cm</option>
-                            <option value="wallet">Wallet 2.5x3.5in</option>
                         </select>
                     </div>
                     <div>
@@ -172,7 +142,6 @@
                         </div>
                         <div class="flex flex-col">
                             <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Lamination Fold Mode</span>
-                            <span class="text-[9px] text-slate-500 font-medium leading-tight">Auto-flip back card for seamless folding.</span>
                         </div>
                     </label>
                 </div>
@@ -181,76 +150,68 @@
 
         <section class="lg:col-span-8 flex flex-col">
             <div class="studio-panel rounded-xl shadow-xl h-full flex flex-col overflow-hidden">
-                
-                <div class="bg-slate-950/60 border-b border-slate-800/80 px-5 py-3.5">
+                <div class="bg-slate-950/60 border-b border-slate-800/80 px-5 py-3.5 flex justify-between">
                     <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase"><i class="fa-solid fa-eye text-cyan-500 mr-2"></i>Live Print Preview</h2>
+                    <span class="text-[9px] text-cyan-500 font-bold tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> TOP-LEFT ALIGNED (SAVES PAPER)</span>
                 </div>
                 
-                <div class="flex-grow bg-[#090f1c] p-8 flex items-center justify-center overflow-auto relative min-h-[480px]">
+                <div class="flex-grow bg-[#090f1c] p-8 flex items-start justify-start overflow-auto relative min-h-[480px]">
                     <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
-                    
-                    <div id="paperPreview" class="p-6 flex shadow-2xl transition-all duration-300">
-                        </div>
+                    <div id="paperPreview" class="flex shadow-2xl transition-all duration-300 mx-auto lg:mx-0"></div>
                 </div>
 
                 <div class="bg-slate-950/60 border-t border-slate-800/60 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div class="flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 
-                        300 DPI - High Definition Render Active
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 300 DPI Rendering
                     </div>
                     <button type="button" id="generateBtn" onclick="executePrintJob()" class="cyan-glow-btn text-white font-black text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Generate Print-Ready Sheet
+                        <i class="fa-solid fa-bolt"></i> Generate Sheet
                     </button>
                 </div>
             </div>
         </section>
+
+        <div id="cropModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-200"><i class="fa-solid fa-crop-simple text-cyan-500 mr-2"></i> Pro Image Adjustment</h3>
+                    <button onclick="closeCropModal()" class="text-slate-500 hover:text-rose-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div class="p-6 bg-[#090f1c] flex justify-center items-center h-[50vh]">
+                    <div class="w-full h-full flex justify-center items-center">
+                        <img id="cropTargetImage" class="max-h-full max-w-full">
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-slate-950 border-t border-slate-800 flex justify-between items-center">
+                    <div class="flex gap-2">
+                        <button onclick="cropper.rotate(-90)" class="px-3 py-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button onclick="cropper.rotate(90)" class="px-3 py-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                    <button onclick="saveCrop()" class="cyan-glow-btn text-white font-black text-xs uppercase tracking-widest px-6 py-2.5 rounded-lg flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i> Save & Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>
         let activeJob = 'id_card';
-        let frontImgData = '';
-        let backImgData = '';
-        let photoImgData = '';
+        let cropper = null;
+        let currentCropType = '';
+        
+        // Final blobs ready to be sent to backend
+        let printBlobs = { front: null, back: null, photo: null };
+        // Base64 object URLs for Live Preview
+        let previewUrls = { front: '', back: '', photo: '' };
 
-        const paperRatios = {
-            'a4': { w: 210, h: 297 },
-            '4x6': { w: 4, h: 6 },
-            '5x7': { w: 5, h: 7 },
-            '8x10': { w: 8, h: 10 }
-        };
+        const paperRatios = { 'a4': { w: 210, h: 297 }, '4x6': { w: 4, h: 6 }, '5x7': { w: 5, h: 7 }, '8x10': { w: 8, h: 10 } };
 
-        // File upload thumbnail rendering
-        function handleFileChange(type) {
-            const input = document.getElementById(type === 'front' ? 'idFront' : (type === 'back' ? 'idBack' : 'passportPhoto'));
-            const thumb = document.getElementById(type === 'front' ? 'frontThumb' : (type === 'back' ? 'backThumb' : 'photoThumb'));
-            const placeholder = document.getElementById(type === 'front' ? 'frontPlaceholder' : (type === 'back' ? 'backPlaceholder' : 'photoPlaceholder'));
-            
-            if(input.files && input.files[0]) {
-                const url = URL.createObjectURL(input.files[0]);
-                if(type === 'front') frontImgData = url;
-                if(type === 'back') backImgData = url;
-                if(type === 'photo') photoImgData = url;
-                
-                thumb.src = url;
-                thumb.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-                updatePreview();
-            }
-        }
-
-        // Lamination toggle style update
         document.getElementById('laminationMode').addEventListener('change', function() {
-            const dot = this.parentElement.querySelector('.dot');
-            const bg = this.parentElement.querySelector('.block');
-            if(this.checked) {
-                dot.style.transform = 'translateX(100%)';
-                dot.classList.replace('bg-slate-400', 'bg-white');
-                bg.classList.replace('bg-slate-800', 'bg-cyan-600');
-            } else {
-                dot.style.transform = 'translateX(0)';
-                dot.classList.replace('bg-white', 'bg-slate-400');
-                bg.classList.replace('bg-cyan-600', 'bg-slate-800');
-            }
+            const dot = this.parentElement.querySelector('.dot'); const bg = this.parentElement.querySelector('.block');
+            if(this.checked) { dot.style.transform = 'translateX(100%)'; dot.classList.replace('bg-slate-400', 'bg-white'); bg.classList.replace('bg-slate-800', 'bg-cyan-600'); } 
+            else { dot.style.transform = 'translateX(0)'; dot.classList.replace('bg-white', 'bg-slate-400'); bg.classList.replace('bg-cyan-600', 'bg-slate-800'); }
         });
 
         function setJobType(job) {
@@ -259,73 +220,123 @@
             document.getElementById('jobPassport').className = job === 'passport' ? "active-tab py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group" : "py-3 px-3 rounded-xl flex flex-col items-center justify-center text-center border border-slate-800 transition-all group bg-slate-950/40";
             
             document.getElementById('idUploadGroup').style.display = job === 'id_card' ? 'grid' : 'none';
-            document.getElementById('cardTypeGroup').style.display = job === 'id_card' ? 'block' : 'none';
             document.getElementById('laminationBox').style.display = job === 'id_card' ? 'block' : 'none';
-            
             document.getElementById('passportUploadGroup').style.display = job === 'passport' ? 'flex' : 'none';
             document.getElementById('passportConfigBox').style.display = job === 'passport' ? 'flex' : 'none';
-            
             updatePreview();
         }
 
+        // ✂️ Crop Modal Logic
+        function triggerCropModal(event, type) {
+            const file = event.target.files[0];
+            if(!file) return;
+            currentCropType = type;
+            const url = URL.createObjectURL(file);
+            const image = document.getElementById('cropTargetImage');
+            image.src = url;
+
+            const modal = document.getElementById('cropModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+            // Set Aspect Ratio (ID Card = 8.5/5.4, Passport = dynamically based on size)
+            let ratio = NaN;
+            if(activeJob === 'id_card') { ratio = 8.5 / 5.4; } 
+            else {
+                const s = document.getElementById('photoSize').value;
+                if(s === 'passport') ratio = 3.5 / 4.5;
+                if(s === 'stamp') ratio = 2.0 / 2.5;
+                if(s === 'visa') ratio = 1;
+            }
+
+            if(cropper) cropper.destroy();
+            cropper = new Cropper(image, {
+                aspectRatio: ratio, viewMode: 1, dragMode: 'move', autoCropArea: 1, background: false
+            });
+            event.target.value = ''; // Reset input
+        }
+
+        function closeCropModal() {
+            const modal = document.getElementById('cropModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+            if(cropper) cropper.destroy();
+        }
+
+        function saveCrop() {
+            if(!cropper) return;
+            cropper.getCroppedCanvas({ imageSmoothingQuality: 'high' }).toBlob((blob) => {
+                const newUrl = URL.createObjectURL(blob);
+                printBlobs[currentCropType] = blob;
+                previewUrls[currentCropType] = newUrl;
+
+                const thumb = document.getElementById(currentCropType + 'Thumb');
+                const placeholder = document.getElementById(currentCropType + 'Placeholder');
+                thumb.src = newUrl;
+                thumb.classList.remove('hidden');
+                if(placeholder) placeholder.classList.add('hidden');
+
+                closeCropModal();
+                updatePreview();
+            }, 'image/jpeg', 0.95);
+        }
+
+        // 🖨️ Top-Left Live Preview Engine
         function updatePreview() {
             const paper = document.getElementById('paperSize').value;
             const paperDiv = document.getElementById('paperPreview');
             const lamination = document.getElementById('laminationMode').checked;
             
             const ratio = paperRatios[paper];
-            const maxH = 400; // Fixed canvas render bounds
-            const finalH = maxH;
-            const finalW = (ratio.w / ratio.h) * finalH;
+            const maxH = 400; const finalH = maxH; const finalW = (ratio.w / ratio.h) * finalH;
             
-            paperDiv.style.height = `${finalH}px`;
-            paperDiv.style.width = `${finalW}px`;
+            paperDiv.style.height = `${finalH}px`; paperDiv.style.width = `${finalW}px`;
             paperDiv.innerHTML = ''; 
 
+            // PAPER SAVING ALIGNMENT (Top-Left Origin Padding)
+            paperDiv.style.padding = '5%';
+            paperDiv.style.alignContent = 'flex-start';
+            paperDiv.style.alignItems = 'flex-start';
+
             if(activeJob === 'id_card') {
-                // Layout Direction mapping: A4 is Left-Right side, smaller photo papers are Top-Bottom
                 const isVerticalPaper = (paper === '4x6' || paper === '5x7' || paper === '8x10');
                 paperDiv.style.flexDirection = isVerticalPaper ? 'column' : 'row';
-                paperDiv.style.alignItems = 'center';
-                paperDiv.style.justifyContent = 'center';
+                paperDiv.style.justifyContent = 'flex-start'; // TOP LEFT
                 paperDiv.style.gap = '12px';
 
                 const cardW = finalW * (isVerticalPaper ? 0.75 : 0.42);
                 const cardH = cardW * (5.4 / 8.5);
 
-                const frontCard = document.createElement('div');
-                frontCard.className = 'card-face-preview shadow-sm';
-                frontCard.style.width = `${cardW}px`; frontCard.style.height = `${cardH}px`;
-                frontCard.innerHTML = frontImgData ? `<img src="${frontImgData}">` : '<span class="text-[9px] font-bold text-slate-300 tracking-wider">FRONT FACE</span>';
+                const createCard = (type, text) => {
+                    const d = document.createElement('div');
+                    d.className = 'card-face-preview shadow-sm shrink-0';
+                    d.style.width = `${cardW}px`; d.style.height = `${cardH}px`;
+                    d.innerHTML = previewUrls[type] ? `<img src="${previewUrls[type]}">` : `<span class="text-[9px] font-bold text-slate-300">${text}</span>`;
+                    return d;
+                };
 
-                const backCard = document.createElement('div');
-                backCard.className = 'card-face-preview shadow-sm';
-                backCard.style.width = `${cardW}px`; backCard.style.height = `${cardH}px`;
-                backCard.innerHTML = backImgData ? `<img src="${backImgData}">` : '<span class="text-[9px] font-bold text-slate-300 tracking-wider">BACK FACE</span>';
+                const frontCard = createCard('front', 'FRONT FACE');
+                const backCard = createCard('back', 'BACK FACE');
 
                 if(lamination) {
                     if(isVerticalPaper) {
                         backCard.style.transform = 'rotate(180deg)';
                         const line = document.createElement('div');
-                        line.className = 'w-[90%] border-t border-dashed border-slate-400 my-1 relative text-center';
-                        line.innerHTML = '<span class="absolute left-1/2 -top-2 bg-white px-1 text-[7px] text-slate-500 -translate-x-1/2"><i class="fa-solid fa-scissors"></i> Fold Line</span>';
+                        line.className = 'w-full border-t border-dashed border-slate-400 my-1 relative text-center shrink-0';
                         paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
                     } else {
                         const line = document.createElement('div');
-                        line.className = 'h-[90%] border-l border-dashed border-slate-400 mx-1 relative';
+                        line.className = 'h-full border-l border-dashed border-slate-400 mx-1 shrink-0';
                         paperDiv.appendChild(frontCard); paperDiv.appendChild(line); paperDiv.appendChild(backCard);
                     }
                 } else {
                     paperDiv.appendChild(frontCard); paperDiv.appendChild(backCard);
                 }
             } else {
-                // Photo Studio Mode Rendering Loop
                 paperDiv.style.display = 'flex';
                 paperDiv.style.flexWrap = 'wrap';
-                paperDiv.style.alignContent = 'flex-start';
-                paperDiv.style.justifyContent = 'center';
+                paperDiv.style.justifyContent = 'flex-start'; // TOP LEFT
                 paperDiv.style.gap = '4px';
-                paperDiv.style.padding = '16px';
 
                 const sizeType = document.getElementById('photoSize').value;
                 const count = parseInt(document.getElementById('photoCount').value) || 1;
@@ -333,19 +344,17 @@
                 let pw = finalW * 0.16; let ph = pw * (4.5 / 3.5);
                 if(sizeType === 'stamp') { pw = finalW * 0.11; ph = pw * (2.5 / 2); }
                 if(sizeType === 'visa') { pw = finalW * 0.22; ph = pw; }
-                if(sizeType === 'wallet') { pw = finalW * 0.28; ph = pw * (3.5 / 2.5); }
 
                 for(let i=0; i<count; i++) {
                     const gridPhoto = document.createElement('div');
-                    gridPhoto.className = 'card-face-preview border border-slate-300';
+                    gridPhoto.className = 'card-face-preview border border-slate-300 shrink-0';
                     gridPhoto.style.width = `${pw}px`; gridPhoto.style.height = `${ph}px`;
-                    gridPhoto.innerHTML = photoImgData ? `<img src="${photoImgData}">` : '<i class="fa-solid fa-user text-slate-300 text-[9px]"></i>';
+                    gridPhoto.innerHTML = previewUrls.photo ? `<img src="${previewUrls.photo}">` : '<i class="fa-solid fa-user text-slate-300 text-[9px]"></i>';
                     paperDiv.appendChild(gridPhoto);
-                    if(i >= 48) break; // Visual cap protection
+                    if(i >= 48) break; 
                 }
             }
         }
-
         updatePreview();
 
         async function executePrintJob() {
@@ -359,42 +368,30 @@
             formData.append('lamination_mode', laminationMode);
 
             if (activeJob === 'id_card') {
-                const front = document.getElementById('idFront').files[0];
-                const back = document.getElementById('idBack').files[0];
-                if(!front || !back) { alert('Please upload both Front and Back card face images.'); return; }
-                formData.append('front_file', front);
-                formData.append('back_file', back);
+                if(!printBlobs.front || !printBlobs.back) { alert('Please crop and set both Front and Back faces.'); return; }
+                formData.append('front_file', printBlobs.front, 'front.jpg');
+                formData.append('back_file', printBlobs.back, 'back.jpg');
             } else {
-                const photo = document.getElementById('passportPhoto').files[0];
-                if(!photo) { alert('Please upload a portrait image.'); return; }
-                formData.append('passport_file', photo);
+                if(!printBlobs.photo) { alert('Please crop and set a portrait photo.'); return; }
+                formData.append('passport_file', printBlobs.photo, 'photo.jpg');
                 formData.append('photo_size', document.getElementById('photoSize').value);
                 formData.append('photo_count', document.getElementById('photoCount').value);
             }
 
-            generateBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> COMPILING SHEET...";
+            generateBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> COMPILING...";
             generateBtn.disabled = true;
 
             try {
                 const response = await fetch('/process-print-studio', { method: 'POST', body: formData });
                 if(response.ok) {
                     const blob = await response.blob();
-                    const dlUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = dlUrl;
+                    a.href = window.URL.createObjectURL(blob);
                     a.download = `Print_Sheet_${activeJob}_${new Date().getTime()}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                } else {
-                    alert('Error creating print layout.');
-                }
-            } catch {
-                alert('Network connection error occurred.');
-            } finally {
-                generateBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Print-Ready Sheet';
-                generateBtn.disabled = false;
-            }
+                    document.body.appendChild(a); a.click(); a.remove();
+                } else alert('Error creating layout.');
+            } catch { alert('Network connection error.'); } 
+            finally { generateBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Sheet'; generateBtn.disabled = false; }
         }
     </script>
 </body>
