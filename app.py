@@ -5,18 +5,18 @@ import os
 import zipfile
 import base64
 import tempfile
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageDraw
 from werkzeug.utils import secure_filename
 from pdf2docx import Converter
 from docx import Document
 
 app = Flask(__name__)
 
-# 🛡️ ANTI-HANG SECURITY: ५० MB ची फाईल साईझ लिमिट
+# 🛡️ ANTI-HANG SECURITY: 50 MB file size limit
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
 # ==========================================
-# 🌐 FRONTEND PAGE ROUTES (मेनू आणि पेजेस)
+# 🌐 FRONTEND PAGE ROUTES
 # ==========================================
 @app.route('/', methods=['GET'])
 def index():
@@ -49,6 +49,10 @@ def security_page():
 @app.route('/image-crop', methods=['GET'])
 def image_crop():
     return render_template('image_crop.html')
+
+@app.route('/print-studio', methods=['GET'])
+def print_studio():
+    return render_template('print_studio.html')
 
 # ==========================================
 # 🗜️ ENGINE 1: PDF COMPRESSOR
@@ -413,7 +417,7 @@ def protect_pdf():
         return jsonify({"error": str(e)}), 500
 
 # ==========================================
-# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (CM + Pixel + Custom DPI Target Array)
+# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER
 # ==========================================
 @app.route('/process-image-crop', methods=['POST'])
 def process_image_crop():
@@ -429,7 +433,6 @@ def process_image_crop():
             img = img.convert("RGB")
             original_format = 'JPEG'
 
-        # 1. Cropping Engine Execution
         x = int(float(request.form.get('x', 0)))
         y = int(float(request.form.get('y', 0)))
         w = int(float(request.form.get('width', img.width)))
@@ -438,7 +441,6 @@ def process_image_crop():
         if w > 0 and h > 0:
             img = img.crop((x, y, x + w, y + h))
 
-        # 2. Magic Enhance Matrix (Auto Clean & Sharp Filter)
         if request.form.get('enhance') == 'true':
             enhancer = ImageEnhance.Sharpness(img)
             img = enhancer.enhance(1.6) 
@@ -447,7 +449,6 @@ def process_image_crop():
             enhancer_color = ImageEnhance.Color(img)
             img = enhancer_color.enhance(1.1)
 
-        # 3. Dynamic Unit Resolution Target Parser (PX vs CM conversion with DPI)
         unit = request.form.get('unit', 'px')
         raw_w = request.form.get('target_w', '')
         raw_h = request.form.get('target_h', '')
@@ -471,11 +472,9 @@ def process_image_crop():
             except ValueError:
                 pass
 
-        # Perform High-Quality LANCZOS Resampling Matrix
         if target_w and target_h and target_w > 0 and target_h > 0:
             img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
 
-        # 4. Byte Clamping Compression (KB Engine Clamping + DPI Binding)
         target_kb = request.form.get('target_kb')
         img_byte_arr = io.BytesIO()
         
@@ -493,12 +492,121 @@ def process_image_crop():
             img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
         img_byte_arr.seek(0)
-        
-        # डाऊनलोड होणाऱ्या फोटोचं साधं नाव:
         return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Edited_Image.{original_format.lower()}")
 
     except Exception as e:
-        print("Error System Core Grid Failure:", e)
+        print("Error:", e)
+        return jsonify({'error': str(e)}), 500
+
+# ==========================================
+# 🖨️👑 ENGINE 10: PRO PRINT STUDIO (Dynamic Sizes)
+# ==========================================
+@app.route('/process-print-studio', methods=['POST'])
+def process_print_studio():
+    try:
+        job_type = request.form.get('job_type', 'id_card')
+        paper_size = request.form.get('paper_size', '4x6')
+        lamination_mode = request.form.get('lamination_mode', 'false') == 'true'
+
+        if paper_size == '4x6':
+            if job_type == 'id_card':
+                canvas_w, canvas_h = 1200, 1800  
+            else:
+                canvas_w, canvas_h = 1800, 1200  
+        else:
+            canvas_w, canvas_h = 2480, 3508  # A4 Portrait
+
+        canvas = Image.new("RGB", (canvas_w, canvas_h), "white")
+        draw = ImageDraw.Draw(canvas)
+
+        if job_type == 'id_card':
+            id_w, id_h = 1004, 638  # 8.5cm x 5.4cm at 300 DPI
+            
+            front = Image.open(request.files['front_file']).convert("RGB")
+            back = Image.open(request.files['back_file']).convert("RGB")
+
+            front = front.resize((id_w, id_h), Image.Resampling.LANCZOS)
+            back = back.resize((id_w, id_h), Image.Resampling.LANCZOS)
+
+            ImageDraw.Draw(front).rectangle([(0,0), (id_w-1, id_h-1)], outline="#d1d5db", width=2)
+            ImageDraw.Draw(back).rectangle([(0,0), (id_w-1, id_h-1)], outline="#d1d5db", width=2)
+
+            if paper_size == '4x6':
+                fx = (canvas_w - id_w) // 2
+                fy = 200
+                bx = fx
+                by = fy + id_h + 100
+
+                if lamination_mode:
+                    back = back.rotate(180)
+                    mid_y = fy + id_h + 50
+                    for x_dash in range(50, canvas_w - 50, 20):
+                        draw.line([(x_dash, mid_y), (x_dash + 10, mid_y)], fill="#94a3b8", width=3)
+
+                canvas.paste(front, (fx, fy))
+                canvas.paste(back, (bx, by))
+            else:
+                fy = 400
+                fx = (canvas_w // 2) - id_w - 50
+                bx = (canvas_w // 2) + 50
+
+                if lamination_mode:
+                    mid_x = canvas_w // 2
+                    for y_dash in range(100, canvas_h - 100, 20):
+                        draw.line([(mid_x, y_dash), (mid_x, y_dash + 10)], fill="#94a3b8", width=3)
+
+                canvas.paste(front, (fx, fy))
+                canvas.paste(back, (bx, fy))
+
+        else:
+            photo_size_key = request.form.get('photo_size', 'passport')
+            total_photos = int(request.form.get('photo_count', 5))
+            
+            sizes_map = {
+                'stamp': (236, 295),      # 2 x 2.5 cm
+                'passport': (413, 531),   # 3.5 x 4.5 cm
+                'visa': (590, 590),       # 5 x 5 cm
+                'wallet': (750, 1050),    # 2.5 x 3.5 inch
+                '4x6': (1800, 1200)       
+            }
+            
+            pass_w, pass_h = sizes_map.get(photo_size_key, (413, 531))
+            photo = Image.open(request.files['passport_file']).convert("RGB")
+            
+            if photo_size_key == '4x6' and paper_size == '4x6':
+                 photo = photo.resize((canvas_w, canvas_h), Image.Resampling.LANCZOS)
+                 canvas.paste(photo, (0, 0))
+            else:
+                photo = photo.resize((pass_w, pass_h), Image.Resampling.LANCZOS)
+                ImageDraw.Draw(photo).rectangle([(0,0), (pass_w-1, pass_h-1)], outline="#cbd5e1", width=2)
+
+                gap_x, gap_y = 40, 50
+                start_y = 100
+                
+                cols_per_row = max(1, (canvas_w - 100) // (pass_w + gap_x))
+                actual_grid_width = cols_per_row * pass_w + (cols_per_row - 1) * gap_x
+                start_x = max(50, (canvas_w - actual_grid_width) // 2)
+
+                for index in range(total_photos):
+                    row = index // cols_per_row
+                    col = index % cols_per_row
+                    
+                    x = start_x + col * (pass_w + gap_x)
+                    y = start_y + row * (pass_h + gap_y)
+
+                    if y + pass_h > canvas_h - 50:
+                        break 
+
+                    canvas.paste(photo, (x, y))
+
+        img_byte_arr = io.BytesIO()
+        canvas.save(img_byte_arr, format='JPEG', quality=98, dpi=(300, 300))
+        img_byte_arr.seek(0)
+
+        return send_file(img_byte_arr, mimetype='image/jpeg', as_attachment=True, download_name=f"Print_Studio_Ready.jpg")
+
+    except Exception as e:
+        print("Print Studio System Error:", e)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
