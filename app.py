@@ -13,21 +13,15 @@ from docx import Document
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
-# ==========================================
-# 🌐 FRONTEND ROUTES
-# ==========================================
 @app.route('/', methods=['GET'])
-def index(): 
-    return render_template('index.html')
+def index(): return render_template('index.html')
 
 @app.route('/print-studio', methods=['GET'])
-def print_studio(): 
-    return render_template('print_studio.html')
+def print_studio(): return render_template('print_studio.html')
 
 # ==========================================
-# 🛠️ PDF & IMAGE UTILITY ENGINES
+# 🛠️ PDF & IMAGE UTILITY ENGINES (जुनं जसं आहे तसं)
 # ==========================================
-
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
     try:
@@ -38,7 +32,6 @@ def compress_batch():
             doc = fitz.open(stream=file.read(), filetype="pdf")
             pdf_bytes = doc.tobytes(garbage=4, deflate=True)
             compressed_files.append((filename, pdf_bytes))
-        
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w') as zipf:
             for fname, fbytes in compressed_files:
@@ -115,7 +108,7 @@ def process_image_crop():
         return jsonify({"success": False, "error": str(e)})
 
 # ==========================================
-# 🖨️👑 ENGINE: PRO PRINT STUDIO (Final Layout Logic)
+# 🖨️👑 ENGINE: PRO PRINT STUDIO (Updated Matrix & Fold Lines)
 # ==========================================
 @app.route('/process-print-studio', methods=['POST'])
 def process_print_studio():
@@ -124,7 +117,6 @@ def process_print_studio():
         paper_size = request.form.get('paper_size', 'a4')
         lamination_mode = request.form.get('lamination_mode', 'false') == 'true'
 
-        # 🎨 Graphics Settings Fetch 
         bright = float(request.form.get('brightness', 1.0))
         cont = float(request.form.get('contrast', 1.0))
         sharp = float(request.form.get('sharpness', 1.0))
@@ -135,100 +127,96 @@ def process_print_studio():
             if sharp != 1.0: img = ImageEnhance.Sharpness(img).enhance(sharp)
             return img
 
-        # Paper Dimensions @ 300 DPI
-        paper_dims = {'a4': (2480, 3508), '4x6': (1200, 1800), '5x7': (1500, 2100)}
-        canvas_w, canvas_h = paper_dims.get(paper_size, (2480, 3508))
+        # 🎯 4x6 Photo Studio साठी लँडस्केप आकार (१८००x१२००) जेणेकरून ८ फोटो परफेक्ट बसतील
+        if job_type == 'passport' and paper_size == '4x6':
+            canvas_w, canvas_h = 1800, 1200 
+        else:
+            paper_dims = {'a4': (2480, 3508), '4x6': (1200, 1800)}
+            canvas_w, canvas_h = paper_dims.get(paper_size, (2480, 3508))
+
         canvas = Image.new("RGB", (canvas_w, canvas_h), "white")
         draw = ImageDraw.Draw(canvas)
-        margin_x, margin_y = 60, 60 
 
         if job_type == 'id_card':
-            # 🎯 4x6 साठी थोडी वेगळी साईज
-            if paper_size == '4x6':
-                id_w, id_h = 1050, 665 
-            else:
-                id_w, id_h = 1200, 760 
+            id_w, id_h = (1050, 665) if paper_size == '4x6' else (1200, 760)
 
             front = Image.open(request.files['front_file']).convert("RGB")
             back = Image.open(request.files['back_file']).convert("RGB")
-            
-            # Apply Graphics & Resize
             front = apply_graphics(front).resize((id_w, id_h), Image.Resampling.LANCZOS)
             back = apply_graphics(back).resize((id_w, id_h), Image.Resampling.LANCZOS)
             
-            # Draw Border
             ImageDraw.Draw(front).rectangle([(0,0), (id_w-1, id_h-1)], outline="#cbd5e1", width=3)
             ImageDraw.Draw(back).rectangle([(0,0), (id_w-1, id_h-1)], outline="#cbd5e1", width=3)
 
-            if paper_size in ['4x6', '5x7']:
-                # 🎯 4x6 Paper Perfect Layout
+            if paper_size == '4x6':
                 gap = 150
                 fx = (canvas_w - id_w) // 2 
-                fy = margin_y + 40
+                fy = 100
                 bx = fx
                 by = fy + id_h + gap
-                
                 canvas.paste(front, (fx, fy))
                 canvas.paste(back, (bx, by))
                 
-                # Middle Dashed Line
+                # Dark Fold Line
                 mid_y = fy + id_h + (gap // 2)
-                for x_dash in range(fx, fx + id_w, 25):
-                    draw.line([(x_dash, mid_y), (x_dash + 10, mid_y)], fill="#94a3b8", width=3)
+                for x_dash in range(fx, fx + id_w, 30):
+                    draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=5)
 
             else:
                 if lamination_mode:
-                    # 🎯 A4 Lamination (Side-by-side)
                     gap = 80
                     mid_x = canvas_w // 2
                     fx = mid_x - id_w - (gap // 2)
                     bx = mid_x + (gap // 2)
-                    fy, by = margin_y, margin_y 
-                    
+                    fy = 150
                     canvas.paste(front, (fx, fy))
-                    canvas.paste(back, (bx, by))
+                    canvas.paste(back, (bx, fy))
                     
-                    # Middle Vertical Line
-                    for y_dash in range(margin_y, margin_y + id_h, 25):
-                        draw.line([(mid_x, y_dash), (mid_x, y_dash + 15)], fill="#94a3b8", width=4)
+                    # 🎯 Dark Lamination Fold Line (Vertical)
+                    for y_dash in range(fy - 50, fy + id_h + 50, 30):
+                        draw.line([(mid_x, y_dash), (mid_x, y_dash + 15)], fill="#000000", width=6)
                 else:
-                    # 🎯 A4 NORMAL (Top-Center + BIG GAP 350px)
                     gap = 350
                     fx = (canvas_w - id_w) // 2 
-                    fy = margin_y
+                    fy = 150
                     bx = fx  
                     by = fy + id_h + gap
-                    
                     canvas.paste(front, (fx, fy))
                     canvas.paste(back, (bx, by))
                     
-                    # Middle Horizontal Cutting Line
+                    # 🎯 Dark Fold Line (Horizontal)
                     mid_y = fy + id_h + (gap // 2)
-                    for x_dash in range(fx, fx + id_w, 25):
-                        draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#94a3b8", width=4)
+                    for x_dash in range(fx - 50, fx + id_w + 50, 30):
+                        draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=6)
 
         else:
-            # 🎯 PHOTO STUDIO (Row Flow)
+            # 🎯 PHOTO STUDIO (Exact Matrix)
             photo = Image.open(request.files['passport_file']).convert("RGB")
             photo = apply_graphics(photo)
             
-            photo_size_key = request.form.get('photo_size', 'passport')
             total_photos = int(request.form.get('photo_count', 8))
-            sizes_map = { 'stamp': (236, 295), 'passport': (413, 531) }
-            pass_w, pass_h = sizes_map.get(photo_size_key, (413, 531))
+            photo_w, photo_h = 380, 490 # Standard studio crop size
             
-            photo = photo.resize((pass_w, pass_h), Image.Resampling.LANCZOS)
-            ImageDraw.Draw(photo).rectangle([(0,0), (pass_w-1, pass_h-1)], outline="#cbd5e1", width=2)
+            if paper_size == '4x6':
+                cols, rows = 4, 2  # 8 Photos
+                margin_x, margin_y = 120, 80
+                gap_x, gap_y = 20, 40
+            else:
+                cols, rows = 6, 6  # 36 Photos
+                margin_x, margin_y = 70, 100
+                gap_x, gap_y = 15, 60
+
+            photo = photo.resize((photo_w, photo_h), Image.Resampling.LANCZOS)
+            ImageDraw.Draw(photo).rectangle([(0,0), (photo_w-1, photo_h-1)], outline="#cbd5e1", width=3)
             
-            gap_x, gap_y = 30, 40
-            cols_per_row = max(1, (canvas_w - (margin_x * 2)) // (pass_w + gap_x))
-            for index in range(total_photos):
-                row = index // cols_per_row
-                col = index % cols_per_row
-                x = margin_x + col * (pass_w + gap_x)
-                y = margin_y + row * (pass_h + gap_y)
-                if y + pass_h > canvas_h - margin_y: break 
-                canvas.paste(photo, (x, y))
+            photo_count = 0
+            for r in range(rows):
+                for c in range(cols):
+                    if photo_count >= total_photos: break
+                    x = margin_x + c * (photo_w + gap_x)
+                    y = margin_y + r * (photo_h + gap_y)
+                    canvas.paste(photo, (x, y))
+                    photo_count += 1
 
         img_byte = io.BytesIO()
         canvas.save(img_byte, format='JPEG', quality=100, dpi=(300, 300))
