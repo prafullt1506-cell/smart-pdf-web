@@ -13,13 +13,8 @@
     <style>
         body { background-color: #070c16; color: #e2e8f0; }
         .studio-panel { background-color: #111c30; border: 1px solid #1e2d4a; }
-        .cyan-glow-btn {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); transition: all 0.3s ease; color: white; border: none;
-        }
+        .cyan-glow-btn { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); transition: all 0.3s ease; color: white; border: none; }
         .cyan-glow-btn:hover { box-shadow: 0 0 30px rgba(6, 182, 212, 0.8); transform: translateY(-2px); }
-        
-        /* 🎯 Tab Logic Glow */
         .tab-btn { transition: all 0.3s ease; border: 2px solid transparent; }
         .tab-active { background-color: rgba(6, 182, 212, 0.15); border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
         .tab-inactive { background-color: #0b1324; border-color: #1e293b; opacity: 0.5; }
@@ -27,7 +22,6 @@
         #paperPreview { background-color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: all 0.3s ease; position: relative; display: flex; }
         .card-face-preview { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;}
         .card-face-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .cropper-modal { background-color: rgba(0,0,0,0.9); }
     </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col">
@@ -39,7 +33,7 @@
 
     <main class="container mx-auto px-6 py-6 flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-6 relative">
         <section class="lg:col-span-4 flex flex-col gap-4">
-            <div class="studio-panel p-5 rounded-xl flex flex-col gap-5 h-full shadow-xl">
+            <div class="studio-panel p-5 rounded-xl flex flex-col gap-4 h-full shadow-xl overflow-y-auto">
                 
                 <div class="grid grid-cols-2 gap-3">
                     <button type="button" id="tabIdCard" onclick="setJobType('id_card')" class="tab-btn tab-active py-4 px-2 rounded-xl flex flex-col items-center">
@@ -56,19 +50,19 @@
                     <div id="idInputs" class="grid grid-cols-2 gap-3">
                         <label class="flex flex-col items-center cursor-pointer">
                             <input type="file" id="idFront" onchange="triggerCropModal(event, 'front')" class="sr-only">
-                            <div class="w-full h-20 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-crop"></i></div>
+                            <div class="w-full h-16 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-crop"></i></div>
                             <span class="text-[9px] mt-1 uppercase">Front Side</span>
                         </label>
                         <label class="flex flex-col items-center cursor-pointer">
                             <input type="file" id="idBack" onchange="triggerCropModal(event, 'back')" class="sr-only">
-                            <div class="w-full h-20 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-crop"></i></div>
+                            <div class="w-full h-16 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-crop"></i></div>
                             <span class="text-[9px] mt-1 uppercase">Back Side</span>
                         </label>
                     </div>
                     <div id="photoInput" class="hidden">
                         <label class="flex flex-col items-center cursor-pointer">
                             <input type="file" id="passportPhoto" onchange="triggerCropModal(event, 'photo')" class="sr-only">
-                            <div class="w-full h-20 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="w-full h-16 border border-dashed border-slate-700 rounded-lg flex items-center justify-center bg-slate-900"><i class="fa-solid fa-user-plus"></i></div>
                             <span class="text-[9px] mt-1 uppercase">Passport Image</span>
                         </label>
                     </div>
@@ -77,7 +71,7 @@
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Select Paper</label>
                     <select id="paperSize" onchange="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold">
-                        <option value="a4">A4 SHEET (Perfect Center)</option>
+                        <option value="a4">A4 SHEET (Standard)</option>
                         <option value="4x6">4x6 PHOTO PAPER</option>
                     </select>
                 </div>
@@ -87,12 +81,32 @@
                     <input type="number" id="photoCount" value="8" min="1" max="32" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold text-white">
                 </div>
 
-                <div id="laminationGroup" class="mt-2">
+                <div id="laminationGroup">
                     <label class="flex items-center gap-3 cursor-pointer bg-slate-900 p-3 rounded-xl border border-slate-800">
                         <input type="checkbox" id="laminationMode" onchange="updatePreview()" class="w-5 h-5">
                         <span class="text-xs font-black uppercase text-cyan-400">Lamination Mode</span>
                     </label>
                 </div>
+
+                <!-- 🎨 GRAPHICS SETTINGS BLOCK -->
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 mt-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-4"><i class="fa-solid fa-wand-magic-sparkles text-cyan-500 mr-1"></i> Graphics Settings</label>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs text-slate-300 font-bold mb-1"><span>Brightness</span> <span id="br_val">1.0</span></div>
+                            <input type="range" id="brightness" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-cyan-500" oninput="document.getElementById('br_val').innerText = this.value">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-slate-300 font-bold mb-1"><span>Contrast</span> <span id="cr_val">1.0</span></div>
+                            <input type="range" id="contrast" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-cyan-500" oninput="document.getElementById('cr_val').innerText = this.value">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-slate-300 font-bold mb-1"><span>Sharpness</span> <span id="sh_val">1.0</span></div>
+                            <input type="range" id="sharpness" min="0.0" max="3.0" step="0.1" value="1.0" class="w-full accent-cyan-500" oninput="document.getElementById('sh_val').innerText = this.value">
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -116,7 +130,7 @@
             <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
                 <div class="p-4 border-b border-slate-800 flex justify-between bg-slate-950">
                     <h3 class="text-xs font-black uppercase">Adjust Cut Area</h3>
-                    <button onclick="closeCropModal()"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="closeCropModal()"><i class="fa-solid fa-xmark text-white"></i></button>
                 </div>
                 <div class="p-4 bg-black h-[50vh] flex items-center justify-center">
                     <img id="cropTarget" class="max-h-full">
@@ -141,8 +155,8 @@
 
         function setJobType(job) {
             activeJob = job;
-            document.getElementById('tabIdCard').className = (job === 'id_card') ? "tab-btn tab-active py-4 px-2 rounded-xl" : "tab-btn tab-inactive py-4 px-2 rounded-xl";
-            document.getElementById('tabPassport').className = (job === 'passport') ? "tab-btn tab-active py-4 px-2 rounded-xl" : "tab-btn tab-inactive py-4 px-2 rounded-xl";
+            document.getElementById('tabIdCard').className = (job === 'id_card') ? "tab-btn tab-active py-4 px-2 rounded-xl flex flex-col items-center" : "tab-btn tab-inactive py-4 px-2 rounded-xl flex flex-col items-center";
+            document.getElementById('tabPassport').className = (job === 'passport') ? "tab-btn tab-active py-4 px-2 rounded-xl flex flex-col items-center" : "tab-btn tab-inactive py-4 px-2 rounded-xl flex flex-col items-center";
             document.getElementById('idInputs').style.display = (job === 'id_card') ? 'grid' : 'none';
             document.getElementById('photoInput').style.display = (job === 'passport') ? 'block' : 'none';
             document.getElementById('passportControls').style.display = (job === 'passport') ? 'block' : 'none';
@@ -181,37 +195,37 @@
             const paper = document.getElementById('paperSize').value;
             const lamination = document.getElementById('laminationMode').checked;
             
-            // Layout Reset Logic
             paperDiv.innerHTML = '';
             paperDiv.style.width = (paper==='a4') ? '300px' : '220px';
-            paperDiv.style.height = '420px';
+            paperDiv.style.height = (paper==='a4') ? '420px' : '330px';
             paperDiv.style.padding = '15px';
             paperDiv.style.flexWrap = 'nowrap';
             paperDiv.style.alignContent = 'normal';
 
             if(activeJob === 'id_card') {
-                const cardW = (paper==='a4') ? '140px' : '180px';
+                const cardW = (paper==='a4') ? '140px' : '170px';
                 const cardH = (paper==='a4') ? '90px' : '110px';
                 
                 if(paper === 'a4') {
                     if(lamination) {
-                        // 🎯 LAMINATION: SIDE-BY-SIDE
+                        // 🎯 A4 Lamination Preview
                         paperDiv.style.flexDirection = 'row';
                         paperDiv.style.justifyContent = 'center';
                         paperDiv.style.alignItems = 'flex-start';
                         paperDiv.style.gap = '5px';
                     } else {
-                        // 🎯 NORMAL: TOP-CENTER (Eka khali ek)
+                        // 🎯 A4 Normal Preview (Big Gap visually)
                         paperDiv.style.flexDirection = 'column';
                         paperDiv.style.justifyContent = 'flex-start';
                         paperDiv.style.alignItems = 'center';
-                        paperDiv.style.gap = '15px';
+                        paperDiv.style.gap = '30px'; // Visual gap
                     }
                 } else {
-                    // Small Paper
+                    // 🎯 4x6 Preview
                     paperDiv.style.flexDirection = 'column';
                     paperDiv.style.alignItems = 'center';
-                    paperDiv.style.gap = '10px';
+                    paperDiv.style.justifyContent = 'center';
+                    paperDiv.style.gap = '15px';
                 }
 
                 const createCard = (url) => {
@@ -225,7 +239,7 @@
                 paperDiv.appendChild(createCard(previewUrls.back));
 
             } else {
-                // 🎯 PHOTO STUDIO: HORIZONTAL ROWS
+                // 🎯 PHOTO STUDIO Preview (Row Flow)
                 paperDiv.style.flexDirection = 'row';
                 paperDiv.style.flexWrap = 'wrap';
                 paperDiv.style.justifyContent = 'flex-start';
@@ -235,7 +249,7 @@
                 const count = document.getElementById('photoCount').value;
                 for(let i=0; i<count; i++) {
                     const p = document.createElement('div');
-                    p.className = 'card-face-preview border';
+                    p.className = 'card-face-preview border border-gray-300';
                     p.style.width = (paper==='a4') ? '45px' : '55px';
                     p.style.height = (paper==='a4') ? '60px' : '75px';
                     if(previewUrls.photo) p.innerHTML = `<img src="${previewUrls.photo}">`;
@@ -251,23 +265,37 @@
             formData.append('paper_size', document.getElementById('paperSize').value);
             formData.append('lamination_mode', document.getElementById('laminationMode').checked);
             
+            // 🎯 Add Graphics values to form
+            formData.append('brightness', document.getElementById('brightness').value);
+            formData.append('contrast', document.getElementById('contrast').value);
+            formData.append('sharpness', document.getElementById('sharpness').value);
+            
             if(activeJob === 'id_card') {
-                if(!blobs.front || !blobs.back) return alert("Upload both faces!");
-                formData.append('front_file', blobs.front); formData.append('back_file', blobs.back);
+                if(!blobs.front || !blobs.back) return alert("Please crop both Front and Back sides!");
+                formData.append('front_file', blobs.front); 
+                formData.append('back_file', blobs.back);
             } else {
-                if(!blobs.photo) return alert("Upload photo!");
+                if(!blobs.photo) return alert("Please crop a passport photo!");
                 formData.append('passport_file', blobs.photo);
                 formData.append('photo_count', document.getElementById('photoCount').value);
             }
 
-            btn.innerHTML = "Processing...";
-            const res = await fetch('/process-print-studio', { method:'POST', body: formData });
-            if(res.ok) {
-                const blob = await res.blob();
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                a.download = `Print_${new Date().getTime()}.jpg`; a.click();
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> Processing...";
+            try {
+                const res = await fetch('/process-print-studio', { method:'POST', body: formData });
+                if(res.ok) {
+                    const blob = await res.blob();
+                    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                    a.download = `Print_Sheet_${new Date().getTime()}.jpg`; 
+                    a.click();
+                } else {
+                    alert("Error generating print.");
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Server error.");
             }
-            btn.innerHTML = "Generate HD Print Sheet";
+            btn.innerHTML = "<i class='fa-solid fa-bolt mr-1'></i> Generate HD Print Sheet";
         }
 
         setJobType('id_card');
