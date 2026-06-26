@@ -4,7 +4,6 @@ import io
 import os
 import zipfile
 import base64
-import tempfile
 from PIL import Image, ImageEnhance, ImageDraw
 from werkzeug.utils import secure_filename
 from pdf2docx import Converter
@@ -13,66 +12,50 @@ from docx import Document
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
-# ==========================================
-# 🌐 FRONTEND PAGE ROUTES (हे मिसिंग होते ज्यामुळे Not Found येत होतं)
-# ==========================================
+# --- Routes for all Tools ---
 @app.route('/', methods=['GET'])
-def index(): 
-    return render_template('index.html')
+def index(): return render_template('index.html')
 
 @app.route('/print-studio', methods=['GET'])
-def print_studio(): 
-    return render_template('print_studio.html')
+def print_studio(): return render_template('print_studio.html')
 
 @app.route('/compress_page', methods=['GET'])
-def compress_page(): 
-    return render_template('compress.html')
+def compress_page(): return render_template('compress.html')
 
 @app.route('/image_pdf_page', methods=['GET'])
-def image_pdf_page(): 
-    return render_template('image_pdf.html')
+def image_pdf_page(): return render_template('image_pdf.html')
 
 @app.route('/word_pdf_page', methods=['GET'])
-def word_pdf_page(): 
-    return render_template('word_pdf.html')
+def word_pdf_page(): return render_template('word_pdf.html')
 
 @app.route('/merge_page', methods=['GET'])
-def merge_page(): 
-    return render_template('merge.html')
+def merge_page(): return render_template('merge.html')
 
 @app.route('/split_page', methods=['GET'])
-def split_page(): 
-    return render_template('split.html')
+def split_page(): return render_template('split.html')
 
 @app.route('/security_page', methods=['GET'])
-def security_page(): 
-    return render_template('security.html')
+def security_page(): return render_template('security.html')
 
 @app.route('/image-crop', methods=['GET'])
-def image_crop_page(): 
-    return render_template('image_crop.html')
+def image_crop_page(): return render_template('image_crop.html')
 
-
-# ==========================================
-# 🛠️ PDF & IMAGE UTILITY API ENGINES (तुझे जुने टूल्स)
-# ==========================================
+# --- Backend APIs ---
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
     try:
         files = request.files.getlist('files')
         compressed_files = []
         for file in files:
-            filename = secure_filename(file.filename)
             doc = fitz.open(stream=file.read(), filetype="pdf")
             pdf_bytes = doc.tobytes(garbage=4, deflate=True)
-            compressed_files.append((filename, pdf_bytes))
+            compressed_files.append((secure_filename(file.filename), pdf_bytes))
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w') as zipf:
             for fname, fbytes in compressed_files:
                 zipf.writestr("compressed_" + fname, fbytes)
         return jsonify({"success": True, "file_data": base64.b64encode(zip_buffer.getvalue()).decode('utf-8')})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
 @app.route('/images_to_pdf', methods=['POST'])
 def images_to_pdf():
@@ -85,22 +68,17 @@ def images_to_pdf():
             img.save(img_byte_arr, format='JPEG', quality=90)
             img_doc = fitz.open("pdf", fitz.open("jpeg", img_byte_arr.getvalue()).convert_to_pdf())
             new_doc.insert_pdf(img_doc)
-        out_bytes = new_doc.tobytes()
-        return jsonify({"success": True, "file_data": base64.b64encode(out_bytes).decode('utf-8')})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        return jsonify({"success": True, "file_data": base64.b64encode(new_doc.tobytes()).decode('utf-8')})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
 @app.route('/merge_pdfs', methods=['POST'])
 def merge_pdfs():
     try:
         files = request.files.getlist('files')
         new_doc = fitz.open()
-        for file in files:
-            new_doc.insert_pdf(fitz.open(stream=file.read(), filetype="pdf"))
-        out_bytes = new_doc.tobytes()
-        return jsonify({"success": True, "file_data": base64.b64encode(out_bytes).decode('utf-8')})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        for file in files: new_doc.insert_pdf(fitz.open(stream=file.read(), filetype="pdf"))
+        return jsonify({"success": True, "file_data": base64.b64encode(new_doc.tobytes()).decode('utf-8')})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
 @app.route('/split_pdf', methods=['POST'])
 def split_pdf():
@@ -108,12 +86,9 @@ def split_pdf():
         file = request.files['file']
         pages = request.form.get('pages', '1')
         doc = fitz.open(stream=file.read(), filetype="pdf")
-        page_list = [int(p.strip()) - 1 for p in pages.split(',') if p.strip().isdigit()]
-        doc.select(page_list)
-        out_bytes = doc.tobytes()
-        return jsonify({"success": True, "file_data": base64.b64encode(out_bytes).decode('utf-8')})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        doc.select([int(p.strip()) - 1 for p in pages.split(',') if p.strip().isdigit()])
+        return jsonify({"success": True, "file_data": base64.b64encode(doc.tobytes()).decode('utf-8')})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
 @app.route('/protect_pdf', methods=['POST'])
 def protect_pdf():
@@ -121,10 +96,8 @@ def protect_pdf():
         file = request.files['file']
         password = request.form.get('password', '')
         doc = fitz.open(stream=file.read(), filetype="pdf")
-        out_bytes = doc.tobytes(user_pw=password, owner_pw=password)
-        return jsonify({"success": True, "file_data": base64.b64encode(out_bytes).decode('utf-8')})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        return jsonify({"success": True, "file_data": base64.b64encode(doc.tobytes(user_pw=password, owner_pw=password)).decode('utf-8')})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
 @app.route('/process-image-crop', methods=['POST'])
 def process_image_crop():
@@ -138,13 +111,9 @@ def process_image_crop():
         img.save(img_byte, format='JPEG', quality=95)
         img_byte.seek(0)
         return send_file(img_byte, mimetype='image/jpeg')
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+    except Exception as e: return jsonify({"success": False, "error": str(e)})
 
-
-# ==========================================
-# 🖨️👑 ENGINE: PRO PRINT STUDIO (Final Matrix + Fold Lines)
-# ==========================================
+# --- Final Print Studio Engine ---
 @app.route('/process-print-studio', methods=['POST'])
 def process_print_studio():
     try:
@@ -152,108 +121,62 @@ def process_print_studio():
         paper_size = request.form.get('paper_size', 'a4')
         lamination_mode = request.form.get('lamination_mode', 'false') == 'true'
 
-        bright = float(request.form.get('brightness', 1.0))
-        cont = float(request.form.get('contrast', 1.0))
-        sharp = float(request.form.get('sharpness', 1.0))
-
         def apply_graphics(img):
+            bright = float(request.form.get('brightness', 1.0))
+            cont = float(request.form.get('contrast', 1.0))
+            sharp = float(request.form.get('sharpness', 1.0))
             if bright != 1.0: img = ImageEnhance.Brightness(img).enhance(bright)
             if cont != 1.0: img = ImageEnhance.Contrast(img).enhance(cont)
             if sharp != 1.0: img = ImageEnhance.Sharpness(img).enhance(sharp)
             return img
 
-        if job_type == 'passport' and paper_size == '4x6':
-            canvas_w, canvas_h = 1800, 1200 
+        if job_type == 'passport':
+            paper_dims = {'a4': (2480, 3508), '4x6': (1800, 1200), '5x7': (2100, 1500)}
         else:
-            paper_dims = {'a4': (2480, 3508), '4x6': (1200, 1800)}
-            canvas_w, canvas_h = paper_dims.get(paper_size, (2480, 3508))
-
+            paper_dims = {'a4': (2480, 3508), '4x6': (1200, 1800), '5x7': (1500, 2100)}
+            
+        canvas_w, canvas_h = paper_dims.get(paper_size, (2480, 3508))
         canvas = Image.new("RGB", (canvas_w, canvas_h), "white")
         draw = ImageDraw.Draw(canvas)
 
         if job_type == 'id_card':
-            id_w, id_h = (1050, 665) if paper_size == '4x6' else (1200, 760)
-
-            front = Image.open(request.files['front_file']).convert("RGB")
-            back = Image.open(request.files['back_file']).convert("RGB")
-            front = apply_graphics(front).resize((id_w, id_h), Image.Resampling.LANCZOS)
-            back = apply_graphics(back).resize((id_w, id_h), Image.Resampling.LANCZOS)
+            id_w, id_h = (1050, 665) if paper_size in ['4x6', '5x7'] else (1200, 760)
+            front = apply_graphics(Image.open(request.files['front_file']).convert("RGB")).resize((id_w, id_h), Image.Resampling.LANCZOS)
+            back = apply_graphics(Image.open(request.files['back_file']).convert("RGB")).resize((id_w, id_h), Image.Resampling.LANCZOS)
             
-            ImageDraw.Draw(front).rectangle([(0,0), (id_w-1, id_h-1)], outline="#cbd5e1", width=3)
-            ImageDraw.Draw(back).rectangle([(0,0), (id_w-1, id_h-1)], outline="#cbd5e1", width=3)
-
-            if paper_size == '4x6':
-                gap = 150
-                fx = (canvas_w - id_w) // 2 
-                fy = 100
-                bx = fx
-                by = fy + id_h + gap
-                canvas.paste(front, (fx, fy))
-                canvas.paste(back, (bx, by))
-                
-                mid_y = fy + id_h + (gap // 2)
-                for x_dash in range(fx, fx + id_w, 30):
-                    draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=5)
-
+            if lamination_mode:
+                if back: back = back.rotate(180)
+                mid_x = canvas_w // 2
+                canvas.paste(front, (mid_x - id_w - 40, (canvas_h - id_h)//2))
+                canvas.paste(back, (mid_x + 40, (canvas_h - id_h)//2))
+                draw.line([(mid_x, 100), (mid_x, canvas_h - 100)], fill="#000000", width=8)
             else:
-                if lamination_mode:
-                    gap = 80
-                    mid_x = canvas_w // 2
-                    fx = mid_x - id_w - (gap // 2)
-                    bx = mid_x + (gap // 2)
-                    fy = 150
-                    canvas.paste(front, (fx, fy))
-                    canvas.paste(back, (bx, fy))
-                    
-                    for y_dash in range(fy - 50, fy + id_h + 50, 30):
-                        draw.line([(mid_x, y_dash), (mid_x, y_dash + 15)], fill="#000000", width=6)
-                else:
-                    gap = 350
-                    fx = (canvas_w - id_w) // 2 
-                    fy = 150
-                    bx = fx  
-                    by = fy + id_h + gap
-                    canvas.paste(front, (fx, fy))
-                    canvas.paste(back, (bx, by))
-                    
-                    mid_y = fy + id_h + (gap // 2)
-                    for x_dash in range(fx - 50, fx + id_w + 50, 30):
-                        draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=6)
-
+                fx = (canvas_w - id_w) // 2
+                canvas.paste(front, (fx, 200))
+                canvas.paste(back, (fx, 200 + id_h + 300))
+                mid_y = 200 + id_h + 150
+                for x_dash in range(fx - 50, fx + id_w + 50, 40):
+                    draw.line([(x_dash, mid_y), (x_dash + 20, mid_y)], fill="#000000", width=8)
+        
         else:
-            photo = Image.open(request.files['passport_file']).convert("RGB")
-            photo = apply_graphics(photo)
-            
-            total_photos = int(request.form.get('photo_count', 8))
-            photo_w, photo_h = 380, 490 
-            
-            if paper_size == '4x6':
-                cols, rows = 4, 2  
-                margin_x, margin_y = 120, 80
-                gap_x, gap_y = 20, 40
-            else:
-                cols, rows = 6, 6  
-                margin_x, margin_y = 70, 100
-                gap_x, gap_y = 15, 60
+            photo = apply_graphics(Image.open(request.files['passport_file']).convert("RGB")).resize((380, 490), Image.Resampling.LANCZOS)
+            total = int(request.form.get('photo_count', 8))
+            margins = {'a4': (100, 100), '4x6': (80, 60), '5x7': (90, 80)}
+            gap = {'a4': (50, 50), '4x6': (40, 40), '5x7': (45, 45)}
+            mx, my = margins.get(paper_size, (50, 50))
+            gx, gy = gap.get(paper_size, (30, 30))
+            cols = 6 if paper_size == 'a4' else (5 if paper_size == '5x7' else 4)
 
-            photo = photo.resize((photo_w, photo_h), Image.Resampling.LANCZOS)
-            ImageDraw.Draw(photo).rectangle([(0,0), (photo_w-1, photo_h-1)], outline="#cbd5e1", width=3)
-            
-            photo_count = 0
-            for r in range(rows):
-                for c in range(cols):
-                    if photo_count >= total_photos: break
-                    x = margin_x + c * (photo_w + gap_x)
-                    y = margin_y + r * (photo_h + gap_y)
-                    canvas.paste(photo, (x, y))
-                    photo_count += 1
+            for i in range(total):
+                x = mx + (i % cols) * (380 + gx)
+                y = my + (i // cols) * (490 + gy)
+                canvas.paste(photo, (x, y))
 
         img_byte = io.BytesIO()
         canvas.save(img_byte, format='JPEG', quality=100, dpi=(300, 300))
         img_byte.seek(0)
         return send_file(img_byte, mimetype='image/jpeg', as_attachment=True, download_name="Print_Sheet.jpg")
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
