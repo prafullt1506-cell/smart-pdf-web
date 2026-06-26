@@ -13,14 +13,48 @@ from docx import Document
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
+# ==========================================
+# 🌐 FRONTEND PAGE ROUTES (हे मिसिंग होते ज्यामुळे Not Found येत होतं)
+# ==========================================
 @app.route('/', methods=['GET'])
-def index(): return render_template('index.html')
+def index(): 
+    return render_template('index.html')
 
 @app.route('/print-studio', methods=['GET'])
-def print_studio(): return render_template('print_studio.html')
+def print_studio(): 
+    return render_template('print_studio.html')
+
+@app.route('/compress_page', methods=['GET'])
+def compress_page(): 
+    return render_template('compress.html')
+
+@app.route('/image_pdf_page', methods=['GET'])
+def image_pdf_page(): 
+    return render_template('image_pdf.html')
+
+@app.route('/word_pdf_page', methods=['GET'])
+def word_pdf_page(): 
+    return render_template('word_pdf.html')
+
+@app.route('/merge_page', methods=['GET'])
+def merge_page(): 
+    return render_template('merge.html')
+
+@app.route('/split_page', methods=['GET'])
+def split_page(): 
+    return render_template('split.html')
+
+@app.route('/security_page', methods=['GET'])
+def security_page(): 
+    return render_template('security.html')
+
+@app.route('/image-crop', methods=['GET'])
+def image_crop_page(): 
+    return render_template('image_crop.html')
+
 
 # ==========================================
-# 🛠️ PDF & IMAGE UTILITY ENGINES (जुनं जसं आहे तसं)
+# 🛠️ PDF & IMAGE UTILITY API ENGINES (तुझे जुने टूल्स)
 # ==========================================
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
@@ -107,8 +141,9 @@ def process_image_crop():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+
 # ==========================================
-# 🖨️👑 ENGINE: PRO PRINT STUDIO (Updated Matrix & Fold Lines)
+# 🖨️👑 ENGINE: PRO PRINT STUDIO (Final Matrix + Fold Lines)
 # ==========================================
 @app.route('/process-print-studio', methods=['POST'])
 def process_print_studio():
@@ -127,7 +162,6 @@ def process_print_studio():
             if sharp != 1.0: img = ImageEnhance.Sharpness(img).enhance(sharp)
             return img
 
-        # 🎯 4x6 Photo Studio साठी लँडस्केप आकार (१८००x१२००) जेणेकरून ८ फोटो परफेक्ट बसतील
         if job_type == 'passport' and paper_size == '4x6':
             canvas_w, canvas_h = 1800, 1200 
         else:
@@ -157,7 +191,6 @@ def process_print_studio():
                 canvas.paste(front, (fx, fy))
                 canvas.paste(back, (bx, by))
                 
-                # Dark Fold Line
                 mid_y = fy + id_h + (gap // 2)
                 for x_dash in range(fx, fx + id_w, 30):
                     draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=5)
@@ -172,7 +205,6 @@ def process_print_studio():
                     canvas.paste(front, (fx, fy))
                     canvas.paste(back, (bx, fy))
                     
-                    # 🎯 Dark Lamination Fold Line (Vertical)
                     for y_dash in range(fy - 50, fy + id_h + 50, 30):
                         draw.line([(mid_x, y_dash), (mid_x, y_dash + 15)], fill="#000000", width=6)
                 else:
@@ -184,25 +216,23 @@ def process_print_studio():
                     canvas.paste(front, (fx, fy))
                     canvas.paste(back, (bx, by))
                     
-                    # 🎯 Dark Fold Line (Horizontal)
                     mid_y = fy + id_h + (gap // 2)
                     for x_dash in range(fx - 50, fx + id_w + 50, 30):
                         draw.line([(x_dash, mid_y), (x_dash + 15, mid_y)], fill="#000000", width=6)
 
         else:
-            # 🎯 PHOTO STUDIO (Exact Matrix)
             photo = Image.open(request.files['passport_file']).convert("RGB")
             photo = apply_graphics(photo)
             
             total_photos = int(request.form.get('photo_count', 8))
-            photo_w, photo_h = 380, 490 # Standard studio crop size
+            photo_w, photo_h = 380, 490 
             
             if paper_size == '4x6':
-                cols, rows = 4, 2  # 8 Photos
+                cols, rows = 4, 2  
                 margin_x, margin_y = 120, 80
                 gap_x, gap_y = 20, 40
             else:
-                cols, rows = 6, 6  # 36 Photos
+                cols, rows = 6, 6  
                 margin_x, margin_y = 70, 100
                 gap_x, gap_y = 15, 60
 
