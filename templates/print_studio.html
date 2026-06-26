@@ -70,15 +70,15 @@
 
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Select Paper</label>
-                    <select id="paperSize" onchange="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold">
+                    <select id="paperSize" onchange="handlePaperChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold">
                         <option value="a4">A4 SHEET (Standard)</option>
                         <option value="4x6">4x6 PHOTO PAPER</option>
                     </select>
                 </div>
 
                 <div id="passportControls" class="hidden">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Photo Count (Max 32)</label>
-                    <input type="number" id="photoCount" value="8" min="1" max="32" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold text-white">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Photo Count (A4: 36 | 4x6: 8)</label>
+                    <input type="number" id="photoCount" value="36" min="1" max="36" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs font-bold text-white">
                 </div>
 
                 <div id="laminationGroup">
@@ -88,7 +88,6 @@
                     </label>
                 </div>
 
-                <!-- 🎨 GRAPHICS SETTINGS BLOCK -->
                 <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 mt-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-4"><i class="fa-solid fa-wand-magic-sparkles text-cyan-500 mr-1"></i> Graphics Settings</label>
                     <div class="space-y-4">
@@ -161,6 +160,20 @@
             document.getElementById('photoInput').style.display = (job === 'passport') ? 'block' : 'none';
             document.getElementById('passportControls').style.display = (job === 'passport') ? 'block' : 'none';
             document.getElementById('laminationGroup').style.display = (job === 'id_card') ? 'block' : 'none';
+            handlePaperChange(); // Auto update photo count based on paper
+        }
+
+        // 🎯 DYNAMIC PHOTO COUNT LOGIC
+        function handlePaperChange() {
+            const paper = document.getElementById('paperSize').value;
+            const countInput = document.getElementById('photoCount');
+            if(paper === 'a4') {
+                countInput.max = "36";
+                countInput.value = "36";
+            } else {
+                countInput.max = "8";
+                countInput.value = "8";
+            }
             updatePreview();
         }
 
@@ -196,8 +209,17 @@
             const lamination = document.getElementById('laminationMode').checked;
             
             paperDiv.innerHTML = '';
-            paperDiv.style.width = (paper==='a4') ? '300px' : '220px';
-            paperDiv.style.height = (paper==='a4') ? '420px' : '330px';
+            
+            // 🎯 Visual Paper Dimensions
+            if(activeJob === 'passport' && paper === '4x6') {
+                // Landscape 4x6 for photos
+                paperDiv.style.width = '350px';
+                paperDiv.style.height = '230px'; 
+            } else {
+                paperDiv.style.width = (paper==='a4') ? '300px' : '220px';
+                paperDiv.style.height = (paper==='a4') ? '420px' : '330px';
+            }
+            
             paperDiv.style.padding = '15px';
             paperDiv.style.flexWrap = 'nowrap';
             paperDiv.style.alignContent = 'normal';
@@ -208,20 +230,18 @@
                 
                 if(paper === 'a4') {
                     if(lamination) {
-                        // 🎯 A4 Lamination Preview
                         paperDiv.style.flexDirection = 'row';
                         paperDiv.style.justifyContent = 'center';
                         paperDiv.style.alignItems = 'flex-start';
                         paperDiv.style.gap = '5px';
+                        paperDiv.style.borderRight = "none";
                     } else {
-                        // 🎯 A4 Normal Preview (Big Gap visually)
                         paperDiv.style.flexDirection = 'column';
                         paperDiv.style.justifyContent = 'flex-start';
                         paperDiv.style.alignItems = 'center';
-                        paperDiv.style.gap = '30px'; // Visual gap
+                        paperDiv.style.gap = '30px'; 
                     }
                 } else {
-                    // 🎯 4x6 Preview
                     paperDiv.style.flexDirection = 'column';
                     paperDiv.style.alignItems = 'center';
                     paperDiv.style.justifyContent = 'center';
@@ -239,19 +259,19 @@
                 paperDiv.appendChild(createCard(previewUrls.back));
 
             } else {
-                // 🎯 PHOTO STUDIO Preview (Row Flow)
+                // 🎯 PHOTO STUDIO Preview Matrix
                 paperDiv.style.flexDirection = 'row';
                 paperDiv.style.flexWrap = 'wrap';
                 paperDiv.style.justifyContent = 'flex-start';
                 paperDiv.style.alignContent = 'flex-start';
-                paperDiv.style.gap = '4px';
+                paperDiv.style.gap = (paper==='a4') ? '2px' : '5px';
 
-                const count = document.getElementById('photoCount').value;
+                let count = document.getElementById('photoCount').value;
                 for(let i=0; i<count; i++) {
                     const p = document.createElement('div');
                     p.className = 'card-face-preview border border-gray-300';
-                    p.style.width = (paper==='a4') ? '45px' : '55px';
-                    p.style.height = (paper==='a4') ? '60px' : '75px';
+                    p.style.width = (paper==='a4') ? '38px' : '65px';
+                    p.style.height = (paper==='a4') ? '50px' : '85px';
                     if(previewUrls.photo) p.innerHTML = `<img src="${previewUrls.photo}">`;
                     paperDiv.appendChild(p);
                 }
@@ -265,7 +285,6 @@
             formData.append('paper_size', document.getElementById('paperSize').value);
             formData.append('lamination_mode', document.getElementById('laminationMode').checked);
             
-            // 🎯 Add Graphics values to form
             formData.append('brightness', document.getElementById('brightness').value);
             formData.append('contrast', document.getElementById('contrast').value);
             formData.append('sharpness', document.getElementById('sharpness').value);
@@ -298,7 +317,7 @@
             btn.innerHTML = "<i class='fa-solid fa-bolt mr-1'></i> Generate HD Print Sheet";
         }
 
-        setJobType('id_card');
+        setJobType('id_card'); // Initial load
     </script>
 </body>
 </html>
