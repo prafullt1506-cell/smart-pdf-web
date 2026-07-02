@@ -20,14 +20,13 @@
 </head>
 <body class="bg-slate-100 min-h-screen flex font-sans">
 
-    <!-- LEFT PANEL -->
     <div class="hidden lg:flex lg:w-5/12 bg-slate-900 text-white p-12 flex-col justify-between relative overflow-hidden">
         <div class="absolute -top-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full filter blur-3xl"></div>
         <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full filter blur-3xl"></div>
 
         <div class="relative z-10">
             <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Enterprise Edition</span>
-            <span class="ml-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">New v1.2</span>
+            <span class="ml-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">New v1.0</span>
             <h2 class="text-4xl font-black tracking-tight mt-4 text-sky-400 drop-shadow-lg">Smart PDF Engine</h2>
             <p class="text-slate-400 text-sm mt-2">Next-Generation Compression Technology</p>
         </div>
@@ -68,7 +67,6 @@
         </div>
     </div>
 
-    <!-- RIGHT PANEL -->
     <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-slate-50 relative">
         <div class="bg-white w-[550px] p-8 rounded-2xl shadow-2xl border border-slate-200 relative z-10">
             
@@ -82,19 +80,16 @@
                 <button class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-1.5 rounded-lg font-bold text-sm shadow-md transition transform hover:scale-105">Lock</button>
             </div>
 
-            <!-- Inputs (Hidden) -->
             <input type="file" id="fileInput" multiple accept=".pdf" class="hidden">
             <input type="file" id="imageInput" multiple accept=".jpg,.jpeg,.png" class="hidden">
             <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
 
-            <!-- Control Buttons -->
             <div class="grid grid-cols-3 gap-2 mb-5">
                 <button onclick="openPdfSelect()" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold py-2.5 px-2 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm">📄 Add PDFs</button>
                 <button onclick="openImageSelect()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 px-2 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm">🖼️ Add Images</button>
                 <button onclick="document.getElementById('folderInput').click()" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-2.5 px-2 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm">📁 Scan Folder</button>
             </div>
 
-            <!-- Queue Area -->
             <div class="flex justify-between items-center px-2 mb-2">
                 <span class="font-extrabold text-slate-700 text-sm tracking-wide uppercase">Processing Queue</span>
                 <button onclick="clearQueue()" class="bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 font-bold text-xs px-4 py-1 rounded-lg shadow-sm transition">Clear All</button>
@@ -112,14 +107,13 @@
                 🚀 START COMPRESSION
             </button>
 
-            <!-- Desktop App Download -->
             <div class="mt-8 pt-6 border-t-2 border-dashed border-slate-200 relative">
                 <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4 text-xs font-black text-emerald-500 uppercase tracking-widest">✨ Pro Experience ✨</div>
-                <h3 class="text-sm font-bold text-slate-800 text-center mb-4 mt-2">Get the Desktop App <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs ml-1">v1.2</span></h3>
+                <h3 class="text-sm font-bold text-slate-800 text-center mb-4 mt-2">Get the Desktop App <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs ml-1">v1.0</span></h3>
                 
                 <div class="text-center">
                     <div class="relative overflow-hidden rounded-xl group cursor-pointer shadow-lg shadow-emerald-500/30">
-                        <a href="https://github.com/prafullt1506-cell/smart-pdf-web/releases/download/v1.2/Smart_Compressor_Setup_v1.2.exe" class="relative z-10 flex items-center justify-center w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white font-black py-4 px-6 transition-all duration-300 text-lg gap-2 group-hover:from-emerald-600 group-hover:to-teal-600">
+                        <a href="https://github.com/prafullt1506-cell/smart-pdf-web/releases/download/v1.0/Smart.Compressor.exe" download="Smart.Compressor.exe" class="relative z-10 flex items-center justify-center w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white font-black py-4 px-6 transition-all duration-300 text-lg gap-2 group-hover:from-emerald-600 group-hover:to-teal-600">
                             <span class="animate-bounce">⬇️</span> Download Windows App
                         </a>
                         <div class="absolute top-0 w-1/2 h-full bg-white/30 skew-x-12 animate-shine z-20 pointer-events-none"></div>
@@ -127,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- SUCCESS POPUP (Updated for Dual Choice) -->
             <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-sm hidden flex-col items-center justify-center p-8 rounded-2xl z-50 transition-all duration-300">
                 <div class="bg-green-100 text-green-600 p-4 rounded-full mb-4 animate-bounce">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -149,16 +142,13 @@
                     <p id="popSave" class="text-blue-700 font-black text-lg">🔥 Saved X KB Space! 🔥</p>
                 </div>
 
-                <!-- DYNAMIC DOWNLOAD SECTION -->
                 <div class="flex w-full space-x-2" id="downloadSection">
-                    <!-- Buttons will be injected here via JS -->
-                </div>
+                    </div>
             </div>
 
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         let selectedFiles = [];
         let currentMode = 'pdf'; 
