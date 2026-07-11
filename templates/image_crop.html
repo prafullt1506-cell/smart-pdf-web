@@ -16,117 +16,148 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom Tailwind Config matching Homepage -->
+    <!-- Custom Tailwind Config for Advanced Animations -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: { darkBg: '#0b0f19', }
+                    colors: { darkBg: '#090d16', },
+                    animation: {
+                        blob: "blob 7s infinite",
+                        pulseGlow: "pulseGlow 2s infinite"
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" }
+                        },
+                        pulseGlow: {
+                            "0%, 100%": { boxShadow: "0 0 15px rgba(236, 72, 153, 0.4)" },
+                            "50%": { boxShadow: "0 0 30px rgba(236, 72, 153, 0.8)" }
+                        }
+                    }
                 }
             }
         }
     </script>
     
     <style>
+        /* Ultra Premium Glassmorphism */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
         .dark .glass-panel {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(20, 27, 45, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
         }
         
+        /* Advanced Tech Grid for Workspace */
         .img-workspace {
             max-height: 500px;
             width: 100%;
             display: flex;
             justify-content: center;
-            background: repeating-linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0), repeating-linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0);
-            background-position: 0 0, 10px 10px;
+            background-image: linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
             background-size: 20px 20px;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             border-radius: 1.5rem;
             overflow: hidden;
             position: relative;
         }
         .dark .img-workspace {
-            background: repeating-linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%, #1e293b), repeating-linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%, #1e293b);
-            background-position: 0 0, 10px 10px;
-            background-size: 20px 20px;
-            background-color: #0f172a;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-color: #0b0f19;
         }
         
         img { display: block; max-width: 100%; }
         
         /* Tool Button Hover Effects */
-        .tool-btn { transition: all 0.2s ease; }
-        .tool-btn:active { transform: scale(0.95); }
-        .tool-btn:hover { box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2); }
+        .tool-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tool-btn:active { transform: scale(0.92); }
+        .tool-btn:hover { box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transform: translateY(-2px); }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen font-sans antialiased relative">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen font-sans antialiased relative overflow-x-hidden">
+
+    <!-- 🌟 ANIMATED BACKGROUND BLOBS -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-purple-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-purple-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-pink-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-pink-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-sky-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000 dark:bg-sky-900 dark:opacity-20 dark:mix-blend-screen"></div>
+    </div>
 
     <!-- Navbar -->
-    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center transition-all duration-300">
         <a href="/" class="flex items-center space-x-3 group cursor-pointer">
-            <div class="bg-gradient-to-tr from-pink-500 to-rose-600 p-2 rounded-xl shadow-md group-hover:scale-110 transition-transform">
+            <div class="bg-gradient-to-tr from-pink-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-pink-500/30 group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-crop-simple text-white text-xl"></i>
             </div>
-            <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 tracking-tight">Smart <span class="text-pink-500 font-medium text-xs tracking-widest uppercase ml-1">Cropper</span></h1>
+            <h1 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 tracking-tight">Smart <span class="text-pink-500 font-medium text-sm tracking-widest uppercase ml-1">Cropper</span></h1>
         </a>
-        <div class="flex items-center gap-3">
-            <button id="theme-toggle" class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400"></i>
+        <div class="flex items-center gap-4">
+            <button id="theme-toggle" class="p-3 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group">
+                <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400 group-hover:rotate-12 transition-transform"></i>
             </button>
-            <a href="/" class="px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold rounded-xl transition-all border border-slate-200 dark:border-slate-700 text-sm shadow-sm flex items-center gap-2"><i class="fa-solid fa-house text-xs"></i> Home</a>
+            <a href="/" class="px-6 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold rounded-xl transition-all border border-slate-200 dark:border-slate-700 text-sm shadow-sm flex items-center gap-2 hover:shadow-md"><i class="fa-solid fa-house text-xs"></i> Dashboard</a>
         </div>
     </nav>
 
     <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-pink-200 dark:border-pink-500/20">
-                ✨ Pro Studio Editor Active
+        <div class="text-center mb-10">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-pink-600 dark:text-pink-400 font-bold text-xs uppercase tracking-widest mb-4 border border-pink-200 dark:border-pink-900/50 shadow-sm">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+                </span>
+                Pro Studio Editor Active
             </span>
-            <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-2 text-slate-900 dark:text-white">Advanced Image <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Cropper</span></h2>
+            <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-3 text-slate-900 dark:text-white leading-tight">Advanced Image <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">Cropper</span></h2>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- LEFT WORKSPACE: CROP MATRIX (8 Cols) -->
             <div class="lg:col-span-8 flex flex-col gap-6">
-                <div class="glass-panel p-6 rounded-[2rem] shadow-sm">
-                    <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-pink-500 file:text-white hover:file:bg-pink-600 cursor-pointer mb-5 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 p-1.5 shadow-sm transition-all">
+                <div class="glass-panel p-6 md:p-8 rounded-[2.5rem]">
+                    <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-5 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-gradient-to-r file:from-pink-500 file:to-purple-600 file:text-white hover:file:shadow-lg hover:file:shadow-pink-500/30 cursor-pointer mb-6 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 p-2 shadow-inner transition-all">
                     
                     <div class="img-workspace border border-slate-200 dark:border-slate-800 shadow-inner">
                         <img id="image" src="" alt="Upload an image to start" style="display: none;">
                     </div>
 
                     <!-- PRO TOOLBAR (Zoom, Rotate, Move) -->
-                    <div class="flex flex-wrap gap-2 mt-5 justify-center hidden bg-slate-50 dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm" id="cropper-controls">
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('move')" title="Move Image"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('crop')" title="Draw Crop Box"><i class="fa-solid fa-crop-simple"></i></button>
+                    <div class="flex flex-wrap gap-2.5 mt-6 justify-center hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-md p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm" id="cropper-controls">
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('move')" title="Move Image"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('crop')" title="Draw Crop Box"><i class="fa-solid fa-crop-simple"></i></button>
                         <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomIn()" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomOut()" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomIn()" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomOut()" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                         <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateLeft()" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateRight()" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateLeft()" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateRight()" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
                         <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
-                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-600 rounded-xl text-sm font-bold text-red-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="resetCrop()" title="Reset All"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                        <button class="tool-btn px-4 py-3 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-600 rounded-xl text-sm font-bold text-red-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="resetCrop()" title="Reset All"><i class="fa-solid fa-arrow-rotate-right"></i></button>
                     </div>
 
                     <!-- Ratio Presets -->
-                    <div class="flex flex-wrap gap-2 mt-4 justify-center hidden" id="ratio-buttons">
-                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(16/9)">16:9 Desktop</button>
-                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(4/3)">4:3 Frame</button>
-                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(1)">1:1 Square</button>
-                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(NaN)">Free Form</button>
+                    <div class="flex flex-wrap gap-2.5 mt-5 justify-center hidden" id="ratio-buttons">
+                        <button class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:shadow-md" onclick="setRatio(16/9)">16:9 Desktop</button>
+                        <button class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:shadow-md" onclick="setRatio(4/3)">4:3 Frame</button>
+                        <button class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:shadow-md" onclick="setRatio(1)">1:1 Square</button>
+                        <button class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:shadow-md" onclick="setRatio(NaN)">Free Form</button>
                     </div>
                 </div>
             </div>
@@ -134,83 +165,83 @@
             <!-- RIGHT PANEL: PREVIEW & CONTROLS (4 Cols) -->
             <div class="lg:col-span-4 flex flex-col gap-6">
                 
-                <!-- 🌟 LIVE PREVIEW MOVED TO TOP OF RIGHT PANEL -->
-                <div id="previewPanel" class="glass-panel p-5 rounded-[2rem] shadow-sm hidden">
-                    <h3 class="text-xs font-black tracking-widest uppercase text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+                <!-- 🌟 LIVE PREVIEW -->
+                <div id="previewPanel" class="glass-panel p-6 rounded-[2.5rem] hidden">
+                    <h3 class="text-xs font-black tracking-widest uppercase text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-eye text-pink-500"></i> Live Preview
                     </h3>
-                    <div class="p-3 flex flex-col items-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 relative w-full shadow-inner">
-                        <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-xl relative">
-                            <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain transition-all duration-300 shadow-md" src="" alt="Live Preview Frame">
-                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider hidden shadow-lg shadow-purple-500/20">Enhanced</div>
+                    <div class="p-3 flex flex-col items-center bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 relative w-full shadow-inner">
+                        <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-[1.25rem] relative">
+                            <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain transition-all duration-300 shadow-lg" src="" alt="Live Preview Frame">
+                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider hidden shadow-lg shadow-purple-500/30">Enhanced</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Magic Enhance Control -->
-                <div class="glass-panel p-5 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800">
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <div class="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
-                            <span class="text-lg">🪄</span> Magic Auto-Clean
+                <div class="glass-panel p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800">
+                    <label class="flex items-center justify-between cursor-pointer group">
+                        <div class="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2 group-hover:text-pink-500 transition-colors">
+                            <span class="text-xl">🪄</span> Magic Auto-Clean
                         </div>
                         <div class="relative">
                             <input type="checkbox" id="magicEnhance" class="sr-only">
-                            <div class="block bg-slate-300 dark:bg-slate-800 w-12 h-6 rounded-full border border-slate-400 dark:border-slate-700 transition-colors shadow-inner"></div>
-                            <div class="dot absolute left-1 top-1 bg-white dark:bg-slate-400 w-4 h-4 rounded-full transition-all duration-300 shadow-sm"></div>
+                            <div class="block bg-slate-300 dark:bg-slate-800 w-14 h-7 rounded-full border border-slate-400 dark:border-slate-700 transition-colors shadow-inner"></div>
+                            <div class="dot absolute left-1 top-1 bg-white dark:bg-slate-400 w-5 h-5 rounded-full transition-all duration-300 shadow-md"></div>
                         </div>
                     </label>
                 </div>
 
                 <!-- Resizing & Scaling Unit Grid -->
-                <div class="glass-panel p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                <div class="glass-panel p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-col gap-5">
                     <div>
-                        <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-white dark:bg-gradient-to-r dark:from-pink-500 dark:to-purple-600 text-pink-600 dark:text-white shadow-sm border border-pink-200 dark:border-none">Pixels (PX)</button>
-                            <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">CM</button>
+                        <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
+                            <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2.5 rounded-lg font-black text-xs uppercase tracking-wider transition-all bg-white dark:bg-gradient-to-r dark:from-pink-500 dark:to-purple-600 text-pink-600 dark:text-white shadow-sm border border-pink-200 dark:border-none">Pixels (PX)</button>
+                            <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2.5 rounded-lg font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">Centimeters</button>
                         </div>
                     </div>
 
                     <!-- Input Parameters Form Field (Width & Height) -->
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label id="lblWidth" class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target W (px)</label>
-                            <input type="number" id="targetW" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
+                            <label id="lblWidth" class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Target W (px)</label>
+                            <input type="number" id="targetW" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-pink-500/50 outline-none transition-all shadow-sm">
                         </div>
                         <div>
-                            <label id="lblHeight" class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target H (px)</label>
-                            <input type="number" id="targetH" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
+                            <label id="lblHeight" class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Target H (px)</label>
+                            <input type="number" id="targetH" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-pink-500/50 outline-none transition-all shadow-sm">
                         </div>
                     </div>
 
                     <!-- Input Parameters Form Field (KB & DPI & Strict Mode) -->
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Max Size (KB)</label>
-                            <input type="number" id="targetKB" placeholder="e.g., 50" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
+                            <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Max Size (KB)</label>
+                            <input type="number" id="targetKB" placeholder="e.g., 50" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-pink-500/50 outline-none transition-all shadow-sm">
                         </div>
                         <div>
-                            <label class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target DPI</label>
-                            <input type="number" id="targetDPI" placeholder="300" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
+                            <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Target DPI</label>
+                            <input type="number" id="targetDPI" placeholder="300" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-pink-500/50 outline-none transition-all shadow-sm">
                         </div>
                         
-                        <!-- 🚀 NEW: STRICT vs SAFE MODE SWITCH -->
-                        <div class="col-span-2 mt-1">
-                            <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5 flex justify-between">
+                        <!-- STRICT vs SAFE MODE SWITCH -->
+                        <div class="col-span-2 mt-2">
+                            <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-2 flex justify-between items-center">
                                 Compression Mode
-                                <span id="modeStatusLabel" class="text-emerald-500">Safe</span>
+                                <span id="modeStatusLabel" class="text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md">Safe</span>
                             </label>
-                            <div class="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
-                                <button id="modeSafeBtn" onclick="switchCompMode('safe')" class="py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-slate-200 dark:border-none">Safe Mode</button>
-                                <button id="modeStrictBtn" onclick="switchCompMode('strict')" class="py-1.5 rounded-lg font-black text-[10px] uppercase transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white">Strict Size</button>
+                            <div class="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
+                                <button id="modeSafeBtn" onclick="switchCompMode('safe')" class="py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe Mode</button>
+                                <button id="modeStrictBtn" onclick="switchCompMode('strict')" class="py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white">Strict Size</button>
                             </div>
-                            <p id="modeDescText" class="text-[9px] text-slate-400 dark:text-slate-500 mt-1.5 leading-tight font-medium">Safe: Attempts closest size without corruption.</p>
+                            <p id="modeDescText" class="text-[10px] text-slate-500 dark:text-slate-500 mt-2 leading-relaxed font-medium">Safe: Attempts closest size without corruption.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Core Download Execute Trigger -->
-                <button id="processBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-pink-500/25 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2" disabled>
-                    <i class="fa-solid fa-bolt"></i> CROP & DOWNLOAD
+                <button id="processBtn" class="w-full py-5 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-lg hover:shadow-pink-500/40 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 mt-2 animate-pulseGlow" disabled>
+                    <i class="fa-solid fa-bolt text-yellow-300"></i> CROP & DOWNLOAD
                 </button>
             </div>
         </div>
@@ -239,7 +270,7 @@
         // --- Core Variables ---
         let cropper;
         let currentUnit = 'px';
-        let currentCompMode = 'safe'; // 🚀 Default Mode
+        let currentCompMode = 'safe'; 
         
         const imageElement = document.getElementById('image');
         const uploadInput = document.getElementById('imageUpload');
@@ -265,8 +296,8 @@
             const lblW = document.getElementById('lblWidth'); const lblH = document.getElementById('lblHeight');
             const wInput = document.getElementById('targetW'); const hInput = document.getElementById('targetH');
 
-            const activeClass = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm border-none" : "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-white border border-pink-300 text-pink-600 shadow-sm";
-            const inactiveClass = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white bg-transparent border border-transparent";
+            const activeClass = html.classList.contains('dark') ? "py-2.5 rounded-lg font-black text-xs uppercase tracking-wider transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm border-none" : "py-2.5 rounded-lg font-black text-xs uppercase tracking-wider transition-all bg-white border border-pink-300 text-pink-600 shadow-sm";
+            const inactiveClass = "py-2.5 rounded-lg font-black text-xs uppercase tracking-wider transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white bg-transparent border border-transparent";
 
             if(unit === 'cm') {
                 cmBtn.className = activeClass; pxBtn.className = inactiveClass;
@@ -279,25 +310,22 @@
             }
         }
 
-        // 🚀 NEW: Switch Compression Mode
         function switchCompMode(mode) {
             currentCompMode = mode;
-            const safeBtn = document.getElementById('modeSafeBtn');
-            const strictBtn = document.getElementById('modeStrictBtn');
-            const statusLbl = document.getElementById('modeStatusLabel');
-            const descTxt = document.getElementById('modeDescText');
+            const safeBtn = document.getElementById('modeSafeBtn'); const strictBtn = document.getElementById('modeStrictBtn');
+            const statusLbl = document.getElementById('modeStatusLabel'); const descTxt = document.getElementById('modeDescText');
 
-            const activeSafe = html.classList.contains('dark') ? "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-slate-700 text-emerald-400 shadow-sm" : "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white border border-emerald-200 text-emerald-600 shadow-sm";
-            const activeStrict = html.classList.contains('dark') ? "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-slate-700 text-pink-400 shadow-sm" : "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
-            const inactive = "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white bg-transparent border border-transparent";
+            const activeSafe = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-emerald-400 shadow-sm" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-emerald-200 text-emerald-600 shadow-sm";
+            const activeStrict = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-pink-400 shadow-sm" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
+            const inactive = "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white bg-transparent border border-transparent";
 
             if(mode === 'strict') {
                 strictBtn.className = activeStrict; safeBtn.className = inactive;
-                statusLbl.innerText = "Strict"; statusLbl.className = "text-pink-500";
+                statusLbl.innerText = "Strict"; statusLbl.className = "text-pink-500 bg-pink-500/10 px-2 py-0.5 rounded-md";
                 descTxt.innerText = "Strict: Forces exact size (May pad with zero bytes).";
             } else {
                 safeBtn.className = activeSafe; strictBtn.className = inactive;
-                statusLbl.innerText = "Safe"; statusLbl.className = "text-emerald-500";
+                statusLbl.innerText = "Safe"; statusLbl.className = "text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md";
                 descTxt.innerText = "Safe: Attempts closest size without corruption.";
             }
         }
@@ -308,13 +336,17 @@
             if(this.checked) {
                 dot.style.transform = 'translateX(100%)';
                 dot.classList.replace('bg-slate-400', 'bg-white');
-                bg.classList.replace('bg-slate-800', 'bg-purple-600'); bg.classList.replace('bg-slate-300', 'bg-purple-500');
+                bg.classList.replace('bg-slate-800', 'bg-gradient-to-r');
+                bg.classList.add('from-purple-500', 'to-pink-500');
+                bg.classList.replace('bg-slate-300', 'bg-transparent');
                 overlay.classList.remove('hidden');
-                liveEnhancedPreview.style.filter = "contrast(1.15) brightness(1.05) saturate(1.1) sharpen(1.5)"; 
+                liveEnhancedPreview.style.filter = "contrast(1.15) brightness(1.05) saturate(1.1) drop-shadow(0 0 10px rgba(236,72,153,0.3))"; 
             } else {
                 dot.style.transform = 'translateX(0)';
                 dot.classList.replace('bg-white', 'bg-slate-400');
-                bg.classList.replace('bg-purple-600', 'bg-slate-800'); bg.classList.replace('bg-purple-500', 'bg-slate-300');
+                bg.classList.replace('bg-gradient-to-r', 'bg-slate-800');
+                bg.classList.remove('from-purple-500', 'to-pink-500');
+                bg.classList.add('bg-slate-300');
                 overlay.classList.add('hidden');
                 liveEnhancedPreview.style.filter = "none";
             }
@@ -327,12 +359,13 @@
                 imageElement.style.display = 'block';
                 ratioButtons.classList.remove('hidden');
                 controlsToolbar.classList.remove('hidden'); controlsToolbar.classList.add('flex');
-                previewPanel.classList.remove('hidden'); // 🚀 Shows preview panel at the top right
+                previewPanel.classList.remove('hidden'); 
                 processBtn.disabled = false;
+                processBtn.classList.remove('opacity-50');
 
                 if (cropper) { cropper.destroy(); }
                 cropper = new Cropper(imageElement, {
-                    viewMode: 2, dragMode: 'move', autoCropArea: 0.9, responsive: true, background: true, highlight: true, wheelZoomRatio: 0.1,
+                    viewMode: 2, dragMode: 'move', autoCropArea: 0.9, responsive: true, background: false, highlight: true, wheelZoomRatio: 0.1,
                     cropend() { triggerLivePreviewGeneration(); }, ready() { triggerLivePreviewGeneration(); }, zoom() { setTimeout(triggerLivePreviewGeneration, 100); }
                 });
             }
@@ -347,6 +380,7 @@
         processBtn.addEventListener('click', async function() {
             if (!cropper) return;
             processBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> PROCESSING...";
+            processBtn.classList.remove('animate-pulseGlow');
             processBtn.disabled = true;
 
             const cropData = cropper.getData(true);
@@ -360,7 +394,7 @@
             formData.append('target_w', document.getElementById('targetW').value);
             formData.append('target_h', document.getElementById('targetH').value);
             formData.append('target_dpi', document.getElementById('targetDPI').value); 
-            formData.append('comp_mode', currentCompMode); // 🚀 Sends Safe/Strict to Python
+            formData.append('comp_mode', currentCompMode); 
 
             try {
                 const response = await fetch('/process-image-crop', { method: 'POST', body: formData });
@@ -376,7 +410,8 @@
             } catch {
                 alert('Connection error! Please check your internet.');
             } finally {
-                processBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> CROP & DOWNLOAD';
+                processBtn.innerHTML = '<i class="fa-solid fa-bolt text-yellow-300"></i> CROP & DOWNLOAD';
+                processBtn.classList.add('animate-pulseGlow');
                 processBtn.disabled = false;
             }
         });
