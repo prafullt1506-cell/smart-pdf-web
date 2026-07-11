@@ -16,11 +16,30 @@
             100% { transform: translateX(200%) skewX(-15deg); }
         }
         .animate-shine { animation: shine 3s infinite; }
+        
+        /* New Animated Blob CSS */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex font-sans">
+<body class="bg-slate-100 min-h-screen flex font-sans relative overflow-x-hidden">
 
-    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 text-white p-12 flex-col justify-between relative overflow-hidden">
+    <!-- 🌟 NEW: ANIMATED BACKGROUND BLOBS -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-blue-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-sky-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-indigo-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- LEFT SIDEBAR -->
+    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 text-white p-12 flex-col justify-between relative overflow-hidden z-10 shadow-2xl">
         <div class="absolute -top-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full filter blur-3xl"></div>
         <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full filter blur-3xl"></div>
 
@@ -38,21 +57,21 @@
             </div>
 
             <div class="space-y-4 mt-8">
-                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
                     <span class="text-emerald-400 text-2xl drop-shadow-md">⚡</span>
                     <div>
                         <h4 class="font-bold text-slate-200 text-sm">Exact Size Matching</h4>
                         <p class="text-xs text-slate-400 mt-1">Guarantees the output matches your target KB using smart padding.</p>
                     </div>
                 </div>
-                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
                     <span class="text-sky-400 text-2xl drop-shadow-md">🖼️</span>
                     <div>
                         <h4 class="font-bold text-slate-200 text-sm">Images to PDF (Dual Choice)</h4>
                         <p class="text-xs text-slate-400 mt-1">Convert JPG/PNGs and choose to download in Original OR Target Size.</p>
                     </div>
                 </div>
-                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
                     <span class="text-purple-400 text-2xl drop-shadow-md">📦</span>
                     <div>
                         <h4 class="font-bold text-slate-200 text-sm">Batch Folder Processing</h4>
@@ -67,17 +86,31 @@
         </div>
     </div>
 
-    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-slate-50 relative">
-        <div class="bg-white w-[550px] p-8 rounded-2xl shadow-2xl border border-slate-200 relative z-10">
+    <!-- RIGHT MAIN WORKSPACE -->
+    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-transparent relative z-10">
+        <div class="bg-white/90 backdrop-blur-xl w-[550px] p-8 rounded-2xl shadow-2xl border border-slate-200 relative z-10">
             
             <h1 class="text-3xl font-extrabold text-center text-slate-800 mb-6 tracking-tight">SMART COMPRESSOR</h1>
 
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex justify-between items-center mb-5 shadow-inner">
+            <!-- Target Size Input -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center mb-4 shadow-sm">
                 <div class="flex items-center space-x-3">
                     <label class="font-bold text-slate-700 text-sm">Target Size (KB):</label>
                     <input type="number" id="target_kb" value="500" class="border-2 border-sky-200 rounded-lg px-3 py-1.5 w-24 text-center focus:outline-none focus:border-sky-500 font-black text-slate-800 shadow-sm transition">
                 </div>
                 <button class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-1.5 rounded-lg font-bold text-sm shadow-md transition transform hover:scale-105">Lock</button>
+            </div>
+
+            <!-- 🚀 NEW: SAFE / STRICT MODE TOGGLE -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 mb-5 shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="font-bold text-slate-700 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white text-emerald-600 shadow-sm border border-emerald-200">Safe (No Corrupt)</button>
+                    <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 hover:text-slate-700">Strict (Exact Size)</button>
+                </div>
+                <p id="modeDesc" class="text-[10px] text-slate-500 mt-2 font-medium">Safe Mode: Reaches close to target size without filling garbage bytes.</p>
             </div>
 
             <input type="file" id="fileInput" multiple accept=".pdf" class="hidden">
@@ -95,7 +128,7 @@
                 <button onclick="clearQueue()" class="bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 font-bold text-xs px-4 py-1 rounded-lg shadow-sm transition">Clear All</button>
             </div>
 
-            <div id="queueBox" class="bg-slate-50 border border-slate-200 rounded-xl h-36 overflow-y-auto p-3 mb-5 custom-scrollbar shadow-inner">
+            <div id="queueBox" class="bg-white border border-slate-200 rounded-xl h-36 overflow-y-auto p-3 mb-5 custom-scrollbar shadow-inner">
                 <p id="emptyMsg" class="text-center text-slate-400 font-medium text-sm mt-10">Select PDFs to compress OR Images to make a PDF!</p>
             </div>
 
@@ -107,10 +140,9 @@
                 🚀 START COMPRESSION
             </button>
 
+            <!-- Desktop App Banner -->
             <div class="mt-8 pt-6 border-t-2 border-dashed border-slate-200 relative">
                 <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4 text-xs font-black text-emerald-500 uppercase tracking-widest">✨ Pro Experience ✨</div>
-                
-                <!-- इथे बदल केला आहे -->
                 <h3 class="text-sm font-bold text-slate-800 text-center mb-4 mt-2">Get the Desktop App</h3>
                 
                 <div class="text-center">
@@ -123,7 +155,8 @@
                 </div>
             </div>
 
-            <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-sm hidden flex-col items-center justify-center p-8 rounded-2xl z-50 transition-all duration-300">
+            <!-- Success Popup -->
+            <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-md hidden flex-col items-center justify-center p-8 rounded-2xl z-50 transition-all duration-300">
                 <div class="bg-green-100 text-green-600 p-4 rounded-full mb-4 animate-bounce">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
@@ -144,16 +177,38 @@
                     <p id="popSave" class="text-blue-700 font-black text-lg">🔥 Saved X KB Space! 🔥</p>
                 </div>
 
-                <div class="flex w-full space-x-2" id="downloadSection">
-                    </div>
+                <div class="flex w-full space-x-2" id="downloadSection"></div>
             </div>
-
         </div>
     </div>
 
     <script>
         let selectedFiles = [];
         let currentMode = 'pdf'; 
+        let compMode = 'safe'; // 🚀 Added State for Compression Mode
+
+        // 🚀 Switch Safe / Strict Mode Function
+        function setMode(mode) {
+            compMode = mode;
+            const safeBtn = document.getElementById('modeSafeBtn');
+            const strictBtn = document.getElementById('modeStrictBtn');
+            const badge = document.getElementById('modeBadge');
+            const desc = document.getElementById('modeDesc');
+
+            if(mode === 'strict') {
+                strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-sky-600 shadow-sm border border-sky-200";
+                safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 hover:text-slate-700";
+                badge.innerText = "Strict";
+                badge.className = "ml-2 text-[9px] bg-sky-100 text-sky-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
+                desc.innerText = "Strict Mode: Forces exact target size using zero byte padding if needed.";
+            } else {
+                safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-emerald-600 shadow-sm border border-emerald-200";
+                strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 hover:text-slate-700";
+                badge.innerText = "Safe";
+                badge.className = "ml-2 text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
+                desc.innerText = "Safe Mode: Reaches close to target size without filling garbage bytes.";
+            }
+        }
 
         document.getElementById('fileInput').addEventListener('change', handleFileSelect);
         document.getElementById('folderInput').addEventListener('change', handleFileSelect);
@@ -220,7 +275,7 @@
             box.innerHTML = '';
             selectedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-white border border-slate-200 rounded-lg p-2.5 mb-2 shadow-sm hover:border-sky-300 transition';
+                item.className = 'flex justify-between items-center bg-slate-50 border border-slate-200 rounded-lg p-2.5 mb-2 shadow-sm hover:border-sky-300 transition';
                 let icon = file.name.toLowerCase().endsWith('.pdf') ? '📄' : '🖼️';
                 item.innerHTML = `
                     <span class="text-xs font-bold text-slate-700 truncate w-4/5">${icon} ${file.name}</span>
@@ -246,6 +301,7 @@
 
             const formData = new FormData();
             formData.append('target_kb', targetKb);
+            formData.append('comp_mode', compMode); // 🚀 Send Mode to Backend
             selectedFiles.forEach(file => {
                 formData.append('files', file);
             });
@@ -278,7 +334,7 @@
             
             const downloadSection = document.getElementById('downloadSection');
 
-            // 🌟 IF MODE IS IMAGES (Dual Choice Layout)
+            // IF MODE IS IMAGES (Dual Choice Layout)
             if (currentMode === 'images') {
                 document.getElementById('labelOrig').innerText = "Generated PDF";
                 document.getElementById('popOrig').innerText = data.generated_pdf_kb + " KB";
@@ -293,9 +349,8 @@
                     document.getElementById('popSave').innerText = `🔥 You Can Save ${saved} KB Space! 🔥`;
                 }
 
-                // DUAL BUTTONS
                 downloadSection.innerHTML = `
-                    <button onclick="closePopup()" class="w-1/4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl transition text-sm">Close</button>
+                    <button onclick="closePopup()" class="w-1/4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl transition text-sm shadow-sm">Close</button>
                     
                     <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="w-2/4 flex flex-col justify-center items-center text-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-xl shadow-lg transition leading-tight">
                         <span class="text-[13px]">⬇️ Original Size</span>
@@ -308,7 +363,7 @@
                     </a>
                 `;
             } 
-            // 🌟 IF MODE IS PDF (Standard Single Layout)
+            // IF MODE IS PDF (Standard Single Layout)
             else {
                 document.getElementById('labelOrig').innerText = "Original";
                 document.getElementById('popOrig').innerText = data.original_kb + " KB";
@@ -325,9 +380,8 @@
                     document.getElementById('popSave').innerText = `🔥 You Saved ${saved} KB (${percent}%) Space! 🔥`;
                 }
 
-                // SINGLE BUTTON
                 downloadSection.innerHTML = `
-                    <button onclick="closePopup()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl transition">Close</button>
+                    <button onclick="closePopup()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl transition shadow-sm">Close</button>
                     <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="flex-1 text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-lg transition">⬇️ Save File</a>
                 `;
             }
