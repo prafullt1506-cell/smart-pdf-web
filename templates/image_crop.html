@@ -1,183 +1,246 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Image Cropper - PDF Toolkit Pro</title>
+    <title>Pro Image Cropper & Enhancer | Smart Toolkit</title>
+    
+    <!-- Premium Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Cropper.js & FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <!-- FontAwesome Added for Pro Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Tailwind Config matching Homepage -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { darkBg: '#0b0f19', }
+                }
+            }
+        }
+    </script>
+    
     <style>
         .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .img-workspace { max-height: 500px; width: 100%; display: flex; justify-content: center; background: #0f172a; border-radius: 1rem; overflow: hidden; position: relative; }
+        .dark .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .img-workspace {
+            max-height: 500px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: repeating-linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0), repeating-linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+            background-color: #f8fafc;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .dark .img-workspace {
+            background: repeating-linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%, #1e293b), repeating-linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%, #1e293b);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+            background-color: #0f172a;
+        }
+        
         img { display: block; max-width: 100%; }
-        .preview-box { background: #1e293b; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); }
-        /* Toolbar Button Hover Glow */
-        .tool-btn { transition: all 0.3s ease; }
-        .tool-btn:hover { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); transform: translateY(-2px); }
+        
+        /* Tool Button Hover Effects */
+        .tool-btn { transition: all 0.2s ease; }
+        .tool-btn:active { transform: scale(0.95); }
+        .tool-btn:hover { box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2); }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen font-sans antialiased">
-    
-    <!-- Navigation -->
-    <nav class="glass-panel sticky top-0 z-50 px-8 py-4 flex justify-between items-center shadow-xl">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl">✂️</span>
-            <a href="/" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500">PDF Toolkit Pro</a>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen font-sans antialiased relative">
+
+    <!-- Navbar -->
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
+        <a href="/" class="flex items-center space-x-3 group cursor-pointer">
+            <div class="bg-gradient-to-tr from-pink-500 to-rose-600 p-2 rounded-xl shadow-md group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-crop-simple text-white text-xl"></i>
+            </div>
+            <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-400 tracking-tight">Smart <span class="text-pink-500 font-medium text-xs tracking-widest uppercase ml-1">Cropper</span></h1>
+        </a>
+        <div class="flex items-center gap-3">
+            <button id="theme-toggle" class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+                <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400"></i>
+            </button>
+            <a href="/" class="px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold rounded-xl transition-all border border-slate-200 dark:border-slate-700 text-sm shadow-sm flex items-center gap-2"><i class="fa-solid fa-house text-xs"></i> Home</a>
         </div>
-        <a href="/" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 font-bold rounded-full transition-all border border-slate-600 text-sm shadow-md">Dashboard</a>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Top Info Header -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
+        <!-- Header -->
         <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-pink-500/20">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 font-bold text-[11px] uppercase tracking-wider mb-3 border border-pink-200 dark:border-pink-500/20">
                 ✨ Pro Studio Editor Active
             </span>
-            <h1 class="text-4xl font-black tracking-tight mb-2">Advanced Image <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">Cropper</span></h1>
-            <p class="text-sm text-slate-400 max-w-xl mx-auto">Ultra-smooth cropping, rotation, zoom, and dynamic size clamping workspace.</p>
+            <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-2 text-slate-900 dark:text-white">Advanced Image <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Cropper</span></h2>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- LEFT WORKSPACE: CROP MATRIX & LIVE PREVIEW (8 Cols) -->
+            <!-- LEFT WORKSPACE: CROP MATRIX (8 Cols) -->
             <div class="lg:col-span-8 flex flex-col gap-6">
-                <!-- Cropper Input/Display Grid -->
-                <div class="glass-panel p-6 rounded-3xl shadow-xl">
-                    <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer mb-5 bg-slate-900 rounded-full border border-slate-800 p-1">
+                <div class="glass-panel p-6 rounded-[2rem] shadow-sm">
+                    <input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-pink-500 file:text-white hover:file:bg-pink-600 cursor-pointer mb-5 bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 p-1.5 shadow-sm transition-all">
                     
-                    <div class="img-workspace border border-slate-800 shadow-inner">
+                    <div class="img-workspace border border-slate-200 dark:border-slate-800 shadow-inner">
                         <img id="image" src="" alt="Upload an image to start" style="display: none;">
                     </div>
 
-                    <!-- 🛠️ PRO TOOLBAR (Zoom, Rotate, Move) -->
-                    <div class="flex flex-wrap gap-3 mt-5 justify-center hidden bg-slate-900 p-3 rounded-2xl border border-slate-800" id="cropper-controls">
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="setDragMode('move')" title="Move Image">
-                            <i class="fa-solid fa-arrows-up-down-left-right"></i>
-                        </button>
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="setDragMode('crop')" title="Draw Crop Box">
-                            <i class="fa-solid fa-crop-simple"></i>
-                        </button>
-                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="zoomIn()" title="Zoom In">
-                            <i class="fa-solid fa-magnifying-glass-plus"></i>
-                        </button>
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="zoomOut()" title="Zoom Out">
-                            <i class="fa-solid fa-magnifying-glass-minus"></i>
-                        </button>
-                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-emerald-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="rotateLeft()" title="Rotate Left">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </button>
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-emerald-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="rotateRight()" title="Rotate Right">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
-                        <div class="w-px bg-slate-700 mx-1"></div> <!-- Divider -->
-                        <button class="tool-btn px-4 py-2 bg-slate-800 hover:bg-red-600 rounded-xl text-sm font-bold text-slate-300 hover:text-white" onclick="resetCrop()" title="Reset All">
-                            <i class="fa-solid fa-arrow-rotate-right"></i>
-                        </button>
+                    <!-- PRO TOOLBAR (Zoom, Rotate, Move) -->
+                    <div class="flex flex-wrap gap-2 mt-5 justify-center hidden bg-slate-50 dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm" id="cropper-controls">
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('move')" title="Move Image"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-pink-600 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="setDragMode('crop')" title="Draw Crop Box"><i class="fa-solid fa-crop-simple"></i></button>
+                        <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomIn()" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-600 rounded-xl text-sm font-bold text-blue-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="zoomOut()" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                        <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateLeft()" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600 rounded-xl text-sm font-bold text-emerald-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="rotateRight()" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
+                        <div class="w-px bg-slate-300 dark:bg-slate-700 mx-1"></div> 
+                        <button class="tool-btn px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-600 rounded-xl text-sm font-bold text-red-600 dark:text-slate-300 shadow-sm border border-slate-200 dark:border-slate-700" onclick="resetCrop()" title="Reset All"><i class="fa-solid fa-arrow-rotate-right"></i></button>
                     </div>
 
                     <!-- Ratio Presets -->
                     <div class="flex flex-wrap gap-2 mt-4 justify-center hidden" id="ratio-buttons">
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(16/9)">16:9 Desktop</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(4/3)">4:3 Frame</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(1)">1:1 Square</button>
-                        <button class="px-4 py-1.5 bg-slate-800 hover:bg-purple-600 rounded-full text-xs font-bold transition-all" onclick="setRatio(NaN)">Free Form</button>
-                    </div>
-                </div>
-
-                <!-- 🌟 SINGLE LIVE PREVIEW PANEL -->
-                <div id="previewPanel" class="glass-panel p-6 rounded-3xl shadow-xl hidden">
-                    <h3 class="text-xs font-black tracking-widest uppercase text-slate-400 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-eye text-pink-500"></i> Final Live Preview
-                    </h3>
-                    
-                    <div class="preview-box p-4 flex flex-col items-center border border-purple-500/20 relative w-full">
-                        <span class="text-[10px] font-black uppercase text-purple-400 tracking-wider mb-3 bg-purple-950/40 px-3 py-1.5 rounded-md border border-purple-900/40">✨ This is how your file will look</span>
-                        <div class="w-full h-64 flex items-center justify-center overflow-hidden bg-slate-950 rounded-lg relative">
-                            <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain filter transition-all duration-300 shadow-lg" src="" alt="Live Preview Frame">
-                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider hidden">Enhance Filter Active</div>
-                        </div>
+                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(16/9)">16:9 Desktop</button>
+                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(4/3)">4:3 Frame</button>
+                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(1)">1:1 Square</button>
+                        <button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-600 hover:text-purple-700 dark:hover:text-white rounded-full text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300" onclick="setRatio(NaN)">Free Form</button>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT PANEL: CONTROLS (4 Cols) -->
+            <!-- RIGHT PANEL: PREVIEW & CONTROLS (4 Cols) -->
             <div class="lg:col-span-4 flex flex-col gap-6">
-                <!-- Magic Enhance Control Toggle -->
-                <div class="glass-panel p-5 rounded-3xl border border-slate-800">
+                
+                <!-- 🌟 LIVE PREVIEW MOVED TO TOP OF RIGHT PANEL -->
+                <div id="previewPanel" class="glass-panel p-5 rounded-[2rem] shadow-sm hidden">
+                    <h3 class="text-xs font-black tracking-widest uppercase text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-pink-500"></i> Live Preview
+                    </h3>
+                    <div class="p-3 flex flex-col items-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 relative w-full shadow-inner">
+                        <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-xl relative">
+                            <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain transition-all duration-300 shadow-md" src="" alt="Live Preview Frame">
+                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider hidden shadow-lg shadow-purple-500/20">Enhanced</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Magic Enhance Control -->
+                <div class="glass-panel p-5 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800">
                     <label class="flex items-center justify-between cursor-pointer">
-                        <div class="font-extrabold text-slate-200 text-sm flex items-center gap-2">
-                            <span>🪄</span> Magic Auto-Clean & Clear
+                        <div class="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
+                            <span class="text-lg">🪄</span> Magic Auto-Clean
                         </div>
                         <div class="relative">
                             <input type="checkbox" id="magicEnhance" class="sr-only">
-                            <div class="block bg-slate-800 w-12 h-6 rounded-full border border-slate-700 transition-colors"></div>
-                            <div class="dot absolute left-1 top-1 bg-slate-400 w-4 h-4 rounded-full transition-all duration-300"></div>
+                            <div class="block bg-slate-300 dark:bg-slate-800 w-12 h-6 rounded-full border border-slate-400 dark:border-slate-700 transition-colors shadow-inner"></div>
+                            <div class="dot absolute left-1 top-1 bg-white dark:bg-slate-400 w-4 h-4 rounded-full transition-all duration-300 shadow-sm"></div>
                         </div>
                     </label>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Instantly fixes blur, increases sharpness, and balances contrast.</p>
                 </div>
 
                 <!-- Resizing & Scaling Unit Grid -->
-                <div class="glass-panel p-5 rounded-3xl border border-slate-800 flex flex-col gap-5">
+                <div class="glass-panel p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
                     <div>
-                        <h3 class="font-black text-xs text-slate-400 uppercase tracking-widest mb-3 pb-1 border-b border-slate-800/60 flex items-center justify-between">
-                            <span>Target Dimension Unit</span>
-                        </h3>
-                        
-                        <!-- Unit Type Switcher Buttons -->
-                        <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                            <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10">Pixels (PX)</button>
-                            <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white">Centimeters (CM)</button>
+                        <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <button id="unitPixelBtn" onclick="switchUnit('px')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-white dark:bg-gradient-to-r dark:from-pink-500 dark:to-purple-600 text-pink-600 dark:text-white shadow-sm border border-pink-200 dark:border-none">Pixels (PX)</button>
+                            <button id="unitCmBtn" onclick="switchUnit('cm')" class="py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">CM</button>
                         </div>
                     </div>
 
                     <!-- Input Parameters Form Field (Width & Height) -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label id="lblWidth" class="text-xs font-bold text-slate-400 block mb-1">Target Width (px)</label>
-                            <input type="number" id="targetW" placeholder="Auto" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                            <label id="lblWidth" class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target W (px)</label>
+                            <input type="number" id="targetW" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
                         </div>
                         <div>
-                            <label id="lblHeight" class="text-xs font-bold text-slate-400 block mb-1">Target Height (px)</label>
-                            <input type="number" id="targetH" placeholder="Auto" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                            <label id="lblHeight" class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target H (px)</label>
+                            <input type="number" id="targetH" placeholder="Auto" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
                         </div>
                     </div>
 
-                    <!-- Input Parameters Form Field (KB & DPI) -->
+                    <!-- Input Parameters Form Field (KB & DPI & Strict Mode) -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-bold text-slate-400 block mb-1">Max Size (KB)</label>
-                            <input type="number" id="targetKB" placeholder="e.g., 50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                            <label class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Max Size (KB)</label>
+                            <input type="number" id="targetKB" placeholder="e.g., 50" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-slate-400 block mb-1">Target DPI</label>
-                            <input type="number" id="targetDPI" placeholder="e.g., 300" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:outline-none focus:border-pink-500 text-sm transition-colors">
+                            <label class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-1">Target DPI</label>
+                            <input type="number" id="targetDPI" placeholder="300" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white font-bold text-sm">
+                        </div>
+                        
+                        <!-- 🚀 NEW: STRICT vs SAFE MODE SWITCH -->
+                        <div class="col-span-2 mt-1">
+                            <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5 flex justify-between">
+                                Compression Mode
+                                <span id="modeStatusLabel" class="text-emerald-500">Safe</span>
+                            </label>
+                            <div class="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+                                <button id="modeSafeBtn" onclick="switchCompMode('safe')" class="py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-slate-200 dark:border-none">Safe Mode</button>
+                                <button id="modeStrictBtn" onclick="switchCompMode('strict')" class="py-1.5 rounded-lg font-black text-[10px] uppercase transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white">Strict Size</button>
+                            </div>
+                            <p id="modeDescText" class="text-[9px] text-slate-400 dark:text-slate-500 mt-1.5 leading-tight font-medium">Safe: Attempts closest size without corruption.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Core Download Execute Trigger -->
-                <button id="processBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-pink-500/20 transform hover:-translate-y-1 transition-all disabled:opacity-40 disabled:pointer-events-none" disabled>
-                    ⚡ CROP & DOWNLOAD
+                <button id="processBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-pink-500/25 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2" disabled>
+                    <i class="fa-solid fa-bolt"></i> CROP & DOWNLOAD
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- JS For Pro Tools -->
+    <!-- JS For Theme & Pro Tools -->
     <script>
+        // --- Theme Toggle ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark'); themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
+        } else { html.classList.remove('dark'); }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark'); themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light'); themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
+            }
+        });
+
+        // --- Core Variables ---
         let cropper;
         let currentUnit = 'px';
+        let currentCompMode = 'safe'; // 🚀 Default Mode
+        
         const imageElement = document.getElementById('image');
         const uploadInput = document.getElementById('imageUpload');
         const processBtn = document.getElementById('processBtn');
@@ -187,56 +250,71 @@
         const magicToggle = document.getElementById('magicEnhance');
         const liveEnhancedPreview = document.getElementById('liveEnhancedPreview');
 
-        // Toolbar Functions
+        // --- Tools ---
         function setDragMode(mode) { if(cropper) { cropper.setDragMode(mode); } }
         function zoomIn() { if(cropper) { cropper.zoom(0.1); } }
         function zoomOut() { if(cropper) { cropper.zoom(-0.1); } }
         function rotateLeft() { if(cropper) { cropper.rotate(-45); triggerLivePreviewGeneration(); } }
         function rotateRight() { if(cropper) { cropper.rotate(45); triggerLivePreviewGeneration(); } }
         function resetCrop() { if(cropper) { cropper.reset(); triggerLivePreviewGeneration(); } }
+        function setRatio(ratio) { if(cropper) { cropper.setAspectRatio(ratio); triggerLivePreviewGeneration(); } }
 
         function switchUnit(unit) {
             currentUnit = unit;
-            const pxBtn = document.getElementById('unitPixelBtn');
-            const cmBtn = document.getElementById('unitCmBtn');
-            const lblW = document.getElementById('lblWidth');
-            const lblH = document.getElementById('lblHeight');
-            const wInput = document.getElementById('targetW');
-            const hInput = document.getElementById('targetH');
+            const pxBtn = document.getElementById('unitPixelBtn'); const cmBtn = document.getElementById('unitCmBtn');
+            const lblW = document.getElementById('lblWidth'); const lblH = document.getElementById('lblHeight');
+            const wInput = document.getElementById('targetW'); const hInput = document.getElementById('targetH');
+
+            const activeClass = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm border-none" : "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-white border border-pink-300 text-pink-600 shadow-sm";
+            const inactiveClass = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white bg-transparent border border-transparent";
 
             if(unit === 'cm') {
-                cmBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10";
-                pxBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
-                lblW.innerText = "Target Width (cm)";
-                lblH.innerText = "Target Height (cm)";
-                wInput.placeholder = "e.g., 3.5";
-                hInput.placeholder = "e.g., 4.5";
+                cmBtn.className = activeClass; pxBtn.className = inactiveClass;
+                lblW.innerText = "Target W (cm)"; lblH.innerText = "Target H (cm)";
+                wInput.placeholder = "e.g., 3.5"; hInput.placeholder = "e.g., 4.5";
             } else {
-                pxBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/10";
-                cmBtn.className = "py-2 rounded-lg font-black text-xs uppercase tracking-wide transition-all text-slate-400 hover:text-white";
-                lblW.innerText = "Target Width (px)";
-                lblH.innerText = "Target Height (px)";
-                wInput.placeholder = "Auto";
-                hInput.placeholder = "Auto";
+                pxBtn.className = activeClass; cmBtn.className = inactiveClass;
+                lblW.innerText = "Target W (px)"; lblH.innerText = "Target H (px)";
+                wInput.placeholder = "Auto"; hInput.placeholder = "Auto";
+            }
+        }
+
+        // 🚀 NEW: Switch Compression Mode
+        function switchCompMode(mode) {
+            currentCompMode = mode;
+            const safeBtn = document.getElementById('modeSafeBtn');
+            const strictBtn = document.getElementById('modeStrictBtn');
+            const statusLbl = document.getElementById('modeStatusLabel');
+            const descTxt = document.getElementById('modeDescText');
+
+            const activeSafe = html.classList.contains('dark') ? "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-slate-700 text-emerald-400 shadow-sm" : "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white border border-emerald-200 text-emerald-600 shadow-sm";
+            const activeStrict = html.classList.contains('dark') ? "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-slate-700 text-pink-400 shadow-sm" : "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
+            const inactive = "py-1.5 rounded-lg font-black text-[10px] uppercase transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white bg-transparent border border-transparent";
+
+            if(mode === 'strict') {
+                strictBtn.className = activeStrict; safeBtn.className = inactive;
+                statusLbl.innerText = "Strict"; statusLbl.className = "text-pink-500";
+                descTxt.innerText = "Strict: Forces exact size (May pad with zero bytes).";
+            } else {
+                safeBtn.className = activeSafe; strictBtn.className = inactive;
+                statusLbl.innerText = "Safe"; statusLbl.className = "text-emerald-500";
+                descTxt.innerText = "Safe: Attempts closest size without corruption.";
             }
         }
 
         magicToggle.addEventListener('change', function() {
-            const dot = this.parentElement.querySelector('.dot');
-            const bg = this.parentElement.querySelector('.block');
+            const dot = this.parentElement.querySelector('.dot'); const bg = this.parentElement.querySelector('.block');
             const overlay = document.getElementById('enhanceOverlayText');
             if(this.checked) {
                 dot.style.transform = 'translateX(100%)';
                 dot.classList.replace('bg-slate-400', 'bg-white');
-                bg.classList.replace('bg-slate-800', 'bg-purple-600');
-                bg.classList.replace('border-slate-700', 'border-purple-500');
+                bg.classList.replace('bg-slate-800', 'bg-purple-600'); bg.classList.replace('bg-slate-300', 'bg-purple-500');
                 overlay.classList.remove('hidden');
                 liveEnhancedPreview.style.filter = "contrast(1.15) brightness(1.05) saturate(1.1) sharpen(1.5)"; 
             } else {
                 dot.style.transform = 'translateX(0)';
                 dot.classList.replace('bg-white', 'bg-slate-400');
-                bg.classList.replace('bg-purple-600', 'bg-slate-800');
-                bg.classList.replace('border-purple-500', 'border-slate-700');
+                bg.classList.replace('bg-purple-600', 'bg-slate-800'); bg.classList.replace('bg-purple-500', 'bg-slate-300');
                 overlay.classList.add('hidden');
                 liveEnhancedPreview.style.filter = "none";
             }
@@ -245,65 +323,44 @@
         uploadInput.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
-                const url = URL.createObjectURL(file);
-                
-                imageElement.src = url;
+                imageElement.src = URL.createObjectURL(file);
                 imageElement.style.display = 'block';
                 ratioButtons.classList.remove('hidden');
-                controlsToolbar.classList.remove('hidden');
-                controlsToolbar.classList.add('flex');
-                previewPanel.classList.remove('hidden');
+                controlsToolbar.classList.remove('hidden'); controlsToolbar.classList.add('flex');
+                previewPanel.classList.remove('hidden'); // 🚀 Shows preview panel at the top right
                 processBtn.disabled = false;
 
                 if (cropper) { cropper.destroy(); }
-                
-                // 🌟 Pro Configuration for Smoothness
                 cropper = new Cropper(imageElement, {
-                    viewMode: 1, // बॉक्स इमेजच्या बाहेर जाणार नाही
-                    dragMode: 'move', // बाय-डिफॉल्ट इमेज हलवता येईल
-                    autoCropArea: 0.8,
-                    responsive: true,
-                    background: true,
-                    highlight: true,
-                    wheelZoomRatio: 0.1, // माऊस व्हीलने एकदम स्मूथ झूम
-                    cropend() { triggerLivePreviewGeneration(); },
-                    ready() { triggerLivePreviewGeneration(); },
-                    zoom() { setTimeout(triggerLivePreviewGeneration, 100); }
+                    viewMode: 2, dragMode: 'move', autoCropArea: 0.9, responsive: true, background: true, highlight: true, wheelZoomRatio: 0.1,
+                    cropend() { triggerLivePreviewGeneration(); }, ready() { triggerLivePreviewGeneration(); }, zoom() { setTimeout(triggerLivePreviewGeneration, 100); }
                 });
             }
         });
 
-        function setRatio(ratio) {
-            if(cropper) { cropper.setAspectRatio(ratio); triggerLivePreviewGeneration(); }
-        }
-
         function triggerLivePreviewGeneration() {
             if(!cropper) return;
-            const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 });
-            if(canvas) {
-                liveEnhancedPreview.src = canvas.toDataURL('image/jpeg');
-            }
+            const canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+            if(canvas) liveEnhancedPreview.src = canvas.toDataURL('image/jpeg', 0.8);
         }
 
         processBtn.addEventListener('click', async function() {
             if (!cropper) return;
-
-            processBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin mr-2'></i> PROCESSING...";
+            processBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> PROCESSING...";
             processBtn.disabled = true;
 
             const cropData = cropper.getData(true);
             const formData = new FormData();
             formData.append('file', uploadInput.files[0]);
-            formData.append('x', cropData.x);
-            formData.append('y', cropData.y);
-            formData.append('width', cropData.width);
-            formData.append('height', cropData.height);
+            formData.append('x', cropData.x); formData.append('y', cropData.y);
+            formData.append('width', cropData.width); formData.append('height', cropData.height);
             formData.append('enhance', magicToggle.checked);
             formData.append('target_kb', document.getElementById('targetKB').value);
             formData.append('unit', currentUnit);
             formData.append('target_w', document.getElementById('targetW').value);
             formData.append('target_h', document.getElementById('targetH').value);
             formData.append('target_dpi', document.getElementById('targetDPI').value); 
+            formData.append('comp_mode', currentCompMode); // 🚀 Sends Safe/Strict to Python
 
             try {
                 const response = await fetch('/process-image-crop', { method: 'POST', body: formData });
@@ -311,18 +368,15 @@
                     const blob = await response.blob();
                     const dlUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = dlUrl;
-                    a.download = `Edited_Image_${new Date().getTime()}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
+                    a.href = dlUrl; a.download = `Smart_Crop_${new Date().getTime()}.jpg`;
+                    document.body.appendChild(a); a.click(); a.remove();
                 } else {
-                    alert('Error processing image.');
+                    alert('Error processing image. Please try again.');
                 }
             } catch {
-                alert('Something went wrong!');
+                alert('Connection error! Please check your internet.');
             } finally {
-                processBtn.innerHTML = '⚡ CROP & DOWNLOAD';
+                processBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> CROP & DOWNLOAD';
                 processBtn.disabled = false;
             }
         });
