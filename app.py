@@ -5,7 +5,7 @@ import os
 import zipfile
 import base64
 import tempfile
-import gc
+import gc  # 🛡️ RAM Optimization
 import subprocess
 import platform
 from PIL import Image, ImageEnhance
@@ -15,11 +15,11 @@ from docx import Document
 
 app = Flask(__name__)
 
-# 🛡️ ANTI-HANG SECURITY: 50 MB limit
+# 🛡️ ANTI-HANG SECURITY: ५० MB ची फाईल साईझ लिमिट
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
 # ==========================================
-# 🌐 FRONTEND PAGE ROUTES
+# 🌐 FRONTEND PAGE ROUTES (मेनू आणि पेजेस)
 # ==========================================
 @app.route('/', methods=['GET'])
 def index():
@@ -103,6 +103,8 @@ def compress_batch():
                         break
             doc.close()
 
+            # (Removed Padding Logic: Corrupts files and adds no value.)
+            
             total_new_size += len(pdf_bytes) / 1024
             compressed_files.append((filename, pdf_bytes))
 
@@ -184,6 +186,8 @@ def images_to_pdf():
                     break
         new_doc.close()
 
+        # (Removed Padding Logic: Corrupts files and adds no value.)
+
         return jsonify({
             "success": True,
             "is_dual": True,
@@ -261,6 +265,7 @@ def pdf_to_word():
         
         file.save(temp_pdf.name)
         
+        # Verify PDF is valid before converting
         try:
              doc_check = fitz.open(temp_pdf.name)
              if doc_check.is_encrypted:
@@ -550,6 +555,7 @@ def process_image_crop():
             img = img.convert("RGB")
             original_format = 'JPEG'
 
+        # 1. Cropping Engine Execution
         x = int(float(request.form.get('x', 0)))
         y = int(float(request.form.get('y', 0)))
         w = int(float(request.form.get('width', img.width)))
@@ -558,6 +564,7 @@ def process_image_crop():
         if w > 0 and h > 0:
             img = img.crop((x, y, x + w, y + h))
 
+        # 2. Magic Enhance Matrix (Auto Clean & Sharp Filter)
         if request.form.get('enhance') == 'true':
             enhancer = ImageEnhance.Sharpness(img)
             img = enhancer.enhance(1.6) 
@@ -566,6 +573,7 @@ def process_image_crop():
             enhancer_color = ImageEnhance.Color(img)
             img = enhancer_color.enhance(1.1)
 
+        # 3. Dynamic Unit Resolution Target Parser
         unit = request.form.get('unit', 'px')
         raw_w = request.form.get('target_w', '')
         raw_h = request.form.get('target_h', '')
@@ -591,7 +599,9 @@ def process_image_crop():
         if target_w and target_h and target_w > 0 and target_h > 0:
             img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
 
+        # 4. Byte Clamping Compression (Safe Mode and Strict Size Mode hybrid)
         target_kb = request.form.get('target_kb')
+        comp_mode = request.form.get('comp_mode', 'safe') # 🚀 UI मधून Safe किंवा Strict मोड घेईल
         img_byte_arr = io.BytesIO()
         
         if target_kb and target_kb.isdigit():
@@ -604,6 +614,12 @@ def process_image_crop():
                 if img_byte_arr.tell() <= target_bytes:
                     break
                 quality -= 5
+                
+            # 🚀 STRICT MODE LOGIC: जर फाईल टार्गेटपेक्षा लहान असेल, तर कचरा (Zero bytes) भरून साईझ तंतोतंत वाढवा
+            if comp_mode == 'strict':
+                current_size = img_byte_arr.tell()
+                if current_size < target_bytes:
+                    img_byte_arr.write(b'\0' * (target_bytes - current_size))
         else:
             img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
