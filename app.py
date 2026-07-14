@@ -54,7 +54,7 @@ def image_crop():
     return render_template('image_crop.html')
 
 # ==========================================
-# 🗜️ ENGINE 1: PDF COMPRESSOR (Fixed Safe & Strict Mode)
+# 🗜️ ENGINE 1: PDF COMPRESSOR (Universal Safe/Strict Logic)
 # ==========================================
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
@@ -88,13 +88,13 @@ def compress_batch():
             pdf_bytes = doc.tobytes(garbage=4, deflate=True, clean=True)
 
             if len(pdf_bytes) > target_size_bytes:
-                # 🚀 FIXED: 15 Gradual Steps (Slow scale-down to hit target accurately)
+                # 🚀 UNIVERSAL: 16 Smooth Gradual Steps
                 settings = [
-                    (1.5, 85), (1.5, 70), (1.5, 55),
-                    (1.2, 80), (1.2, 65), (1.2, 45),
-                    (1.0, 75), (1.0, 55), (1.0, 35),
-                    (0.8, 65), (0.8, 45), (0.8, 25),
-                    (0.6, 50), (0.6, 30), (0.5, 15)
+                    (1.2, 85), (1.2, 65), (1.2, 45),
+                    (1.0, 85), (1.0, 65), (1.0, 45), (1.0, 25),
+                    (0.8, 70), (0.8, 50), (0.8, 30),
+                    (0.6, 60), (0.6, 40), (0.6, 20),
+                    (0.4, 50), (0.4, 30), (0.4, 15)
                 ]
                 for zoom, quality in settings:
                     new_doc = fitz.open()
@@ -109,12 +109,11 @@ def compress_batch():
 
                     pdf_bytes = new_doc.tobytes(garbage=4, deflate=True)
                     new_doc.close()
-                    # Stop as soon as we drop below target
                     if len(pdf_bytes) <= target_size_bytes:
                         break
             doc.close()
 
-            # 🚀 FIXED: Strict Mode Padding (Uses \x00 for binary zero bytes)
+            # 🚀 UNIVERSAL STRICT PADDING (\x00)
             if comp_mode == 'strict':
                 if len(pdf_bytes) < target_size_bytes:
                     padding_needed = target_size_bytes - len(pdf_bytes)
@@ -151,7 +150,7 @@ def compress_batch():
         gc.collect()
 
 # ==========================================
-# 🖼️ ENGINE 2: IMAGES TO PDF (Fixed Safe & Strict Mode)
+# 🖼️ ENGINE 2: IMAGES TO PDF (Universal Safe/Strict Logic)
 # ==========================================
 @app.route('/images_to_pdf', methods=['POST'])
 def images_to_pdf():
@@ -161,7 +160,7 @@ def images_to_pdf():
         files = request.files.getlist('files')
         
         target_kb = int(request.form.get('target_kb', 500))
-        comp_mode = request.form.get('comp_mode', 'safe') # 🚀 Added Mode Capture
+        comp_mode = request.form.get('comp_mode', 'safe') 
         target_size_bytes = target_kb * 1024
         
         total_image_size = 0
@@ -187,12 +186,13 @@ def images_to_pdf():
         pdf_bytes = original_pdf_bytes 
         
         if len(pdf_bytes) > target_size_bytes:
-            # 🚀 FIXED: Gradual Steps for Images to PDF
+            # 🚀 UNIVERSAL: 16 Smooth Gradual Steps
             settings = [
-                (1.0, 90), (1.0, 75), (1.0, 60), (1.0, 45),
-                (0.9, 80), (0.9, 60), (0.9, 40),
-                (0.8, 75), (0.8, 50), (0.8, 30),
-                (0.7, 50), (0.7, 30), (0.6, 20)
+                (1.2, 85), (1.2, 65), (1.2, 45),
+                (1.0, 85), (1.0, 65), (1.0, 45), (1.0, 25),
+                (0.8, 70), (0.8, 50), (0.8, 30),
+                (0.6, 60), (0.6, 40), (0.6, 20),
+                (0.4, 50), (0.4, 30), (0.4, 15)
             ]
             for zoom, quality in settings:
                 comp_doc = fitz.open()
@@ -210,7 +210,7 @@ def images_to_pdf():
                     break
         new_doc.close()
 
-        # 🚀 FIXED: Strict Mode for Images to PDF
+        # 🚀 UNIVERSAL STRICT PADDING (\x00)
         if comp_mode == 'strict':
             if len(pdf_bytes) < target_size_bytes:
                 padding_needed = target_size_bytes - len(pdf_bytes)
@@ -326,7 +326,7 @@ def pdf_to_word():
         gc.collect()
 
 # ==========================================
-# 📑 ENGINE 5: WORD TO PDF (Advanced Pro Version with Fallback)
+# 📑 ENGINE 5: WORD TO PDF
 # ==========================================
 @app.route('/word_to_pdf', methods=['POST'])
 def word_to_pdf():
@@ -557,7 +557,7 @@ def protect_pdf():
         gc.collect()
 
 # ==========================================
-# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER
+# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (Universal Safe/Strict Logic)
 # ==========================================
 @app.route('/process-image-crop', methods=['POST'])
 def process_image_crop():
@@ -625,6 +625,7 @@ def process_image_crop():
         if target_kb and target_kb.isdigit():
             target_bytes = int(target_kb) * 1024
             quality = 95
+            # 🚀 UNIVERSAL: Gradual Step Down for Image
             while quality > 15:
                 img_byte_arr.seek(0)
                 img_byte_arr.truncate()
@@ -633,6 +634,7 @@ def process_image_crop():
                     break
                 quality -= 5
                 
+            # 🚀 UNIVERSAL STRICT PADDING (\x00)
             if comp_mode == 'strict':
                 current_size = img_byte_arr.tell()
                 if current_size < target_bytes:
