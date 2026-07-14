@@ -15,11 +15,11 @@ from docx import Document
 
 app = Flask(__name__)
 
-# 🛡️ ANTI-HANG SECURITY: ५० MB ची फाईल साईझ लिमिट
+# 🛡️ ANTI-HANG SECURITY: 50 MB Limit
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
 # ==========================================
-# 🌐 FRONTEND PAGE ROUTES (मेनू आणि पेजेस)
+# 🌐 FRONTEND PAGE ROUTES
 # ==========================================
 @app.route('/', methods=['GET'])
 def index():
@@ -54,7 +54,7 @@ def image_crop():
     return render_template('image_crop.html')
 
 # ==========================================
-# 🗜️ ENGINE 1: PDF COMPRESSOR
+# 🗜️ ENGINE 1: PDF COMPRESSOR (Fixed Safe & Strict Mode)
 # ==========================================
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
@@ -66,6 +66,9 @@ def compress_batch():
             return jsonify({"error": "No files selected"}), 400
 
         target_kb = int(request.form.get('target_kb', 500))
+        comp_mode = request.form.get('comp_mode', 'safe')
+        target_size_bytes = target_kb * 1024
+        
         total_original_size = 0
         total_new_size = 0
         compressed_files = []
@@ -84,8 +87,15 @@ def compress_batch():
 
             pdf_bytes = doc.tobytes(garbage=4, deflate=True, clean=True)
 
-            if len(pdf_bytes) / 1024 > target_kb:
-                settings = [(1.2, 55), (1.0, 45), (0.8, 35), (0.7, 25), (0.6, 15)]
+            if len(pdf_bytes) > target_size_bytes:
+                # 🚀 FIXED: 15 Gradual Steps (Slow scale-down to hit target accurately)
+                settings = [
+                    (1.5, 85), (1.5, 70), (1.5, 55),
+                    (1.2, 80), (1.2, 65), (1.2, 45),
+                    (1.0, 75), (1.0, 55), (1.0, 35),
+                    (0.8, 65), (0.8, 45), (0.8, 25),
+                    (0.6, 50), (0.6, 30), (0.5, 15)
+                ]
                 for zoom, quality in settings:
                     new_doc = fitz.open()
                     for page_num in range(len(doc)):
@@ -99,12 +109,17 @@ def compress_batch():
 
                     pdf_bytes = new_doc.tobytes(garbage=4, deflate=True)
                     new_doc.close()
-                    if len(pdf_bytes) / 1024 <= target_kb:
+                    # Stop as soon as we drop below target
+                    if len(pdf_bytes) <= target_size_bytes:
                         break
             doc.close()
 
-            # (Removed Padding Logic: Corrupts files and adds no value.)
-            
+            # 🚀 FIXED: Strict Mode Padding (Uses \x00 for binary zero bytes)
+            if comp_mode == 'strict':
+                if len(pdf_bytes) < target_size_bytes:
+                    padding_needed = target_size_bytes - len(pdf_bytes)
+                    pdf_bytes += b'\x00' * padding_needed
+
             total_new_size += len(pdf_bytes) / 1024
             compressed_files.append((filename, pdf_bytes))
 
@@ -136,7 +151,7 @@ def compress_batch():
         gc.collect()
 
 # ==========================================
-# 🖼️ ENGINE 2: IMAGES TO PDF
+# 🖼️ ENGINE 2: IMAGES TO PDF (Fixed Safe & Strict Mode)
 # ==========================================
 @app.route('/images_to_pdf', methods=['POST'])
 def images_to_pdf():
@@ -144,7 +159,10 @@ def images_to_pdf():
         if 'files' not in request.files:
             return jsonify({"error": "No files uploaded"}), 400
         files = request.files.getlist('files')
+        
         target_kb = int(request.form.get('target_kb', 500))
+        comp_mode = request.form.get('comp_mode', 'safe') # 🚀 Added Mode Capture
+        target_size_bytes = target_kb * 1024
         
         total_image_size = 0
         new_doc = fitz.open()
@@ -168,8 +186,14 @@ def images_to_pdf():
         generated_pdf_kb = len(original_pdf_bytes) / 1024
         pdf_bytes = original_pdf_bytes 
         
-        if len(pdf_bytes) / 1024 > target_kb:
-            settings = [(1.0, 90), (0.9, 85), (0.8, 80)]
+        if len(pdf_bytes) > target_size_bytes:
+            # 🚀 FIXED: Gradual Steps for Images to PDF
+            settings = [
+                (1.0, 90), (1.0, 75), (1.0, 60), (1.0, 45),
+                (0.9, 80), (0.9, 60), (0.9, 40),
+                (0.8, 75), (0.8, 50), (0.8, 30),
+                (0.7, 50), (0.7, 30), (0.6, 20)
+            ]
             for zoom, quality in settings:
                 comp_doc = fitz.open()
                 for page_num in range(len(new_doc)):
@@ -182,11 +206,15 @@ def images_to_pdf():
                     comp_doc.insert_pdf(fitz.open("pdf", img_pdf_bytes))
                 pdf_bytes = comp_doc.tobytes(garbage=4, deflate=True)
                 comp_doc.close()
-                if len(pdf_bytes) / 1024 <= target_kb:
+                if len(pdf_bytes) <= target_size_bytes:
                     break
         new_doc.close()
 
-        # (Removed Padding Logic: Corrupts files and adds no value.)
+        # 🚀 FIXED: Strict Mode for Images to PDF
+        if comp_mode == 'strict':
+            if len(pdf_bytes) < target_size_bytes:
+                padding_needed = target_size_bytes - len(pdf_bytes)
+                pdf_bytes += b'\x00' * padding_needed
 
         return jsonify({
             "success": True,
@@ -265,7 +293,6 @@ def pdf_to_word():
         
         file.save(temp_pdf.name)
         
-        # Verify PDF is valid before converting
         try:
              doc_check = fitz.open(temp_pdf.name)
              if doc_check.is_encrypted:
@@ -311,22 +338,19 @@ def word_to_pdf():
         original_kb = len(file.read()) / 1024
         file.seek(0)
         
-        # Create temp files
         temp_dir = tempfile.gettempdir()
         temp_docx = tempfile.NamedTemporaryFile(delete=False, suffix=".docx", dir=temp_dir)
         file.save(temp_docx.name)
         temp_pdf_name = temp_docx.name.replace(".docx", ".pdf")
         
-        # 1. Try Advanced High-Quality Conversion (LibreOffice)
         conversion_success = False
         command = 'libreoffice'
         if platform.system() == 'Windows':
-            command = 'soffice' # Windows command
+            command = 'soffice'
         elif platform.system() == 'Darwin':
-            command = '/Applications/LibreOffice.app/Contents/MacOS/soffice' # Mac command
+            command = '/Applications/LibreOffice.app/Contents/MacOS/soffice'
             
         try:
-            # Run background LibreOffice converter
             subprocess.run([
                 command, '--headless', '--convert-to', 'pdf', '--outdir', temp_dir, temp_docx.name
             ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -338,7 +362,6 @@ def word_to_pdf():
         except Exception as e:
             print(f"LibreOffice failed or not installed. Fallback to basic engine. Error: {e}")
             
-        # 2. Fallback to Basic Text Extraction (If LibreOffice fails/missing)
         if not conversion_success:
             doc = Document(temp_docx.name)
             pdf_doc = fitz.open()
@@ -366,7 +389,6 @@ def word_to_pdf():
     except Exception as e:
         return jsonify({"error": f"Word to PDF Error: {str(e)}"}), 500
     finally:
-        # Cleanup ALL temp files safely
         if 'temp_docx' in locals() and os.path.exists(temp_docx.name):
             try: os.remove(temp_docx.name)
             except: pass
@@ -555,7 +577,6 @@ def process_image_crop():
             img = img.convert("RGB")
             original_format = 'JPEG'
 
-        # 1. Cropping Engine Execution
         x = int(float(request.form.get('x', 0)))
         y = int(float(request.form.get('y', 0)))
         w = int(float(request.form.get('width', img.width)))
@@ -564,7 +585,6 @@ def process_image_crop():
         if w > 0 and h > 0:
             img = img.crop((x, y, x + w, y + h))
 
-        # 2. Magic Enhance Matrix (Auto Clean & Sharp Filter)
         if request.form.get('enhance') == 'true':
             enhancer = ImageEnhance.Sharpness(img)
             img = enhancer.enhance(1.6) 
@@ -573,7 +593,6 @@ def process_image_crop():
             enhancer_color = ImageEnhance.Color(img)
             img = enhancer_color.enhance(1.1)
 
-        # 3. Dynamic Unit Resolution Target Parser
         unit = request.form.get('unit', 'px')
         raw_w = request.form.get('target_w', '')
         raw_h = request.form.get('target_h', '')
@@ -599,9 +618,8 @@ def process_image_crop():
         if target_w and target_h and target_w > 0 and target_h > 0:
             img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
 
-        # 4. Byte Clamping Compression (Safe Mode and Strict Size Mode hybrid)
         target_kb = request.form.get('target_kb')
-        comp_mode = request.form.get('comp_mode', 'safe') # 🚀 UI मधून Safe किंवा Strict मोड घेईल
+        comp_mode = request.form.get('comp_mode', 'safe') 
         img_byte_arr = io.BytesIO()
         
         if target_kb and target_kb.isdigit():
@@ -615,11 +633,10 @@ def process_image_crop():
                     break
                 quality -= 5
                 
-            # 🚀 STRICT MODE LOGIC: जर फाईल टार्गेटपेक्षा लहान असेल, तर कचरा (Zero bytes) भरून साईझ तंतोतंत वाढवा
             if comp_mode == 'strict':
                 current_size = img_byte_arr.tell()
                 if current_size < target_bytes:
-                    img_byte_arr.write(b'\0' * (target_bytes - current_size))
+                    img_byte_arr.write(b'\x00' * (target_bytes - current_size))
         else:
             img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
