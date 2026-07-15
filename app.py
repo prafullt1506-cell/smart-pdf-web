@@ -88,13 +88,13 @@ def compress_batch():
             pdf_bytes = doc.tobytes(garbage=4, deflate=True, clean=True)
 
             if len(pdf_bytes) > target_size_bytes:
-                # 🚀 UNIVERSAL: 16 Smooth Gradual Steps
+                # 🚀 EXTREME FALLBACKS: To strictly guarantee target match!
                 settings = [
-                    (1.2, 85), (1.2, 65), (1.2, 45),
-                    (1.0, 85), (1.0, 65), (1.0, 45), (1.0, 25),
+                    (1.2, 85), (1.2, 65), (1.0, 85), (1.0, 65), (1.0, 45),
                     (0.8, 70), (0.8, 50), (0.8, 30),
                     (0.6, 60), (0.6, 40), (0.6, 20),
-                    (0.4, 50), (0.4, 30), (0.4, 15)
+                    (0.4, 50), (0.4, 30), (0.4, 15),
+                    (0.2, 30), (0.2, 10), (0.1, 5) # Extreme Low Levels Added!
                 ]
                 for zoom, quality in settings:
                     new_doc = fitz.open()
@@ -186,13 +186,13 @@ def images_to_pdf():
         pdf_bytes = original_pdf_bytes 
         
         if len(pdf_bytes) > target_size_bytes:
-            # 🚀 UNIVERSAL: 16 Smooth Gradual Steps
+            # 🚀 EXTREME FALLBACKS FOR IMAGE TO PDF
             settings = [
-                (1.2, 85), (1.2, 65), (1.2, 45),
-                (1.0, 85), (1.0, 65), (1.0, 45), (1.0, 25),
-                (0.8, 70), (0.8, 50), (0.8, 30),
-                (0.6, 60), (0.6, 40), (0.6, 20),
-                (0.4, 50), (0.4, 30), (0.4, 15)
+                (1.0, 90), (1.0, 75), (1.0, 60), (1.0, 45),
+                (0.8, 80), (0.8, 60), (0.8, 40), (0.8, 20),
+                (0.6, 70), (0.6, 50), (0.6, 30), (0.6, 15),
+                (0.4, 60), (0.4, 40), (0.4, 20), (0.4, 10),
+                (0.2, 50), (0.2, 30), (0.2, 10), (0.1, 5) # Extreme Low Levels Added!
             ]
             for zoom, quality in settings:
                 comp_doc = fitz.open()
@@ -326,7 +326,7 @@ def pdf_to_word():
         gc.collect()
 
 # ==========================================
-# 📑 ENGINE 5: WORD TO PDF
+# 📑 ENGINE 5: WORD TO PDF (Advanced Pro Version with Fallback)
 # ==========================================
 @app.route('/word_to_pdf', methods=['POST'])
 def word_to_pdf():
