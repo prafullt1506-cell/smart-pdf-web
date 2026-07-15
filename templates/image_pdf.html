@@ -4,111 +4,198 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image 🔄 PDF Converter - Premium Edition</title>
+    
+    <!-- Premium Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Tailwind Config for Advanced Animations & Theme -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { darkBg: '#090d16', },
+                    animation: {
+                        blob: "blob 7s infinite",
+                        shine: "shine 1.5s ease-in-out infinite"
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" }
+                        },
+                        shine: {
+                            "0%": { transform: "translateX(-100%) skewX(-15deg)" },
+                            "100%": { transform: "translateX(200%) skewX(-15deg)" }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
         /* Sleek Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Glassmorphism Background */
+        /* Ultra Premium Glassmorphism Background */
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
+        .dark .glass-card {
+            background: rgba(20, 27, 45, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-50 via-slate-50 to-blue-50 min-h-screen flex items-center justify-center font-sans p-6 relative">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen flex items-center justify-center font-sans p-6 relative overflow-x-hidden">
 
-    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-md text-slate-700 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:bg-white hover:shadow-md hover:text-sky-600 transition-all font-semibold text-sm">
-        <i class="fa-solid fa-arrow-left"></i> Dashboard
-    </a>
+    <!-- 🌟 ANIMATED BACKGROUND BLOBS (Purple/Sky Theme for Image/PDF) -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-purple-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-purple-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-sky-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-sky-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-indigo-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000 dark:bg-indigo-900 dark:opacity-20 dark:mix-blend-screen"></div>
+    </div>
 
-    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
+    <!-- Top Navigation Elements -->
+    <div class="absolute top-6 left-6 z-50">
+        <a href="/" class="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700 hover:shadow-md hover:text-sky-600 dark:hover:text-sky-400 transition-all font-bold text-sm">
+            <i class="fa-solid fa-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="absolute top-6 right-6 z-50">
+        <button id="theme-toggle" class="p-3 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group backdrop-blur-md">
+            <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400 group-hover:rotate-12 transition-transform"></i>
+        </button>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500 z-10">
         
+        <!-- Header -->
         <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px] uppercase tracking-widest mb-4 border border-emerald-100 shadow-sm">
+            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-4 border border-emerald-100 dark:border-emerald-900/50 shadow-sm">
                 <i class="fa-solid fa-check-circle"></i> Zero Quality Loss Engine
             </span>
-            <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 tracking-tight transition-all">Images to PDF</h1>
-            <p id="toolSub" class="text-sm text-slate-500 mt-2 font-medium">Merge high-resolution images into a perfectly structured PDF document.</p>
+            <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight transition-all">Images to PDF</h1>
+            <p id="toolSub" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Merge high-resolution images into a perfectly structured PDF document.</p>
         </div>
 
+        <!-- Mode Switcher -->
         <div class="flex justify-center mb-8 relative">
             <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-slate-200 border-dashed"></div>
+                <div class="w-full border-t border-slate-200 dark:border-slate-700 border-dashed"></div>
             </div>
-            <button onclick="toggleSwapMode()" class="relative group bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full shadow-lg hover:shadow-slate-500/30 transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700">
+            <button onclick="toggleSwapMode()" class="relative group bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold px-6 py-2.5 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700 dark:border-sky-500">
                 <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700 ease-in-out"></i> 
                 <span>Switch Conversion Mode</span>
             </button>
         </div>
 
-        <div id="targetBox" class="bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center mb-6 shadow-sm transition-all duration-300">
-            <div class="flex items-center space-x-3">
-                <div class="bg-sky-100 p-2 rounded-lg text-sky-600"><i class="fa-solid fa-compress"></i></div>
-                <label class="font-bold text-slate-700 text-sm">Target Size (KB):</label>
-                <input type="number" id="target_kb" value="500" class="border border-slate-200 bg-slate-50 rounded-lg px-3 py-1.5 w-24 text-center focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white font-black text-slate-800 transition-all">
+        <!-- 🚀 NEW: Target Size & Safe/Strict Mode Container (Animated Show/Hide) -->
+        <div id="targetBox" class="transition-all duration-300 overflow-hidden" style="max-height: 500px; opacity: 1;">
+            
+            <!-- Target KB Input -->
+            <div class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex justify-between items-center mb-4 shadow-sm backdrop-blur-sm transition-colors duration-500">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-sky-100 dark:bg-sky-500/20 p-2 rounded-lg text-sky-600 dark:text-sky-400"><i class="fa-solid fa-compress"></i></div>
+                    <label class="font-bold text-slate-700 dark:text-slate-300 text-sm">Target Size (KB):</label>
+                    <input type="number" id="target_kb" value="500" class="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 rounded-lg px-3 py-1.5 w-24 text-center focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white dark:focus:bg-slate-800 font-black text-slate-800 dark:text-white transition-all">
+                </div>
             </div>
-            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-wider">Smart Padding</span>
+
+            <!-- SAFE / STRICT MODE TOGGLE -->
+            <div class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
+                    <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (No Corrupt)</button>
+                    <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">Strict (Exact Size)</button>
+                </div>
+                <p id="modeDesc" class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium">Safe Mode: Reaches close to target size without filling garbage bytes.</p>
+            </div>
+
         </div>
 
         <input type="file" id="fileInput" multiple class="hidden">
 
-        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 hover:bg-sky-50/30 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
-            <div class="text-5xl text-slate-300 group-hover:text-sky-500 group-hover:scale-110 transition-all duration-300 mb-4">
+        <!-- Upload Dropzone -->
+        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-500 bg-white/50 dark:bg-slate-900/50 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group backdrop-blur-sm">
+            <div class="text-5xl text-slate-300 dark:text-slate-600 group-hover:text-sky-500 group-hover:scale-110 transition-all duration-300 mb-4">
                 <i id="dropzoneIcon" class="fa-solid fa-cloud-arrow-up"></i>
             </div>
-            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 mb-1">Drag & Drop or Click to Upload</p>
+            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 dark:text-slate-200 mb-1">Drag & Drop or Click to Upload</p>
             <p class="text-xs text-slate-400 font-medium">Supports high-res JPG and PNG formats</p>
         </div>
 
+        <!-- Queue Header -->
         <div class="flex justify-between items-center px-2 mb-3">
-            <span class="font-extrabold text-slate-800 text-[11px] tracking-widest uppercase">Processing Queue</span>
-            <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">Clear All</button>
+            <span class="font-extrabold text-slate-800 dark:text-slate-300 text-[11px] tracking-widest uppercase">Processing Queue</span>
+            <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-bold text-xs transition-colors">Clear All</button>
         </div>
 
-        <div id="queueBox" class="bg-white border border-slate-100 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner">
-            <p id="emptyMsg" class="text-center text-slate-400 font-medium text-xs mt-10">No files selected yet.</p>
+        <!-- Queue Box -->
+        <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner backdrop-blur-sm transition-colors duration-500">
+            <p id="emptyMsg" class="text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>
         </div>
 
-        <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-6 overflow-hidden transition-colors duration-500">
             <div id="progressBar" class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 h-full rounded-full w-0 transition-all duration-300 relative">
                 <div class="absolute top-0 left-0 bottom-0 right-0 bg-white/20 animate-pulse"></div>
             </div>
         </div>
 
+        <!-- Execute Button -->
         <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-sky-500/30 transition-all duration-300 transform hover:-translate-y-1">
             <span class="relative z-10 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION
             </span>
-            <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
+            <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
         </button>
 
-        <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95">
+        <!-- 🌟 Success Popup (Glassmorphism + Dark Mode Ready) -->
+        <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
             
             <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
                 <i class="fa-solid fa-check text-3xl"></i>
             </div>
             
-            <h2 class="text-2xl font-black text-slate-800 mb-6 text-center tracking-tight">Conversion Successful!</h2>
+            <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 text-center tracking-tight">Conversion Successful!</h2>
             
             <div class="flex space-x-4 w-full mb-6">
-                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
-                    <p id="lblLeft" class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Input Size</p>
-                    <p id="valLeft" class="text-slate-700 text-2xl font-black">0 KB</p>
+                <div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 text-center transition-colors duration-500">
+                    <p id="lblLeft" class="text-slate-400 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Input Size</p>
+                    <p id="valLeft" class="text-slate-700 dark:text-slate-300 text-2xl font-black">0 KB</p>
                 </div>
-                <div class="flex-1 bg-sky-50 border border-sky-100 rounded-2xl p-4 text-center">
+                <div class="flex-1 bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-900/50 rounded-2xl p-4 text-center transition-colors duration-500">
                     <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Output Size</p>
-                    <p id="valRight" class="text-sky-700 text-2xl font-black">0 KB</p>
+                    <p id="valRight" class="text-sky-700 dark:text-sky-400 text-2xl font-black">0 KB</p>
                 </div>
             </div>
 
-            <div id="popSave" class="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 text-xs tracking-wide">
+            <div id="popSave" class="w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-900/50 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 dark:text-emerald-400 text-xs tracking-wide transition-colors duration-500">
                 ✨ High Definition PDF File Matrix Ready!
             </div>
 
@@ -118,14 +205,62 @@
     </div>
 
     <script>
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark'); themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
+        } else { html.classList.remove('dark'); }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark'); themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light'); themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
+            }
+            setMode(compMode); // Refresh UI buttons
+            updateQueueUI();
+        });
+
+        // --- Core Application Logic ---
         let selectedFiles = [];
         let currentMode = 'img_to_pdf';
+        let compMode = 'safe'; // 🚀 Added State for Compression Mode
+
+        // 🚀 Switch Safe / Strict Mode Function
+        function setMode(mode) {
+            compMode = mode;
+            const safeBtn = document.getElementById('modeSafeBtn');
+            const strictBtn = document.getElementById('modeStrictBtn');
+            const badge = document.getElementById('modeBadge');
+            const desc = document.getElementById('modeDesc');
+
+            const isDark = html.classList.contains('dark');
+
+            if(mode === 'strict') {
+                strictBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-sky-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-sky-600 shadow-sm border border-sky-200";
+                safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
+                badge.innerText = "Strict";
+                badge.className = isDark ? "ml-2 text-[9px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-sky-100 text-sky-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
+                desc.innerText = "Strict Mode: Forces exact target size using zero byte padding if needed.";
+            } else {
+                safeBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-emerald-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-emerald-600 shadow-sm border border-emerald-200";
+                strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
+                badge.innerText = "Safe";
+                badge.className = isDark ? "ml-2 text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
+                desc.innerText = "Safe Mode: Reaches close to target size without filling garbage bytes.";
+            }
+        }
+        
+        // Initialize Default Mode
+        setMode('safe');
 
         function toggleSwapMode() {
             const icon = document.getElementById('swapIcon');
-            // Smooth 180deg spin for the icon
             icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
-            
             clearQueue();
 
             const targetBox = document.getElementById('targetBox');
@@ -137,9 +272,12 @@
                 document.getElementById('dropzoneText').innerText = "Click to upload a single PDF document";
                 document.getElementById('dropzoneIcon').className = "fa-solid fa-file-pdf text-rose-400";
                 
-                // Smooth hide
+                // 🚀 Hide Settings Panel smoothly
                 targetBox.style.opacity = '0';
-                setTimeout(() => targetBox.classList.add('hidden'), 300);
+                targetBox.style.maxHeight = '0px';
+                targetBox.style.marginBottom = '0px';
+                targetBox.style.padding = '0px';
+                targetBox.style.border = 'none';
             } else {
                 currentMode = 'img_to_pdf';
                 document.getElementById('toolTitle').innerText = "Images to PDF";
@@ -147,9 +285,10 @@
                 document.getElementById('dropzoneText').innerText = "Drag & Drop or Click to Upload";
                 document.getElementById('dropzoneIcon').className = "fa-solid fa-cloud-arrow-up text-sky-400";
                 
-                // Smooth show
-                targetBox.classList.remove('hidden');
-                setTimeout(() => targetBox.style.opacity = '1', 50);
+                // 🚀 Show Settings Panel smoothly
+                targetBox.style.maxHeight = '500px';
+                targetBox.style.opacity = '1';
+                targetBox.style.marginBottom = '24px'; // equivalent to mb-6
             }
         }
 
@@ -189,21 +328,23 @@
 
         function updateQueueUI() {
             const box = document.getElementById('queueBox');
+            const isDark = html.classList.contains('dark');
+            
             if (selectedFiles.length === 0) {
-                box.innerHTML = '<p class="text-center text-slate-400 font-medium text-xs mt-10">No files selected yet.</p>';
+                box.innerHTML = `<p class="text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>`;
                 return;
             }
             box.innerHTML = '';
             selectedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl p-2.5 mb-2 transition-colors';
+                item.className = 'flex justify-between items-center bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 rounded-xl p-2.5 mb-2 transition-colors';
                 let icon = currentMode === 'img_to_pdf' ? '<i class="fa-regular fa-image text-sky-500 mr-2"></i>' : '<i class="fa-regular fa-file-pdf text-rose-500 mr-2"></i>';
                 item.innerHTML = `
                     <div class="flex items-center w-4/5">
                         ${icon}
-                        <span class="text-xs font-bold text-slate-700 truncate">${file.name}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">${file.name}</span>
                     </div>
-                    <button onclick="removeFile(${index})" class="text-slate-300 hover:text-red-500 transition-colors px-2"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="removeFile(${index})" class="text-slate-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2"><i class="fa-solid fa-xmark"></i></button>
                 `;
                 box.appendChild(item);
             });
@@ -227,6 +368,7 @@
             let endpoint = '';
             if (currentMode === 'img_to_pdf') {
                 formData.append('target_kb', document.getElementById('target_kb').value);
+                formData.append('comp_mode', compMode); // 🚀 SEND SELECTED MODE TO BACKEND
                 endpoint = '/images_to_pdf';
             } else {
                 endpoint = '/pdf_to_images';
@@ -252,7 +394,6 @@
         function showPopup(data) {
             const popup = document.getElementById('successPopup');
             popup.classList.remove('hidden');
-            // Slight delay for smooth scale-in animation
             setTimeout(() => {
                 popup.classList.remove('opacity-0', 'scale-95');
                 popup.classList.add('opacity-100', 'scale-100');
@@ -268,11 +409,11 @@
                 document.getElementById('popSave').innerText = "🔥 High-Quality conversion with dual size options ready!";
 
                 dlLayout.innerHTML = `
-                    <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="flex-1 flex flex-col items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl transition-colors text-xs border border-slate-200">
-                        <span>Original HD</span><span class="text-[9px] text-slate-500 mt-0.5">${data.generated_pdf_kb} KB</span>
+                    <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="flex-1 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-2xl transition-colors text-xs border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <span>Original HD</span><span class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">${data.generated_pdf_kb} KB</span>
                     </a>
-                    <a href="data:${data.mime_type};base64,${data.file_data_comp}" download="${data.file_name_comp}" class="flex-1 flex flex-col items-center justify-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl shadow-lg transition-colors text-xs">
-                        <span>Target Match</span><span class="text-[9px] text-slate-400 mt-0.5">${data.new_kb} KB</span>
+                    <a href="data:${data.mime_type};base64,${data.file_data_comp}" download="${data.file_name_comp}" class="flex-1 flex flex-col items-center justify-center bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold py-3 rounded-2xl shadow-lg transition-colors text-xs">
+                        <span>Target Match</span><span class="text-[9px] text-slate-400 dark:text-sky-200 mt-0.5">${data.new_kb} KB</span>
                     </a>
                 `;
             } else {
@@ -283,16 +424,16 @@
                 document.getElementById('popSave').innerText = "✨ Clean high-density image extraction finished perfectly!";
 
                 dlLayout.innerHTML = `
-                    <button onclick="closePopup()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200">Close</button>
-                    <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
+                    <button onclick="closePopup()" class="w-1/3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200 dark:border-slate-700">Close</button>
+                    <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
                         <i class="fa-solid fa-file-zipper text-lg"></i> Download ZIP
                     </a>
                 `;
             }
             
-            // Add a close button for dual mode at the top right of popup
+            // Close button for dual mode at the top right of popup
             if(data.is_dual) {
-                dlLayout.innerHTML += `<button onclick="closePopup()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>`;
+                dlLayout.innerHTML += `<button onclick="closePopup()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>`;
             }
 
             resetBtn();
@@ -306,12 +447,12 @@
                 popup.classList.add('hidden');
                 popup.classList.remove('flex');
                 clearQueue();
-            }, 300); // Wait for transition to finish
+            }, 300);
         }
 
         function resetBtn() {
             const btn = document.getElementById('startBtn');
-            btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION</span><div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>`;
+            btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION</span><div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>`;
             btn.classList.remove("opacity-80", "pointer-events-none");
             document.getElementById('progressBar').style.width = '0%';
         }
