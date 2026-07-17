@@ -1,253 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Security Suite - Premium Edition</title>
+    <title>Pro Secure PDF | Smart Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }, colors: { darkBg: '#090d16' }, animation: { blob: "blob 7s infinite", shine: "shine 1.5s ease-in-out infinite" }, keyframes: { blob: { "0%": { transform: "translate(0px, 0px) scale(1)" }, "33%": { transform: "translate(30px, -50px) scale(1.1)" }, "66%": { transform: "translate(-20px, 20px) scale(0.9)" }, "100%": { transform: "translate(0px, 0px) scale(1)" } }, shine: { "0%": { transform: "translateX(-100%) skewX(-15deg)" }, "100%": { transform: "translateX(200%) skewX(-15deg)" } } } } }
+    </script>
     <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); }
+        .dark .glass-card { background: rgba(20, 27, 45, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); }
+        .animation-delay-2000 { animation-delay: 2s; } .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-50 via-slate-50 to-red-50 min-h-screen flex items-center justify-center font-sans p-6 relative">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen flex font-sans relative overflow-x-hidden">
 
-    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-md text-slate-700 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:bg-white hover:shadow-md hover:text-rose-600 transition-all font-semibold text-sm">
-        <i class="fa-solid fa-arrow-left"></i> Dashboard
-    </a>
-
-    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
-        
-        <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-widest mb-4 border border-rose-100 shadow-sm">
-                <i class="fa-solid fa-shield-halved"></i> Military Grade Encryption Active
-            </span>
-            <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 tracking-tight transition-all">Protect PDF</h1>
-            <p id="toolSub" class="text-sm text-slate-500 mt-2 font-medium">Encrypt your PDF architecture with a strong custom security key.</p>
-        </div>
-
-        <div class="flex justify-center mb-8 relative">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-slate-200 border-dashed"></div>
-            </div>
-            <button onclick="toggleSwapMode()" class="relative group bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full shadow-lg hover:shadow-slate-500/30 transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700">
-                <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700 ease-in-out"></i> 
-                <span>Switch Security Mode</span>
-            </button>
-        </div>
-
-        <input type="file" id="fileInput" class="hidden" accept=".pdf">
-
-        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 hover:border-rose-400 bg-slate-50/50 hover:bg-rose-50/30 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
-            <div class="text-5xl text-slate-300 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-300 mb-4">
-                <i id="dropzoneIcon" class="fa-solid fa-lock text-rose-400"></i>
-            </div>
-            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 mb-1">Click to Upload target PDF File</p>
-        </div>
-
-        <div id="fileDisplay" class="hidden flex justify-between items-center bg-white border border-slate-100 rounded-xl p-4 mb-6 shadow-sm">
-            <div class="flex items-center w-4/5">
-                <i class="fa-solid fa-file-pdf text-rose-500 mr-3 text-lg"></i>
-                <span id="fileName" class="text-sm font-bold text-slate-700 truncate">filename.pdf</span>
-            </div>
-            <button onclick="clearFile()" class="text-slate-300 hover:text-red-500 transition-colors px-2"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-6 shadow-sm">
-            <label id="pwdLabel" class="font-bold text-slate-700 text-sm mb-2 block">Set Security Password:</label>
-            <div class="relative">
-                <span class="absolute inset-y-0 left-0 flex items-center进 left-0 pl-4 text-slate-400">
-                    <i class="fa-solid fa-key"></i>
-                </span>
-                <input type="password" id="pdfPassword" placeholder="Enter security passphrase" class="w-full border border-slate-200 bg-slate-50 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white font-medium text-slate-800 transition-all">
-            </div>
-        </div>
-
-        <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
-            <div id="progressBar" class="bg-gradient-to-r from-rose-400 via-red-500 to-pink-500 h-full rounded-full w-0 transition-all duration-300 relative"></div>
-        </div>
-
-        <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-rose-500 to-red-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-rose-500/30 transition-all duration-300 transform hover:-translate-y-1">
-            <span id="btnText" class="relative z-10 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-lock text-yellow-200"></i> ENCRYPT DOCUMENT
-            </span>
+    <div class="absolute top-6 right-6 z-50">
+        <button id="theme-toggle" class="p-3 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group backdrop-blur-md">
+            <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400 group-hover:rotate-12 transition-transform"></i>
         </button>
+    </div>
 
-        <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95">
-            <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
-                <i class="fa-solid fa-check text-3xl"></i>
+    <!-- 🌟 ANIMATED BACKGROUND (Security Slate Theme) -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-slate-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-slate-800 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-gray-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-gray-800 dark:opacity-30 dark:mix-blend-screen"></div>
+    </div>
+
+    <!-- 🚀 LEFT SIDEBAR -->
+    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 dark:bg-slate-950 text-white p-12 flex-col justify-between relative overflow-hidden z-10 shadow-2xl transition-colors duration-500">
+        <div class="absolute -top-20 -left-20 w-80 h-80 bg-slate-500/10 rounded-full filter blur-3xl"></div>
+        <div class="relative z-10">
+            <a href="/" class="inline-block mb-6 px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold backdrop-blur-sm transition border border-white/10"><i class="fa-solid fa-arrow-left mr-1"></i> Dashboard</a><br>
+            <span class="bg-slate-500/20 text-slate-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Premium Security</span>
+            <h2 class="text-4xl font-black tracking-tight mt-4 text-slate-300 drop-shadow-lg">Protect <i class="fa-solid fa-right-left text-2xl mx-1 opacity-50"></i> Unlock</h2>
+            <p class="text-slate-400 text-sm mt-2">Document Encryption Engine</p>
+        </div>
+        <div class="my-auto space-y-8 relative z-10">
+            <div class="space-y-2">
+                <h3 class="text-3xl font-extrabold leading-tight text-white">Keep your private data totally secure.</h3>
+                <p class="text-slate-400 text-base">Inject a strong password to lock a PDF, or safely strip existing passwords from locked files.</p>
             </div>
-            <h2 id="popupTitle" class="text-2xl font-black text-slate-800 mb-6 text-center tracking-tight">PDF Secured Successfully!</h2>
-            
-            <div class="flex space-x-4 w-full mb-6">
-                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
-                    <p class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Input Size</p>
-                    <p id="valLeft" class="text-slate-700 text-xl font-black">0 KB</p>
+            <div class="space-y-4 mt-8">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 shadow-sm">
+                    <span class="text-slate-300 text-2xl">🔒</span>
+                    <div><h4 class="font-bold text-slate-200 text-sm">Protect Mode</h4><p class="text-xs text-slate-400 mt-1">Encrypts the file so it cannot be viewed or edited without the password.</p></div>
                 </div>
-                <div class="flex-1 bg-rose-50 border border-rose-100 rounded-2xl p-4 text-center">
-                    <p class="text-rose-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Output Size</p>
-                    <p id="valRight" class="text-slate-700 text-xl font-black">0 KB</p>
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 shadow-sm">
+                    <span class="text-gray-400 text-2xl">🔓</span>
+                    <div><h4 class="font-bold text-slate-200 text-sm">Unlock Mode</h4><p class="text-xs text-slate-400 mt-1">Removes the security lock permanently (You must know the password first).</p></div>
                 </div>
-            </div>
-
-            <div id="popSave" class="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 text-xs tracking-wide">
-                ✨ Security Matrix Compilation finished safely!
-            </div>
-
-            <div class="flex w-full space-x-3">
-                <button onclick="closePopup()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200">Close</button>
-                <a id="downloadLnk" href="#" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
-                    <i class="fa-solid fa-download text-lg"></i> Download File
-                </a>
             </div>
         </div>
+        <div class="text-xs text-slate-500 relative z-10 mt-8">&copy; 2026 Smart Toolkit.</div>
+    </div>
 
+    <!-- RIGHT MAIN WORKSPACE -->
+    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-transparent relative z-10">
+        <div class="glass-card w-full max-w-[550px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
+            
+            <div class="text-center mb-8">
+                <h1 id="toolTitle" class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">Protect PDF</h1>
+            </div>
+
+            <!-- Mode Switcher -->
+            <div class="flex justify-center mb-8 relative">
+                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200 dark:border-slate-700 border-dashed"></div></div>
+                <button onclick="toggleMode()" class="relative group bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3 text-xs uppercase border border-slate-700">
+                    <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700"></i> <span>Switch Mode</span>
+                </button>
+            </div>
+
+            <input type="file" id="pdfInput" accept=".pdf" class="hidden">
+            <div onclick="document.getElementById('pdfInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-slate-500 bg-white/50 dark:bg-slate-900/50 p-8 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
+                <div id="dropIcon" class="text-5xl text-slate-300 dark:text-slate-600 group-hover:text-slate-500 group-hover:scale-110 transition-all duration-300 mb-4"><i class="fa-solid fa-lock"></i></div>
+                <p id="dropText" class="text-sm font-extrabold text-slate-700 dark:text-slate-200">Upload PDF to Protect</p>
+            </div>
+
+            <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl p-3 mb-4 shadow-inner">
+                <p class="text-center text-slate-400 text-xs py-2">No file selected.</p>
+            </div>
+
+            <!-- Password Input -->
+            <div class="mb-6 relative">
+                <label class="font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider block mb-2">Password:</label>
+                <div class="relative">
+                    <input type="password" id="pdfPassword" placeholder="Enter password..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-slate-500 outline-none pr-10 shadow-sm">
+                    <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"><i id="eyeIcon" class="fa-solid fa-eye"></i></button>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-6"><div id="progressBar" class="bg-slate-600 h-full rounded-full w-0 transition-all duration-300"></div></div>
+
+            <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-black text-lg py-4 rounded-2xl shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <span id="btnText" class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-lock"></i> SECURE PDF</span>
+            </button>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
+                <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-white shadow-lg mb-6"><i class="fa-solid fa-check text-3xl"></i></div>
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 text-center tracking-tight">Operation Successful!</h2>
+                <div class="flex w-full space-x-3 mt-6" id="downloadLayout">
+                    <button onclick="closePopup()" class="w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 rounded-2xl text-sm">Close</button>
+                    <a id="downloadBtn" href="#" class="w-2/3 flex items-center justify-center gap-2 bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg text-sm"><i class="fa-solid fa-download"></i> Download</a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        let selectedFile = null;
-        let currentMode = 'protect'; // Engine mode variable tracker
+        const themeToggleBtn = document.getElementById('theme-toggle'); const themeIcon = document.getElementById('theme-icon'); const html = document.documentElement;
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { html.classList.add('dark'); themeIcon.classList.replace('fa-moon', 'fa-sun'); }
+        themeToggleBtn.addEventListener('click', () => { html.classList.toggle('dark'); if (html.classList.contains('dark')) { localStorage.setItem('theme', 'dark'); themeIcon.classList.replace('fa-moon', 'fa-sun'); } else { localStorage.setItem('theme', 'light'); themeIcon.classList.replace('fa-sun', 'fa-moon'); } });
 
-        function toggleSwapMode() {
-            const icon = document.getElementById('swapIcon');
-            icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
-            clearFile();
+        let currentMode = 'protect'; let selectedFile = null;
 
-            if (currentMode === 'protect') {
-                currentMode = 'unlock';
-                document.getElementById('toolTitle').innerText = "Unlock PDF";
-                document.getElementById('toolSub').innerText = "Decrypt and completely remove locks from an encrypted PDF.";
-                document.getElementById('dropzoneText').innerText = "Click to upload an Encrypted PDF File";
-                document.getElementById('dropzoneIcon').className = "fa-solid fa-lock-open text-emerald-400";
-                document.getElementById('pwdLabel').innerText = "Enter Existing Password:";
-                document.getElementById('pdfPassword').placeholder = "Enter password to decrypt";
-                document.getElementById('btnText').innerHTML = `<i class="fa-solid fa-lock-open text-yellow-200"></i> DECRYPT DOCUMENT`;
-            } else {
-                currentMode = 'protect';
-                document.getElementById('toolTitle').innerText = "Protect PDF";
-                document.getElementById('toolSub').innerText = "Encrypt your PDF architecture with a strong custom security key.";
-                document.getElementById('dropzoneText').innerText = "Click to Upload target PDF File";
-                document.getElementById('dropzoneIcon').className = "fa-solid fa-lock text-rose-400";
-                document.getElementById('pwdLabel').innerText = "Set Security Password:";
-                document.getElementById('pdfPassword').placeholder = "Enter security passphrase";
-                document.getElementById('btnText').innerHTML = `<i class="fa-solid fa-lock text-yellow-200"></i> ENCRYPT DOCUMENT`;
-            }
-        }
-
-        function triggerUpload() {
-            document.getElementById('fileInput').click();
-        }
-
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            if(e.target.files.length > 0) {
-                selectedFile = e.target.files[0];
-                document.getElementById('fileName').innerText = selectedFile.name;
-                document.getElementById('fileDisplay').classList.remove('hidden');
-                document.getElementById('fileDisplay').classList.add('flex');
-            }
-        });
-
-        function clearFile() {
-            selectedFile = null;
-            document.getElementById('fileInput').value = '';
-            document.getElementById('fileDisplay').classList.add('hidden');
-            document.getElementById('fileDisplay').classList.remove('flex');
-            document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('pdfPassword').value = '';
-        }
-
-        function processEngine() {
-            if (!selectedFile) {
-                alert("Please select a PDF file first.");
-                return;
-            }
+        function toggleMode() {
+            document.getElementById('swapIcon').style.transform = currentMode === 'protect' ? 'rotate(180deg)' : 'rotate(0deg)';
+            currentMode = currentMode === 'protect' ? 'unlock' : 'protect';
             
-            const pwd = document.getElementById('pdfPassword').value.trim();
-            if (!pwd) {
-                alert("Please type the required password!");
-                return;
-            }
+            document.getElementById('toolTitle').innerText = currentMode === 'protect' ? "Protect PDF" : "Unlock PDF";
+            document.getElementById('dropText').innerText = currentMode === 'protect' ? "Upload PDF to Protect" : "Upload PDF to Unlock";
+            document.getElementById('dropIcon').innerHTML = currentMode === 'protect' ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-unlock-keyhole"></i>';
+            document.getElementById('btnText').innerHTML = currentMode === 'protect' ? '<i class="fa-solid fa-lock"></i> SECURE PDF' : '<i class="fa-solid fa-unlock"></i> REMOVE PASSWORD';
+        }
 
-            const btn = document.getElementById('startBtn');
-            const pBar = document.getElementById('progressBar');
-            
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> COMPILING ENCRYPTION MATRICES...";
-            btn.classList.add("opacity-80", "pointer-events-none");
-            pBar.style.width = '50%';
+        function togglePassword() {
+            const input = document.getElementById('pdfPassword'); const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') { input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
+            else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+        }
 
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            formData.append('password', pwd);
-            formData.append('mode', currentMode);
+        document.getElementById('pdfInput').addEventListener('change', function(e) { if(e.target.files.length > 0) { selectedFile = e.target.files[0]; updateQueueUI(); } });
 
-            fetch('/protect_pdf', { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => {
+        function updateQueueUI() {
+            const box = document.getElementById('queueBox');
+            if(!selectedFile) { box.innerHTML = `<p class="text-center text-slate-400 text-xs py-2">No file selected.</p>`; return; }
+            box.innerHTML = `<div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><div class="flex items-center gap-3 w-4/5"><i class="fa-solid fa-file-pdf text-slate-500 text-2xl shrink-0"></i><span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${selectedFile.name}</span></div><button onclick="selectedFile=null; updateQueueUI();" class="text-slate-400 hover:text-red-500 p-2"><i class="fa-solid fa-xmark"></i></button></div>`;
+        }
+
+        async function processEngine() {
+            if(!selectedFile) return alert("Please select a PDF file first.");
+            const password = document.getElementById('pdfPassword').value;
+            if(!password) return alert("Please enter a password.");
+
+            const btn = document.getElementById('startBtn'); const pBar = document.getElementById('progressBar');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...'; btn.classList.add("opacity-70", "pointer-events-none"); pBar.style.width = '60%'; 
+
+            const formData = new FormData(); formData.append('file', selectedFile); formData.append('password', password); formData.append('mode', currentMode);
+            try {
+                const res = await fetch('/protect_pdf', { method: 'POST', body: formData });
+                const data = await res.json();
                 pBar.style.width = '100%';
-                if (data.success) {
-                    setTimeout(() => { showPopup(data); }, 600);
-                } else {
-                    alert("System Matrix Failed: " + data.error);
-                    resetBtn();
-                }
-            })
-            .catch(() => {
-                alert("A structural security block failed!");
-                resetBtn();
-            });
+                if(res.ok && data.success) { setTimeout(() => { showPopup(data); }, 500); } else { alert('Error: ' + data.error); resetBtn(); }
+            } catch (e) { alert('Connection error!'); resetBtn(); }
         }
 
         function showPopup(data) {
-            const popup = document.getElementById('successPopup');
-            popup.classList.remove('hidden');
-            setTimeout(() => {
-                popup.classList.remove('opacity-0', 'scale-95');
-                popup.classList.add('opacity-100', 'scale-100');
-            }, 10);
-            
-            document.getElementById('valLeft').innerText = data.original_kb + " KB";
-            document.getElementById('valRight').innerText = data.new_kb + " KB";
-
-            if (currentMode === 'protect') {
-                document.getElementById('popupTitle').innerText = "PDF Secured Successfully!";
-                document.getElementById('popSave').innerText = "✨ Military Grade Security Key Compiled Perfectly!";
-            } else {
-                document.getElementById('popupTitle').innerText = "PDF Unlocked Perfectly!";
-                document.getElementById('popSave').innerText = "✨ Encryption removed. File layout is completely open!";
-            }
-
-            const dlLnk = document.getElementById('downloadLnk');
-            dlLnk.href = `data:${data.mime_type};base64,${data.file_data}`;
-            dlLnk.download = data.file_name;
-            
+            const popup = document.getElementById('successPopup'); popup.classList.remove('hidden');
+            setTimeout(() => { popup.classList.remove('opacity-0', 'scale-95'); popup.classList.add('opacity-100', 'scale-100'); }, 10);
+            const dlBtn = document.getElementById('downloadBtn'); dlBtn.href = `data:${data.mime_type};base64,${data.file_data}`; dlBtn.download = data.file_name;
             resetBtn();
         }
-
         function closePopup() {
-            const popup = document.getElementById('successPopup');
-            popup.classList.remove('opacity-100', 'scale-100');
-            popup.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => {
-                popup.classList.add('hidden');
-                popup.classList.remove('flex');
-                clearFile();
-            }, 300);
+            const popup = document.getElementById('successPopup'); popup.classList.remove('opacity-100', 'scale-100'); popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => { popup.classList.add('hidden'); selectedFile = null; updateQueueUI(); document.getElementById('pdfPassword').value = ''; }, 300);
         }
-
         function resetBtn() {
-            const btn = document.getElementById('startBtn');
-            if (currentMode === 'protect') {
-                btn.innerHTML = `<span id="btnText" class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-lock text-yellow-200"></i> ENCRYPT DOCUMENT</span>`;
-            } else {
-                btn.innerHTML = `<span id="btnText" class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-lock-open text-yellow-200"></i> DECRYPT DOCUMENT</span>`;
-            }
-            btn.classList.remove("opacity-80", "pointer-events-none");
-            document.getElementById('progressBar').style.width = '0%';
+            const btn = document.getElementById('startBtn'); 
+            btn.innerHTML = currentMode === 'protect' ? '<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-lock"></i> SECURE PDF</span>' : '<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-unlock"></i> REMOVE PASSWORD</span>';
+            btn.classList.remove("opacity-70", "pointer-events-none"); document.getElementById('progressBar').style.width = '0%';
         }
     </script>
 </body>
