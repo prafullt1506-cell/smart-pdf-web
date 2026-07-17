@@ -71,7 +71,7 @@
             width: 100%;
             height: 8px;
             border-radius: 10px;
-            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981); /* Red to Green */
+            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);
             outline: none;
             transition: all 0.3s;
         }
@@ -93,180 +93,225 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen flex items-center justify-center font-sans p-6 relative overflow-x-hidden">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen flex font-sans relative overflow-x-hidden">
 
-    <!-- 🌟 ANIMATED BACKGROUND BLOBS (Purple/Sky Theme for Image/PDF) -->
-    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
-        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-purple-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-purple-900 dark:opacity-30 dark:mix-blend-screen"></div>
-        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-sky-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-sky-900 dark:opacity-30 dark:mix-blend-screen"></div>
-        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-indigo-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000 dark:bg-indigo-900 dark:opacity-20 dark:mix-blend-screen"></div>
-    </div>
-
-    <!-- Top Navigation Elements -->
-    <div class="absolute top-6 left-6 z-50">
-        <a href="/" class="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700 hover:shadow-md hover:text-sky-600 dark:hover:text-sky-400 transition-all font-bold text-sm">
-            <i class="fa-solid fa-arrow-left"></i> Dashboard
-        </a>
-    </div>
-
-    <!-- Theme Toggle -->
+    <!-- Theme Toggle (Top Floating Button) -->
     <div class="absolute top-6 right-6 z-50">
         <button id="theme-toggle" class="p-3 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group backdrop-blur-md">
             <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400 group-hover:rotate-12 transition-transform"></i>
         </button>
     </div>
 
-    <!-- Main Workspace Container -->
-    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500 z-10">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-4 border border-emerald-100 dark:border-emerald-900/50 shadow-sm">
-                <i class="fa-solid fa-check-circle"></i> Zero Quality Loss Engine
-            </span>
-            <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight transition-all">Images to PDF</h1>
-            <p id="toolSub" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Merge high-resolution images into a perfectly structured PDF document.</p>
+    <!-- 🌟 ANIMATED BACKGROUND BLOBS -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-purple-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-purple-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-sky-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-sky-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-indigo-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000 dark:bg-indigo-900 dark:opacity-20 dark:mix-blend-screen"></div>
+    </div>
+
+    <!-- 🚀 LEFT SIDEBAR (Tool Details Panel) -->
+    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 dark:bg-slate-950 text-white p-12 flex-col justify-between relative overflow-hidden z-10 shadow-2xl transition-colors duration-500">
+        <div class="absolute -top-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full filter blur-3xl"></div>
+        <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-500/10 rounded-full filter blur-3xl"></div>
+
+        <div class="relative z-10">
+            <a href="/" class="inline-block mb-6 px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold backdrop-blur-sm transition border border-white/10"><i class="fa-solid fa-arrow-left mr-1"></i> Dashboard</a>
+            <br>
+            <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Premium Edition</span>
+            <span class="ml-2 bg-purple-500/20 text-purple-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">Dual Engine</span>
+            <h2 id="sideTitle" class="text-4xl font-black tracking-tight mt-4 text-sky-400 drop-shadow-lg">Converter Matrix</h2>
+            <p id="sideSub" class="text-slate-400 text-sm mt-2">Next-Generation Document Packaging</p>
         </div>
 
-        <!-- Mode Switcher -->
-        <div class="flex justify-center mb-8 relative">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-slate-200 dark:border-slate-700 border-dashed"></div>
+        <div class="my-auto space-y-8 relative z-10">
+            <div class="space-y-2">
+                <h3 id="sideDescTitle" class="text-3xl font-extrabold leading-tight text-white">Convert Images to PDF or extract PDFs flawlessly.</h3>
+                <p id="sideDescText" class="text-slate-400 text-base">Our layout engine preserves every layer properties, maintaining extreme density resolution perfectly.</p>
             </div>
-            <button onclick="toggleSwapMode()" class="relative group bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold px-6 py-2.5 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700 dark:border-sky-500">
-                <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700 ease-in-out"></i> 
-                <span>Switch Conversion Mode</span>
-            </button>
+
+            <div class="space-y-4 mt-8">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
+                    <span class="text-emerald-400 text-2xl drop-shadow-md">🖼️</span>
+                    <div>
+                        <h4 class="font-bold text-slate-200 text-sm">HD Visual Packaging</h4>
+                        <p class="text-xs text-slate-400 mt-1">Converts JPG/PNG collections into linear document trees cleanly.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
+                    <span class="text-sky-400 text-2xl drop-shadow-md">⚡</span>
+                    <div>
+                        <h4 class="font-bold text-slate-200 text-sm">Bracket Sizing Control</h4>
+                        <p class="text-xs text-slate-400 mt-1">Gives you precise 50-KB stepping control to match strict submission limits.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
+                    <span class="text-purple-400 text-2xl drop-shadow-md">🔄</span>
+                    <div>
+                        <h4 class="font-bold text-slate-200 text-sm">Reverse Extraction</h4>
+                        <p class="text-xs text-slate-400 mt-1">Instantly tear down any PDF into isolated standalone high-res images.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- 🚀 Target Size & Safe/Strict Mode Container (Animated Show/Hide) -->
-        <div id="targetBox" class="transition-all duration-300 overflow-hidden" style="max-height: 800px; opacity: 1;">
+        <div class="text-xs text-slate-500 relative z-10 mt-8">
+            &copy; 2026 Smart Converter Engine. All rights reserved.
+        </div>
+    </div>
+
+    <!-- RIGHT MAIN WORKSPACE -->
+    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-transparent relative z-10">
+        <div class="glass-card w-full max-w-[550px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
             
-            <!-- SAFE / STRICT MODE TOGGLE -->
-            <div class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-4 shadow-sm backdrop-blur-sm transition-colors duration-500">
-                <div class="flex justify-between items-center mb-2">
-                    <label class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
-                </div>
-                <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
-                    <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (Auto-Optimize)</button>
-                    <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">Strict (Exact Size)</button>
-                </div>
-            </div>
-
-            <!-- 🚀 DYNAMIC SLIDER WITH +/- (Safe Mode UI) -->
-            <div id="safe-mode-ui" class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Target File Size</span>
-                    <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
-                </div>
-                
-                <!-- Stepper with Slider (50-50 Step Logic) -->
-                <div class="flex items-center space-x-4 mb-2">
-                    <button id="slider-minus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
-                        <i class="fa-solid fa-minus text-xs"></i>
-                    </button>
-                    
-                    <input type="range" id="compression-slider" min="50" max="2000" step="50" value="500" class="custom-slider flex-1">
-                    
-                    <button id="slider-plus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                    </button>
-                </div>
-
-                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-10">
-                    <span>Max Compress</span>
-                    <span>Original Size</span>
-                </div>
-                
-                <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
-                    <p class="text-xs text-slate-500 font-bold tracking-wider mb-1">Target Bracket</p>
-                    <p id="estimated-kb" class="text-2xl font-black text-sky-500 bg-white dark:bg-slate-800 inline-block px-4 py-1 rounded-xl shadow-sm border border-sky-100 dark:border-sky-900/50">Add images to see</p>
-                </div>
-            </div>
-
-            <!-- 🚀 EXACT INPUT (Strict Mode UI) -->
-            <div id="strict-mode-ui" class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500 hidden">
-                <label class="font-bold text-slate-700 dark:text-slate-300 text-sm block mb-3">Enter Exact Target Size (KB):</label>
-                <div class="flex items-center">
-                    <input type="number" id="strict_target_kb" placeholder="e.g. 250" class="bg-slate-50 dark:bg-slate-900 border-2 border-sky-200 dark:border-sky-800 rounded-l-lg px-4 py-2 w-full focus:outline-none focus:border-sky-500 font-black text-slate-800 dark:text-white shadow-sm transition-colors duration-500">
-                    <span class="bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400 border-2 border-l-0 border-sky-200 dark:border-sky-800 px-4 py-2 rounded-r-lg font-bold">KB</span>
-                </div>
-                <p class="text-[10px] text-slate-500 mt-2 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Output will be padded to match this exact size if it falls short.</p>
-            </div>
-
-        </div>
-
-        <input type="file" id="fileInput" multiple class="hidden">
-
-        <!-- Upload Dropzone -->
-        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-500 bg-white/50 dark:bg-slate-900/50 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 p-8 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group backdrop-blur-sm">
-            <div class="text-5xl text-slate-300 dark:text-slate-600 group-hover:text-sky-500 group-hover:scale-110 transition-all duration-300 mb-4">
-                <i id="dropzoneIcon" class="fa-solid fa-cloud-arrow-up"></i>
-            </div>
-            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 dark:text-slate-200 mb-1">Drag & Drop or Click to Upload</p>
-            <p id="dropzoneSub" class="text-xs text-slate-400 font-medium">Supports high-res JPG and PNG formats</p>
-        </div>
-
-        <!-- Queue Header -->
-        <div class="flex justify-between items-center px-2 mb-3">
-            <span class="font-extrabold text-slate-800 dark:text-slate-300 text-[11px] tracking-widest uppercase">Processing Queue</span>
-            <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-bold text-xs transition-colors">Clear All</button>
-        </div>
-
-        <!-- Queue Box -->
-        <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner backdrop-blur-sm transition-colors duration-500 grid grid-cols-2 gap-2 content-start">
-            <p id="emptyMsg" class="col-span-2 text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-6 overflow-hidden transition-colors duration-500">
-            <div id="progressBar" class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 h-full rounded-full w-0 transition-all duration-300 relative">
-                <div class="absolute top-0 left-0 bottom-0 right-0 bg-white/20 animate-pulse"></div>
-            </div>
-        </div>
-
-        <!-- Execute Button -->
-        <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-sky-500/30 transition-all duration-300 transform hover:-translate-y-1">
-            <span class="relative z-10 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION
-            </span>
-            <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
-        </button>
-
-        <!-- 🌟 Success Popup (Glassmorphism + Dark Mode Ready) -->
-        <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
-            
-            <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
-                <i class="fa-solid fa-check text-3xl"></i>
-            </div>
-            
-            <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 text-center tracking-tight">Conversion Successful!</h2>
-            
-            <div class="flex space-x-4 w-full mb-6">
-                <div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
-                    <p id="lblLeft" class="text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Original Size</p>
-                    <p id="valLeft" class="text-slate-700 dark:text-slate-300 text-2xl font-black">0 KB</p>
-                </div>
-                <div class="flex-1 bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-900/50 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
-                    <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Target Size</p>
-                    <p id="valRight" class="text-sky-700 dark:text-sky-400 text-2xl font-black">0 KB</p>
-                </div>
-            </div>
-
-            <div id="popSave" class="w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-900/50 rounded-xl py-3 text-center mb-6 font-bold text-emerald-700 dark:text-emerald-400 text-xs tracking-wide transition-colors duration-500 shadow-sm">
-                ✨ High Definition PDF File Matrix Ready!
-            </div>
-
-            <!-- 🚀 NEW DOWNLOAD LABEL -->
-            <div class="w-full text-center mb-4">
-                <span class="inline-block bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest animate-pulse border border-yellow-200 dark:border-yellow-700/50 shadow-sm">
-                    👇 Click Below to Download 👇
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-4 border border-emerald-100 dark:border-emerald-900/50 shadow-sm">
+                    <i class="fa-solid fa-check-circle"></i> Zero Quality Loss Engine
                 </span>
+                <h1 id="toolTitle" class="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight transition-all">Images to PDF</h1>
+                <p id="toolSub" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Merge high-resolution images into a perfectly structured PDF document.</p>
             </div>
 
-            <div class="flex w-full space-x-3" id="downloadLayout"></div>
-        </div>
+            <!-- Mode Switcher -->
+            <div class="flex justify-center mb-8 relative">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-slate-200 dark:border-slate-700 border-dashed"></div>
+                </div>
+                <button onclick="toggleSwapMode()" class="relative group bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold px-6 py-2.5 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3 tracking-wide text-xs uppercase border border-slate-700 dark:border-sky-500">
+                    <i id="swapIcon" class="fa-solid fa-arrows-rotate transition-transform duration-700 ease-in-out"></i> 
+                    <span>Switch Conversion Mode</span>
+                </button>
+            </div>
 
+            <!-- Settings Panel (Slider + Modes) -->
+            <div id="targetBox" class="transition-all duration-300 overflow-hidden" style="max-height: 800px; opacity: 1;">
+                
+                <!-- SAFE / STRICT MODE TOGGLE -->
+                <div class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-4 shadow-sm backdrop-blur-sm transition-colors duration-500">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
+                        <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (Auto-Optimize)</button>
+                        <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">Strict (Exact Size)</button>
+                    </div>
+                </div>
+
+                <!-- 🚀 DYNAMIC SLIDER WITH +/- (Safe Mode UI) -->
+                <div id="safe-mode-ui" class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Target File Size</span>
+                        <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
+                    </div>
+                    
+                    <!-- Stepper with Slider (50-50 Step Logic) -->
+                    <div class="flex items-center space-x-4 mb-2">
+                        <button id="slider-minus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
+                            <i class="fa-solid fa-minus text-xs"></i>
+                        </button>
+                        
+                        <input type="range" id="compression-slider" min="50" max="2000" step="50" value="500" class="custom-slider flex-1">
+                        
+                        <button id="slider-plus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-10">
+                        <span>Max Compress</span>
+                        <span>Original Size</span>
+                    </div>
+                    
+                    <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 font-bold tracking-wider mb-1">Target Bracket</p>
+                        <p id="estimated-kb" class="text-2xl font-black text-sky-500 bg-white dark:bg-slate-800 inline-block px-4 py-1 rounded-xl shadow-sm border border-sky-100 dark:border-sky-900/50">Add images to see</p>
+                    </div>
+                </div>
+
+                <!-- 🚀 EXACT INPUT (Strict Mode UI) -->
+                <div id="strict-mode-ui" class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500 hidden">
+                    <label class="font-bold text-slate-700 dark:text-slate-300 text-sm block mb-3">Enter Exact Target Size (KB):</label>
+                    <div class="flex items-center">
+                        <input type="number" id="strict_target_kb" placeholder="e.g. 250" class="bg-slate-50 dark:bg-slate-900 border-2 border-sky-200 dark:border-sky-800 rounded-l-lg px-4 py-2 w-full focus:outline-none focus:border-sky-500 font-black text-slate-800 dark:text-white shadow-sm transition-colors duration-500">
+                        <span class="bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400 border-2 border-l-0 border-sky-200 dark:border-sky-800 px-4 py-2 rounded-r-lg font-bold">KB</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Output will be padded to match this exact size if it falls short.</p>
+                </div>
+
+            </div>
+
+            <input type="file" id="fileInput" multiple class="hidden">
+
+            <!-- Upload Dropzone -->
+            <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-500 bg-white/50 dark:bg-slate-900/50 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 p-8 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group backdrop-blur-sm">
+                <div class="text-5xl text-slate-300 dark:text-slate-600 group-hover:text-sky-500 group-hover:scale-110 transition-all duration-300 mb-4">
+                    <i id="dropzoneIcon" class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 dark:text-slate-200 mb-1">Drag & Drop or Click to Upload</p>
+                <p id="dropzoneSub" class="text-xs text-slate-400 font-medium">Supports high-res JPG and PNG formats</p>
+            </div>
+
+            <!-- Queue Header -->
+            <div class="flex justify-between items-center px-2 mb-3">
+                <span class="font-extrabold text-slate-800 dark:text-slate-300 text-[11px] tracking-widest uppercase">Processing Queue</span>
+                <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-bold text-xs transition-colors">Clear All</button>
+            </div>
+
+            <!-- Queue Box (Grid with Image Previews) -->
+            <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner backdrop-blur-sm transition-colors duration-500 grid grid-cols-2 gap-2 content-start">
+                <p id="emptyMsg" class="col-span-2 text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-6 overflow-hidden transition-colors duration-500">
+                <div id="progressBar" class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 h-full rounded-full w-0 transition-all duration-300 relative">
+                    <div class="absolute top-0 left-0 bottom-0 right-0 bg-white/20 animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- Execute Button -->
+            <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-sky-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                <span class="relative z-10 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION
+                </span>
+                <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
+            </button>
+
+            <!-- 🌟 Success Popup -->
+            <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
+                
+                <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
+                    <i class="fa-solid fa-check text-3xl"></i>
+                </div>
+                
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 text-center tracking-tight">Conversion Successful!</h2>
+                
+                <div class="flex space-x-4 w-full mb-6">
+                    <div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
+                        <p id="lblLeft" class="text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Original Size</p>
+                        <p id="valLeft" class="text-slate-700 dark:text-slate-300 text-2xl font-black">0 KB</p>
+                    </div>
+                    <div class="flex-1 bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-900/50 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
+                        <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Target Size</p>
+                        <p id="valRight" class="text-slate-700 dark:text-slate-400 text-2xl font-black">0 KB</p>
+                    </div>
+                </div>
+
+                <div class="w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-900/50 rounded-xl py-3 text-center mb-6 font-bold text-emerald-700 dark:text-emerald-400 text-xs tracking-wide transition-colors duration-500 shadow-sm">
+                    ✨ High Definition File Matrix Ready!
+                </div>
+
+                <!-- 🚀 DOWNLOAD LABEL -->
+                <div class="w-full text-center mb-4">
+                    <span class="inline-block bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest animate-pulse border border-yellow-200 dark:border-yellow-700/50 shadow-sm">
+                        👇 Click Below to Download 👇
+                    </span>
+                </div>
+
+                <div class="flex w-full space-x-3" id="downloadLayout"></div>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -296,7 +341,7 @@
         let compMode = 'safe'; 
         let originalTotalKB = 0;
 
-        // 🚀 Switch Safe / Strict Mode Function
+        // Switch Safe / Strict Mode Function
         function setMode(mode) {
             compMode = mode;
             const safeBtn = document.getElementById('modeSafeBtn');
@@ -327,7 +372,7 @@
         }
         setMode('safe');
 
-        // 🚀 SMART SLIDER & PLUS/MINUS LOGIC (50-50 Jumps)
+        // SMART SLIDER & PLUS/MINUS LOGIC (50-50 Jumps)
         const slider = document.getElementById('compression-slider');
         const sliderLabel = document.getElementById('slider-label');
         const estKbText = document.getElementById('estimated-kb');
@@ -444,7 +489,7 @@
             for(let i=0; i<files.length; i++) {
                 if (currentMode === 'pdf_to_img') {
                     if(files[i].name.toLowerCase().endsWith('.pdf')) {
-                        selectedFiles = [files[i]]; // Limit to 1 for extraction
+                        selectedFiles = [files[i]]; 
                         break;
                     }
                 } else {
@@ -484,7 +529,7 @@
             box.innerHTML = '';
             selectedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 rounded-xl p-2 mb-2 transition-colors shadow-sm';
+                item.className = 'flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-2 mb-2 transition-colors shadow-sm';
                 
                 if (currentMode === 'img_to_pdf') {
                     let objUrl = URL.createObjectURL(file);
@@ -503,7 +548,6 @@
                         </div>
                         <button onclick="removeFile(${index})" class="text-slate-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2"><i class="fa-solid fa-xmark"></i></button>
                     `;
-                    // Adjust box layout for single file
                     item.className = 'col-span-2 flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-3 shadow-sm';
                 }
                 box.appendChild(item);
@@ -577,7 +621,6 @@
             const dlLayout = document.getElementById('downloadLayout');
 
             if (data.is_dual) {
-                // img_to_pdf mode results
                 document.getElementById('lblLeft').innerText = "Original PDF";
                 document.getElementById('valLeft').innerText = data.generated_pdf_kb + " KB";
                 document.getElementById('lblRight').innerText = "Target PDF";
@@ -599,7 +642,6 @@
                     </a>
                 `;
             } else {
-                // pdf_to_img mode results
                 document.getElementById('lblLeft').innerText = "Input PDF";
                 document.getElementById('valLeft').innerText = data.original_kb + " KB";
                 document.getElementById('lblRight').innerText = "Extracted ZIP";
@@ -614,12 +656,12 @@
                 `;
             }
             
-            // Close button at top right
             dlLayout.innerHTML += `<button onclick="closePopup()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>`;
 
             resetBtn();
         }
 
+        // Popup close function
         function closePopup() {
             const popup = document.getElementById('successPopup');
             popup.classList.remove('opacity-100', 'scale-100');
