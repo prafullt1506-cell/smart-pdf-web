@@ -94,7 +94,7 @@
             width: 100%;
             height: 8px;
             border-radius: 10px;
-            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981); /* Red to Green */
+            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981); 
             outline: none;
             transition: all 0.3s;
         }
@@ -106,7 +106,7 @@
             border-radius: 50%;
             background: #ffffff;
             cursor: pointer;
-            border: 3px solid #ec4899; /* Pink border */
+            border: 3px solid #ec4899;
             box-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -114,6 +114,11 @@
             transform: scale(1.2);
             box-shadow: 0 0 15px rgba(236, 72, 153, 0.9);
         }
+
+        /* 🚀 SCANNER PRESET CLASSES */
+        .filter-magic { filter: contrast(1.2) brightness(1.1) saturate(1.2) drop-shadow(0 0 10px rgba(236,72,153,0.2)); }
+        .filter-bw { filter: contrast(1.8) brightness(1.2) grayscale(1) drop-shadow(0 0 10px rgba(0,0,0,0.2)); }
+        
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen font-sans antialiased relative overflow-x-hidden">
@@ -198,25 +203,26 @@
                         <i class="fa-solid fa-eye text-pink-500"></i> Live Preview
                     </h3>
                     <div class="p-3 flex flex-col items-center bg-white/50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 relative w-full shadow-inner">
-                        <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-[1.25rem] relative">
+                        <div class="w-full h-48 flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-950 rounded-[1.25rem] relative pattern-bg">
+                            <!-- Image gets filtered here based on selection -->
                             <img id="liveEnhancedPreview" class="max-h-full max-w-full object-contain transition-all duration-300 shadow-lg" src="" alt="Live Preview Frame">
-                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider hidden shadow-lg shadow-purple-500/30">Enhanced</div>
+                            <div id="enhanceOverlayText" class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider hidden shadow-lg shadow-purple-500/30">Oken Scan</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Magic Enhance Control -->
+                <!-- 🚀 PRO SCANNER FILTERS (Replaced Magic Enhance Toggle) -->
                 <div class="glass-panel p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800">
-                    <label class="flex items-center justify-between cursor-pointer group">
-                        <div class="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2 group-hover:text-pink-500 transition-colors">
-                            <span class="text-xl">🪄</span> Magic Auto-Clean
-                        </div>
-                        <div class="relative">
-                            <input type="checkbox" id="magicEnhance" class="sr-only">
-                            <div class="block bg-slate-300 dark:bg-slate-800 w-14 h-7 rounded-full border border-slate-400 dark:border-slate-700 transition-colors shadow-inner"></div>
-                            <div class="dot absolute left-1 top-1 bg-white dark:bg-slate-400 w-5 h-5 rounded-full transition-all duration-300 shadow-md"></div>
-                        </div>
+                    <label class="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> Scanner Filters
                     </label>
+                    
+                    <div class="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
+                        <button id="filter-none" onclick="applyFilter('none')" class="py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white dark:bg-slate-700 text-slate-700 dark:text-white shadow-sm border border-slate-200 dark:border-none">Original</button>
+                        <button id="filter-magic" onclick="applyFilter('magic')" class="py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 border border-transparent">Color</button>
+                        <button id="filter-bw" onclick="applyFilter('bw')" class="py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white border border-transparent">B&W Sign</button>
+                    </div>
+                    <p id="filterDesc" class="text-[9px] text-slate-500 dark:text-slate-400 mt-2 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Original image, no extra enhancements.</p>
                 </div>
 
                 <!-- Resizing & Scaling Unit Grid -->
@@ -242,7 +248,7 @@
 
                     <!-- 🚀 NEW: Target DPI & COMPRESSION MODES -->
                     <div>
-                        <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Target DPI</label>
+                        <label class="text-[10px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Target DPI (Print Quality)</label>
                         <input type="number" id="targetDPI" placeholder="300" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-pink-500/50 outline-none transition-all shadow-sm mb-4">
                         
                         <!-- STRICT vs SAFE MODE SWITCH -->
@@ -320,12 +326,14 @@
                 localStorage.setItem('theme', 'light'); themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
             }
             switchCompMode(currentCompMode); // Refresh UI buttons
+            applyFilter(currentFilter); // Refresh Filter buttons
         });
 
         // --- Core Variables ---
         let cropper;
         let currentUnit = 'px';
         let currentCompMode = 'safe'; 
+        let currentFilter = 'none'; // Tracks selected scanner filter
         let originalTotalKB = 0; // Tracking Original Size
         
         const imageElement = document.getElementById('image');
@@ -334,8 +342,8 @@
         const ratioButtons = document.getElementById('ratio-buttons');
         const controlsToolbar = document.getElementById('cropper-controls');
         const previewPanel = document.getElementById('previewPanel');
-        const magicToggle = document.getElementById('magicEnhance');
         const liveEnhancedPreview = document.getElementById('liveEnhancedPreview');
+        const overlayText = document.getElementById('enhanceOverlayText');
 
         // --- Tools ---
         function setDragMode(mode) { if(cropper) { cropper.setDragMode(mode); } }
@@ -366,6 +374,44 @@
             }
         }
 
+        // 🚀 SWITCH SCANNER FILTERS (Oken Scanner Effect)
+        function applyFilter(filterType) {
+            currentFilter = filterType;
+            const btnNone = document.getElementById('filter-none');
+            const btnMagic = document.getElementById('filter-magic');
+            const btnBW = document.getElementById('filter-bw');
+            const desc = document.getElementById('filterDesc');
+
+            // Reset Classes
+            const isDark = html.classList.contains('dark');
+            const activeClass = isDark ? "py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-white shadow-sm border-none" : "py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-slate-200 text-slate-700 shadow-sm";
+            const activePink = isDark ? "py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-pink-400 shadow-sm border-none" : "py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
+            const inactiveClass = "py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white bg-transparent border border-transparent";
+
+            btnNone.className = inactiveClass; btnMagic.className = inactiveClass; btnBW.className = inactiveClass;
+            liveEnhancedPreview.className = "max-h-full max-w-full object-contain transition-all duration-300 shadow-lg"; // Reset
+
+            if (filterType === 'none') {
+                btnNone.className = activeClass;
+                overlayText.classList.add('hidden');
+                desc.innerHTML = '<i class="fa-solid fa-circle-info mr-1"></i> Original image, no extra enhancements.';
+            } 
+            else if (filterType === 'magic') {
+                btnMagic.className = activePink;
+                overlayText.classList.remove('hidden');
+                overlayText.innerText = "Color Scan";
+                liveEnhancedPreview.classList.add('filter-magic');
+                desc.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-1 text-pink-500"></i> <b>Color Scan:</b> Boosts brightness and contrast. Great for photos.';
+            } 
+            else if (filterType === 'bw') {
+                btnBW.className = activeClass;
+                overlayText.classList.remove('hidden');
+                overlayText.innerText = "B&W Document";
+                liveEnhancedPreview.classList.add('filter-bw');
+                desc.innerHTML = '<i class="fa-solid fa-file-signature mr-1 text-slate-700 dark:text-white"></i> <b>B&W Scan:</b> Pure white background, dark text. <b>Best for Signatures!</b>';
+            }
+        }
+
         // 🚀 SWITCH SAFE/STRICT UI
         function switchCompMode(mode) {
             currentCompMode = mode;
@@ -374,8 +420,9 @@
             const safeUI = document.getElementById('safe-mode-ui');
             const strictUI = document.getElementById('strict-mode-ui');
 
-            const activeSafe = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-emerald-400 shadow-sm border-none" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-emerald-200 text-emerald-600 shadow-sm";
-            const activeStrict = html.classList.contains('dark') ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-pink-400 shadow-sm border-none" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
+            const isDark = html.classList.contains('dark');
+            const activeSafe = isDark ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-emerald-400 shadow-sm border-none" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-emerald-200 text-emerald-600 shadow-sm";
+            const activeStrict = isDark ? "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-slate-700 text-pink-400 shadow-sm border-none" : "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all bg-white border border-pink-200 text-pink-600 shadow-sm";
             const inactive = "py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all text-slate-400 hover:text-slate-600 dark:hover:text-white bg-transparent border border-transparent";
 
             if(mode === 'strict') {
@@ -441,29 +488,7 @@
             }
         }
 
-        // --- Core Functions ---
-        magicToggle.addEventListener('change', function() {
-            const dot = this.parentElement.querySelector('.dot'); const bg = this.parentElement.querySelector('.block');
-            const overlay = document.getElementById('enhanceOverlayText');
-            if(this.checked) {
-                dot.style.transform = 'translateX(100%)';
-                dot.classList.replace('bg-slate-400', 'bg-white');
-                bg.classList.replace('bg-slate-800', 'bg-gradient-to-r');
-                bg.classList.add('from-purple-500', 'to-pink-500');
-                bg.classList.replace('bg-slate-300', 'bg-transparent');
-                overlay.classList.remove('hidden');
-                liveEnhancedPreview.style.filter = "contrast(1.15) brightness(1.05) saturate(1.1) drop-shadow(0 0 10px rgba(236,72,153,0.3))"; 
-            } else {
-                dot.style.transform = 'translateX(0)';
-                dot.classList.replace('bg-white', 'bg-slate-400');
-                bg.classList.replace('bg-gradient-to-r', 'bg-slate-800');
-                bg.classList.remove('from-purple-500', 'to-pink-500');
-                bg.classList.add('bg-slate-300');
-                overlay.classList.add('hidden');
-                liveEnhancedPreview.style.filter = "none";
-            }
-        });
-
+        // --- Handle File Upload ---
         uploadInput.addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
@@ -500,10 +525,10 @@
             if(canvas) liveEnhancedPreview.src = canvas.toDataURL('image/jpeg', 0.8);
         }
 
+        // --- Backend Execution (Sending Canvas Data directly if Filtered) ---
         processBtn.addEventListener('click', async function() {
             if (!cropper) return;
 
-            // 🚀 Logic to get Target KB based on Mode
             let finalTargetKb = 0;
             if(currentCompMode === 'strict') {
                 finalTargetKb = document.getElementById('strict_target_kb').value;
@@ -522,16 +547,54 @@
 
             const cropData = cropper.getData(true);
             const formData = new FormData();
-            formData.append('file', uploadInput.files[0]);
-            formData.append('x', cropData.x); formData.append('y', cropData.y);
-            formData.append('width', cropData.width); formData.append('height', cropData.height);
-            formData.append('enhance', magicToggle.checked);
-            formData.append('target_kb', finalTargetKb); // 🚀 Passed dynamically
+            
+            // 🚀 SMART LOGIC: If a scanner filter is selected, we apply it in Javascript Canvas and send the processed image directly!
+            // This avoids modifying app.py while still giving Oken Scanner quality.
+            if (currentFilter !== 'none') {
+                const canvas = cropper.getCroppedCanvas();
+                const ctx = canvas.getContext('2d');
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+
+                if (currentFilter === 'magic') {
+                    // Increase Brightness & Contrast
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = Math.min(255, (data[i] * 1.1) + 10);     // R
+                        data[i+1] = Math.min(255, (data[i+1] * 1.1) + 10); // G
+                        data[i+2] = Math.min(255, (data[i+2] * 1.1) + 10); // B
+                    }
+                } else if (currentFilter === 'bw') {
+                    // Grayscale & High Contrast for Signatures
+                    for (let i = 0; i < data.length; i += 4) {
+                        let avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                        avg = avg > 120 ? 255 : (avg * 0.5); // Thresholding for pure white bg and dark text
+                        data[i] = avg; data[i+1] = avg; data[i+2] = avg;
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                
+                // Convert processed canvas to Blob and send
+                canvas.toBlob(function(blob) {
+                    formData.append('file', blob, 'scanned_image.jpg');
+                    sendToBackend(formData, finalTargetKb);
+                }, 'image/jpeg', 1.0);
+            } else {
+                // Send original file if no filter
+                formData.append('file', uploadInput.files[0]);
+                formData.append('x', cropData.x); formData.append('y', cropData.y);
+                formData.append('width', cropData.width); formData.append('height', cropData.height);
+                sendToBackend(formData, finalTargetKb);
+            }
+        });
+
+        async function sendToBackend(formData, finalTargetKb) {
+            formData.append('target_kb', finalTargetKb);
             formData.append('unit', currentUnit);
             formData.append('target_w', document.getElementById('targetW').value);
             formData.append('target_h', document.getElementById('targetH').value);
             formData.append('target_dpi', document.getElementById('targetDPI').value); 
             formData.append('comp_mode', currentCompMode); 
+            formData.append('enhance', 'false'); // Disable backend enhance since we did it in JS
 
             try {
                 const response = await fetch('/process-image-crop', { method: 'POST', body: formData });
@@ -539,7 +602,7 @@
                     const blob = await response.blob();
                     const dlUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = dlUrl; a.download = `Smart_Crop_${new Date().getTime()}.jpg`;
+                    a.href = dlUrl; a.download = `Smart_Scan_${new Date().getTime()}.jpg`;
                     document.body.appendChild(a); a.click(); a.remove();
                 } else {
                     alert('Error processing image. Please try again.');
@@ -551,7 +614,7 @@
                 processBtn.classList.add('animate-pulseGlow');
                 processBtn.disabled = false;
             }
-        });
+        }
     </script>
 </body>
 </html>
