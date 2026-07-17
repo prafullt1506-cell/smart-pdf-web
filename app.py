@@ -53,6 +53,11 @@ def security_page():
 def image_crop():
     return render_template('image_crop.html')
 
+# 🚀 NEW ROUTE ADDED HERE FOR IMAGE COMPRESSOR
+@app.route('/image_compress_page', methods=['GET'])
+def image_compress_page():
+    return render_template('image_compressor.html')
+
 # ==========================================
 # 🗜️ ENGINE 1: PDF COMPRESSOR (Universal Safe/Strict Logic)
 # ==========================================
