@@ -153,17 +153,31 @@
                 </div>
             </div>
 
-            <!-- 🚀 DYNAMIC SLIDER (Safe Mode UI) -->
+            <!-- 🚀 DYNAMIC SLIDER WITH +/- (Safe Mode UI) -->
             <div id="safe-mode-ui" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 mb-5 shadow-sm transition-colors duration-500">
-                <div class="flex justify-between items-center mb-3">
+                <div class="flex justify-between items-center mb-4">
                     <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Quality Level</span>
                     <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
                 </div>
-                <input type="range" id="compression-slider" min="10" max="90" value="50" class="custom-slider w-full mb-3">
-                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                
+                <!-- NEW: Stepper with Slider -->
+                <div class="flex items-center space-x-4 mb-2">
+                    <button id="slider-minus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
+                        <i class="fa-solid fa-minus text-xs"></i>
+                    </button>
+                    
+                    <input type="range" id="compression-slider" min="10" max="90" value="50" class="custom-slider flex-1">
+                    
+                    <button id="slider-plus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-10">
                     <span>High Quality</span>
                     <span>Max Compress</span>
                 </div>
+                
                 <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-2 border border-slate-100 dark:border-slate-700">
                     <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Estimated Target Size</p>
                     <p id="estimated-kb" class="text-lg font-black text-sky-500">Add files to see size</p>
@@ -275,11 +289,10 @@
             setMode(compMode); // Update UI colors
         });
 
-
         let selectedFiles = [];
         let currentMode = 'pdf'; 
         let compMode = 'safe'; 
-        let originalTotalKB = 0; // 🚀 New: Track Total KB
+        let originalTotalKB = 0; 
 
         // 🚀 Switch Safe / Strict Mode Function
         function setMode(mode) {
@@ -312,12 +325,28 @@
         }
         setMode('safe');
 
-        // 🚀 SLIDER LOGIC
+        // 🚀 SLIDER & PLUS/MINUS LOGIC
         const slider = document.getElementById('compression-slider');
         const sliderLabel = document.getElementById('slider-label');
         const estKbText = document.getElementById('estimated-kb');
 
         slider.addEventListener('input', updateSliderEstimate);
+
+        document.getElementById('slider-minus').addEventListener('click', () => {
+            let currentVal = parseInt(slider.value);
+            if(currentVal > parseInt(slider.min)) {
+                slider.value = currentVal - 1;
+                updateSliderEstimate();
+            }
+        });
+
+        document.getElementById('slider-plus').addEventListener('click', () => {
+            let currentVal = parseInt(slider.value);
+            if(currentVal < parseInt(slider.max)) {
+                slider.value = currentVal + 1;
+                updateSliderEstimate();
+            }
+        });
 
         function updateSliderEstimate() {
             if(originalTotalKB === 0) {
