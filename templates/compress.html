@@ -41,6 +41,33 @@
         .animate-blob { animation: blob 7s infinite; }
         .animation-delay-2000 { animation-delay: 2s; }
         .animation-delay-4000 { animation-delay: 4s; }
+
+        /* 🚀 STYLISH SLIDER CSS */
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+            outline: none;
+            transition: all 0.3s;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 3px solid #0ea5e9;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.6);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.9);
+        }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-darkBg min-h-screen flex font-sans relative overflow-x-hidden transition-colors duration-500">
@@ -115,24 +142,42 @@
             
             <h1 class="text-3xl font-extrabold text-center text-slate-800 dark:text-white mb-6 tracking-tight">SMART COMPRESSOR</h1>
 
-            <!-- Target Size Input -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex justify-between items-center mb-4 shadow-sm transition-colors duration-500">
-                <div class="flex items-center space-x-3">
-                    <label class="font-bold text-slate-700 dark:text-slate-300 text-sm">Target Size (KB):</label>
-                    <input type="number" id="target_kb" value="500" class="bg-white dark:bg-slate-900 border-2 border-sky-200 dark:border-sky-800 rounded-lg px-3 py-1.5 w-24 text-center focus:outline-none focus:border-sky-500 font-black text-slate-800 dark:text-white shadow-sm transition-colors duration-500">
-                </div>
-            </div>
-
             <!-- SAFE / STRICT MODE TOGGLE -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-5 shadow-sm transition-colors duration-500">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4 shadow-sm transition-colors duration-500">
                 <div class="flex justify-between items-center mb-2">
                     <label class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
                 </div>
                 <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
-                    <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (No Corrupt)</button>
+                    <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (Auto-Optimize)</button>
                     <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">Strict (Exact Size)</button>
                 </div>
-                <p id="modeDesc" class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium">Safe Mode: Reaches close to target size without filling garbage bytes.</p>
+            </div>
+
+            <!-- 🚀 DYNAMIC SLIDER (Safe Mode UI) -->
+            <div id="safe-mode-ui" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 mb-5 shadow-sm transition-colors duration-500">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Quality Level</span>
+                    <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
+                </div>
+                <input type="range" id="compression-slider" min="10" max="90" value="50" class="custom-slider w-full mb-3">
+                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    <span>High Quality</span>
+                    <span>Max Compress</span>
+                </div>
+                <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-2 border border-slate-100 dark:border-slate-700">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Estimated Target Size</p>
+                    <p id="estimated-kb" class="text-lg font-black text-sky-500">Add files to see size</p>
+                </div>
+            </div>
+
+            <!-- 🚀 EXACT INPUT (Strict Mode UI) -->
+            <div id="strict-mode-ui" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 mb-5 shadow-sm transition-colors duration-500 hidden">
+                <label class="font-bold text-slate-700 dark:text-slate-300 text-sm block mb-3">Enter Exact Target Size (KB):</label>
+                <div class="flex items-center">
+                    <input type="number" id="strict_target_kb" placeholder="e.g. 250" class="bg-white dark:bg-slate-900 border-2 border-sky-200 dark:border-sky-800 rounded-l-lg px-4 py-2 w-full focus:outline-none focus:border-sky-500 font-black text-slate-800 dark:text-white shadow-sm transition-colors duration-500">
+                    <span class="bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-400 border-2 border-l-0 border-sky-200 dark:border-sky-800 px-4 py-2 rounded-r-lg font-bold">KB</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Output will be padded to match this exact size if it falls short.</p>
             </div>
 
             <input type="file" id="fileInput" multiple accept=".pdf" class="hidden">
@@ -150,8 +195,8 @@
                 <button onclick="clearQueue()" class="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white border border-red-200 dark:border-red-900/50 font-bold text-xs px-4 py-1 rounded-lg shadow-sm transition">Clear All</button>
             </div>
 
-            <div id="queueBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl h-36 overflow-y-auto p-3 mb-5 custom-scrollbar shadow-inner transition-colors duration-500">
-                <p id="emptyMsg" class="text-center text-slate-400 dark:text-slate-500 font-medium text-sm mt-10">Select PDFs to compress OR Images to make a PDF!</p>
+            <div id="queueBox" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl h-32 overflow-y-auto p-3 mb-5 custom-scrollbar shadow-inner transition-colors duration-500">
+                <p id="emptyMsg" class="text-center text-slate-400 dark:text-slate-500 font-medium text-sm mt-8">Select PDFs to compress OR Images to make a PDF!</p>
             </div>
 
             <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 mb-5 overflow-hidden shadow-inner transition-colors duration-500">
@@ -162,15 +207,12 @@
                 🚀 START COMPRESSION
             </button>
 
-            <!-- 🚀 UPDATED: Windows App Download Banner with EXACT Link -->
+            <!-- Windows App Download Banner -->
             <div class="mt-8 pt-6 border-t-2 border-dashed border-slate-200 dark:border-slate-800 relative transition-colors duration-500">
                 <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white dark:bg-slate-900 px-4 text-xs font-black text-emerald-500 uppercase tracking-widest transition-colors duration-500">✨ Pro Experience ✨</div>
-                
                 <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200 text-center mb-4 mt-2">Get the Desktop App</h3>
-                
                 <div class="text-center">
                     <div class="relative overflow-hidden rounded-xl group cursor-pointer shadow-lg shadow-emerald-500/30">
-                        <!-- LINK UPDATED HERE TO Smart.Suite.Pro.exe -->
                         <a href="https://github.com/prafullt1506-cell/smart-pdf-web/releases/download/v1.0/Smart.Suite.Pro.exe" download="Smart.Suite.Pro.exe" class="relative z-10 flex items-center justify-center w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white font-black py-4 px-6 transition-all duration-300 text-lg gap-2 group-hover:from-emerald-600 group-hover:to-teal-600">
                             <span class="animate-bounce">⬇️</span> Download Smart Suite Pro
                         </a>
@@ -178,7 +220,6 @@
                     </div>
                 </div>
             </div>
-            <!-- End of Windows App Banner -->
 
             <!-- Success Popup -->
             <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md hidden flex-col items-center justify-center p-8 rounded-2xl z-50 transition-all duration-300">
@@ -198,10 +239,17 @@
                     </div>
                 </div>
 
-                <div class="w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-100 dark:border-blue-800/50 rounded-xl py-4 text-center mb-8 shadow-sm">
+                <div class="w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-100 dark:border-blue-800/50 rounded-xl py-4 text-center mb-6 shadow-sm">
                     <p id="popSave" class="text-blue-700 dark:text-blue-400 font-black text-lg">🔥 Saved X KB Space! 🔥</p>
                 </div>
 
+                <!-- 🚀 NEW DOWNLOAD LABEL -->
+                <div class="w-full text-center mb-3">
+                    <span class="inline-block bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest animate-pulse border border-yellow-200 dark:border-yellow-700/50 shadow-sm">
+                        👇 Click Below to Download 👇
+                    </span>
+                </div>
+                
                 <div class="flex w-full space-x-2" id="downloadSection"></div>
             </div>
         </div>
@@ -224,15 +272,14 @@
             } else {
                 localStorage.setItem('theme', 'light'); themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
             }
-            // Re-render UI colors based on theme if mode is switched
-            setMode(compMode);
-            updateQueueUI();
+            setMode(compMode); // Update UI colors
         });
 
 
         let selectedFiles = [];
         let currentMode = 'pdf'; 
         let compMode = 'safe'; 
+        let originalTotalKB = 0; // 🚀 New: Track Total KB
 
         // 🚀 Switch Safe / Strict Mode Function
         function setMode(mode) {
@@ -240,41 +287,76 @@
             const safeBtn = document.getElementById('modeSafeBtn');
             const strictBtn = document.getElementById('modeStrictBtn');
             const badge = document.getElementById('modeBadge');
-            const desc = document.getElementById('modeDesc');
-
+            
+            const safeUI = document.getElementById('safe-mode-ui');
+            const strictUI = document.getElementById('strict-mode-ui');
             const isDark = html.classList.contains('dark');
 
             if(mode === 'strict') {
+                safeUI.classList.add('hidden');
+                strictUI.classList.remove('hidden');
+
                 strictBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-sky-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-sky-600 shadow-sm border border-sky-200";
                 safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
                 badge.innerText = "Strict";
                 badge.className = isDark ? "ml-2 text-[9px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-sky-100 text-sky-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
-                desc.innerText = "Strict Mode: Forces exact target size using zero byte padding if needed.";
             } else {
+                safeUI.classList.remove('hidden');
+                strictUI.classList.add('hidden');
+
                 safeBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-emerald-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-emerald-600 shadow-sm border border-emerald-200";
                 strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
                 badge.innerText = "Safe";
                 badge.className = isDark ? "ml-2 text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
-                desc.innerText = "Safe Mode: Reaches close to target size without filling garbage bytes.";
+            }
+        }
+        setMode('safe');
+
+        // 🚀 SLIDER LOGIC
+        const slider = document.getElementById('compression-slider');
+        const sliderLabel = document.getElementById('slider-label');
+        const estKbText = document.getElementById('estimated-kb');
+
+        slider.addEventListener('input', updateSliderEstimate);
+
+        function updateSliderEstimate() {
+            if(originalTotalKB === 0) {
+                estKbText.innerText = "Add files to see size";
+                return;
+            }
+            const val = slider.value;
+            let percent = 100 - val; // 10 = High Quality (90% size), 90 = Extreme (10% size)
+            let estimatedTarget = (originalTotalKB * (percent / 100));
+            
+            let lowerBound = (estimatedTarget * 0.9).toFixed(0);
+            let upperBound = (estimatedTarget * 1.1).toFixed(0);
+            estKbText.innerText = `~ ${lowerBound} - ${upperBound} KB`;
+
+            if(val < 30) {
+                sliderLabel.innerText = "High Quality";
+                sliderLabel.className = "text-[10px] font-black bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider";
+            } else if (val < 70) {
+                sliderLabel.innerText = "Balanced";
+                sliderLabel.className = "text-[10px] font-black bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider";
+            } else {
+                sliderLabel.innerText = "Extreme";
+                sliderLabel.className = "text-[10px] font-black bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full uppercase tracking-wider";
             }
         }
 
-        // Initialize default mode classes correctly
-        setMode('safe');
+        // Calculate Total Size whenever files change
+        function calculateTotalSize() {
+            let totalBytes = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+            originalTotalKB = totalBytes / 1024;
+            updateSliderEstimate();
+        }
 
         document.getElementById('fileInput').addEventListener('change', handleFileSelect);
         document.getElementById('folderInput').addEventListener('change', handleFileSelect);
         document.getElementById('imageInput').addEventListener('change', handleImageSelect);
 
-        function openPdfSelect() {
-            currentMode = 'pdf';
-            document.getElementById('fileInput').click();
-        }
-
-        function openImageSelect() {
-            currentMode = 'images';
-            document.getElementById('imageInput').click();
-        }
+        function openPdfSelect() { currentMode = 'pdf'; document.getElementById('fileInput').click(); }
+        function openImageSelect() { currentMode = 'images'; document.getElementById('imageInput').click(); }
 
         function handleFileSelect(event) {
             currentMode = 'pdf'; 
@@ -287,6 +369,7 @@
                 }
             }
             updateQueueUI();
+            calculateTotalSize();
         }
 
         function handleImageSelect(event) {
@@ -301,29 +384,32 @@
                 }
             }
             updateQueueUI();
+            calculateTotalSize();
         }
 
         function removeFile(index) {
             selectedFiles.splice(index, 1);
             updateQueueUI();
+            calculateTotalSize();
         }
 
         function clearQueue() {
             selectedFiles = [];
+            originalTotalKB = 0;
             document.getElementById('fileInput').value = '';
             document.getElementById('imageInput').value = '';
             document.getElementById('folderInput').value = '';
             updateQueueUI();
+            calculateTotalSize();
             document.getElementById('progressBar').style.width = '0%';
         }
 
         function updateQueueUI() {
             const box = document.getElementById('queueBox');
             if (selectedFiles.length === 0) {
-                box.innerHTML = '<p class="text-center text-slate-400 dark:text-slate-500 font-medium text-sm mt-10">Select PDFs to compress OR Images to make a PDF!</p>';
+                box.innerHTML = '<p class="text-center text-slate-400 dark:text-slate-500 font-medium text-sm mt-8">Select PDFs to compress OR Images to make a PDF!</p>';
                 return;
             }
-
             box.innerHTML = '';
             selectedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
@@ -343,7 +429,20 @@
                 return;
             }
 
-            const targetKb = document.getElementById('target_kb').value;
+            // 🚀 Logic to get Target KB based on Mode
+            let targetKb = 0;
+            if(compMode === 'strict') {
+                targetKb = document.getElementById('strict_target_kb').value;
+                if(!targetKb || targetKb <= 0) {
+                    alert("Please enter a valid Target Size (KB) for Strict Mode.");
+                    return;
+                }
+            } else {
+                let percent = 100 - slider.value;
+                targetKb = Math.floor(originalTotalKB * (percent / 100));
+                if(targetKb <= 0) targetKb = 500; // Fallback
+            }
+
             const btn = document.getElementById('startBtn');
             const pBar = document.getElementById('progressBar');
             
@@ -354,9 +453,7 @@
             const formData = new FormData();
             formData.append('target_kb', targetKb);
             formData.append('comp_mode', compMode); 
-            selectedFiles.forEach(file => {
-                formData.append('files', file);
-            });
+            selectedFiles.forEach(file => { formData.append('files', file); });
 
             let endpoint = (currentMode === 'images') ? '/images_to_pdf' : '/compress_batch';
 
