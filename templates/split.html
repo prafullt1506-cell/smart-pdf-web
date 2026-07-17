@@ -1,199 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Split PDF - Premium Edition</title>
+    <title>Pro Split PDF | Smart Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }, colors: { darkBg: '#090d16' }, animation: { blob: "blob 7s infinite", shine: "shine 1.5s ease-in-out infinite" }, keyframes: { blob: { "0%": { transform: "translate(0px, 0px) scale(1)" }, "33%": { transform: "translate(30px, -50px) scale(1.1)" }, "66%": { transform: "translate(-20px, 20px) scale(0.9)" }, "100%": { transform: "translate(0px, 0px) scale(1)" } }, shine: { "0%": { transform: "translateX(-100%) skewX(-15deg)" }, "100%": { transform: "translateX(200%) skewX(-15deg)" } } } } }
+    </script>
     <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); }
+        .dark .glass-card { background: rgba(20, 27, 45, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); }
+        .animation-delay-2000 { animation-delay: 2s; } .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-50 via-slate-50 to-amber-50 min-h-screen flex items-center justify-center font-sans p-6 relative">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 transition-colors duration-500 min-h-screen flex font-sans relative overflow-x-hidden">
 
-    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/80 backdrop-blur-md text-slate-700 px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:bg-white hover:shadow-md hover:text-orange-600 transition-all font-semibold text-sm">
-        <i class="fa-solid fa-arrow-left"></i> Dashboard
-    </a>
-
-    <div class="glass-card w-full max-w-[600px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
-        
-        <div class="text-center mb-8">
-            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-50 text-orange-600 font-bold text-[10px] uppercase tracking-widest mb-4 border border-orange-100 shadow-sm">
-                <i class="fa-solid fa-scissors"></i> Precision Extractor Active
-            </span>
-            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Split PDF</h1>
-            <p class="text-sm text-slate-500 mt-2 font-medium">Extract specific pages or page ranges into a new document.</p>
-        </div>
-
-        <input type="file" id="fileInput" class="hidden" accept=".pdf">
-
-        <div onclick="triggerUpload()" class="border-2 border-dashed border-slate-200 hover:border-orange-400 bg-slate-50/50 hover:bg-orange-50/30 p-10 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group">
-            <div class="text-5xl text-slate-300 group-hover:text-orange-400 group-hover:scale-110 transition-all duration-300 mb-4">
-                <i id="dropzoneIcon" class="fa-solid fa-file-pdf text-rose-400"></i>
-            </div>
-            <p id="dropzoneText" class="text-sm font-extrabold text-slate-700 mb-1">Click to Upload a PDF File</p>
-        </div>
-
-        <div id="fileDisplay" class="hidden flex justify-between items-center bg-white border border-slate-100 rounded-xl p-4 mb-6 shadow-sm">
-            <div class="flex items-center w-4/5">
-                <i class="fa-solid fa-file-pdf text-rose-500 mr-3 text-lg"></i>
-                <span id="fileName" class="text-sm font-bold text-slate-700 truncate">filename.pdf</span>
-            </div>
-            <button onclick="clearFile()" class="text-slate-300 hover:text-red-500 transition-colors px-2"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-6 shadow-sm transition-all duration-300">
-            <label class="font-bold text-slate-700 text-sm mb-2 block">Pages to Extract:</label>
-            <input type="text" id="pageRange" placeholder="e.g., 1-5, 8, 11-13" class="w-full border border-slate-200 bg-slate-50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white font-medium text-slate-800 transition-all">
-            <p class="text-[11px] text-slate-400 mt-2 font-medium"><i class="fa-solid fa-circle-info text-orange-400 mr-1"></i> Use commas to separate numbers or dashes for ranges.</p>
-        </div>
-
-        <div class="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
-            <div id="progressBar" class="bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-500 h-full rounded-full w-0 transition-all duration-300 relative"></div>
-        </div>
-
-        <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-orange-500 to-amber-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-orange-500/30 transition-all duration-300 transform hover:-translate-y-1">
-            <span class="relative z-10 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-scissors text-yellow-200"></i> SPLIT DOCUMENT
-            </span>
+    <div class="absolute top-6 right-6 z-50">
+        <button id="theme-toggle" class="p-3 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group backdrop-blur-md">
+            <i id="theme-icon" class="fa-solid fa-moon text-lg text-slate-600 dark:text-yellow-400 group-hover:rotate-12 transition-transform"></i>
         </button>
+    </div>
 
-        <div id="successPopup" class="absolute inset-0 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95">
-            <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
-                <i class="fa-solid fa-check text-3xl"></i>
+    <!-- 🌟 ANIMATED BACKGROUND (Red/Rose Theme) -->
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 -left-10 w-[500px] h-[500px] bg-red-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob dark:bg-red-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute top-20 -right-10 w-[400px] h-[400px] bg-rose-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000 dark:bg-rose-900 dark:opacity-30 dark:mix-blend-screen"></div>
+        <div class="absolute -bottom-10 left-1/3 w-[600px] h-[600px] bg-pink-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-4000 dark:bg-pink-900 dark:opacity-20 dark:mix-blend-screen"></div>
+    </div>
+
+    <!-- 🚀 LEFT SIDEBAR -->
+    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 dark:bg-slate-950 text-white p-12 flex-col justify-between relative overflow-hidden z-10 shadow-2xl transition-colors duration-500">
+        <div class="absolute -top-20 -left-20 w-80 h-80 bg-red-500/10 rounded-full filter blur-3xl"></div>
+        <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-rose-500/10 rounded-full filter blur-3xl"></div>
+        <div class="relative z-10">
+            <a href="/" class="inline-block mb-6 px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold backdrop-blur-sm transition border border-white/10"><i class="fa-solid fa-arrow-left mr-1"></i> Dashboard</a><br>
+            <span class="bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Premium Edition</span>
+            <h2 class="text-4xl font-black tracking-tight mt-4 text-red-400 drop-shadow-lg">Split PDF</h2>
+            <p class="text-slate-400 text-sm mt-2">Precision Page Extractor</p>
+        </div>
+        <div class="my-auto space-y-8 relative z-10">
+            <div class="space-y-2">
+                <h3 class="text-3xl font-extrabold leading-tight text-white">Extract exactly what you need.</h3>
+                <p class="text-slate-400 text-base">Separate one page or a whole range of pages from a large PDF document instantly.</p>
             </div>
-            <h2 class="text-2xl font-black text-slate-800 mb-6 text-center tracking-tight">Split Successful!</h2>
-            
-            <div class="flex space-x-4 w-full mb-6">
-                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center">
-                    <p class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Original Size</p>
-                    <p id="valLeft" class="text-slate-700 text-xl font-black">0 KB</p>
+            <div class="space-y-4 mt-8">
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
+                    <span class="text-rose-400 text-2xl drop-shadow-md">✂️</span>
+                    <div><h4 class="font-bold text-slate-200 text-sm">Custom Ranges</h4><p class="text-xs text-slate-400 mt-1">Example: Type "1, 3-5, 8" to get those specific pages bundled into a new file.</p></div>
                 </div>
-                <div class="flex-1 bg-orange-50 border border-orange-100 rounded-2xl p-4 text-center">
-                    <p class="text-orange-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">New Size</p>
-                    <p id="valRight" class="text-slate-700 text-xl font-black">0 KB</p>
+                <div class="flex items-start space-x-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 hover:bg-slate-800 transition shadow-sm">
+                    <span class="text-red-400 text-2xl drop-shadow-md">⚡</span>
+                    <div><h4 class="font-bold text-slate-200 text-sm">Instant Extraction</h4><p class="text-xs text-slate-400 mt-1">Original file quality is perfectly preserved without re-encoding.</p></div>
                 </div>
-            </div>
-
-            <div id="popSave" class="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 text-center mb-8 font-bold text-emerald-700 text-sm tracking-wide">
-                ✨ Extracted PDF is ready for download!
-            </div>
-
-            <div class="flex w-full space-x-3">
-                <button onclick="closePopup()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200">Close</button>
-                <a id="downloadLnk" href="#" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
-                    <i class="fa-solid fa-download text-lg"></i> Download File
-                </a>
             </div>
         </div>
+        <div class="text-xs text-slate-500 relative z-10 mt-8">&copy; 2026 Smart Toolkit. All rights reserved.</div>
+    </div>
 
+    <!-- RIGHT MAIN WORKSPACE -->
+    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 bg-transparent relative z-10">
+        <div class="glass-card w-full max-w-[550px] p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative overflow-hidden transition-all duration-500">
+            
+            <div class="text-center mb-8">
+                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-widest mb-4 border border-red-100 dark:border-red-900/50 shadow-sm"><i class="fa-solid fa-scissors"></i> Precision Engine</span>
+                <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight transition-all">Split PDF Pages</h1>
+            </div>
+
+            <input type="file" id="pdfInput" accept=".pdf" class="hidden">
+            <div onclick="document.getElementById('pdfInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-red-400 dark:hover:border-red-500 bg-white/50 dark:bg-slate-900/50 hover:bg-red-50/50 dark:hover:bg-red-900/20 p-8 rounded-3xl text-center cursor-pointer transition-all duration-300 mb-6 group backdrop-blur-sm">
+                <div class="text-5xl text-slate-300 dark:text-slate-600 group-hover:text-red-500 group-hover:scale-110 transition-all duration-300 mb-4"><i class="fa-solid fa-file-pdf"></i></div>
+                <p class="text-sm font-extrabold text-slate-700 dark:text-slate-200 mb-1">Upload PDF Document</p>
+                <p class="text-xs text-slate-400 font-medium">Select the file you want to split</p>
+            </div>
+
+            <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl p-3 mb-4 shadow-inner backdrop-blur-sm transition-colors duration-500">
+                <p id="emptyMsg" class="text-center text-slate-400 dark:text-slate-500 font-medium text-xs py-2">No file selected.</p>
+            </div>
+
+            <!-- Page Range Input -->
+            <div class="mb-6">
+                <label class="font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider block mb-2">Pages to Extract:</label>
+                <input type="text" id="pageRange" placeholder="e.g. 1, 3-5, 8" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white font-bold text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all shadow-sm">
+                <p class="text-[9px] text-slate-500 mt-2"><i class="fa-solid fa-circle-info mr-1"></i> Use commas to separate pages or dashes for ranges.</p>
+            </div>
+
+            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-6 overflow-hidden"><div id="progressBar" class="bg-gradient-to-r from-red-400 to-rose-600 h-full rounded-full w-0 transition-all duration-300"></div></div>
+
+            <button id="startBtn" onclick="processEngine()" class="w-full relative group overflow-hidden bg-gradient-to-r from-red-500 to-rose-600 text-white font-black text-lg py-4 rounded-2xl shadow-lg shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                <span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-scissors"></i> SPLIT PDF</span>
+                <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
+            </button>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
+                <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6"><i class="fa-solid fa-check text-3xl"></i></div>
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2 text-center tracking-tight">Split Successful!</h2>
+                <div class="flex w-full space-x-3 mt-6" id="downloadLayout">
+                    <button onclick="closePopup()" class="w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 rounded-2xl transition-colors text-sm">Close</button>
+                    <a id="downloadBtn" href="#" class="w-2/3 flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm"><i class="fa-solid fa-download"></i> Download</a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
+        const themeToggleBtn = document.getElementById('theme-toggle'); const themeIcon = document.getElementById('theme-icon'); const html = document.documentElement;
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { html.classList.add('dark'); themeIcon.classList.replace('fa-moon', 'fa-sun'); }
+        themeToggleBtn.addEventListener('click', () => { html.classList.toggle('dark'); if (html.classList.contains('dark')) { localStorage.setItem('theme', 'dark'); themeIcon.classList.replace('fa-moon', 'fa-sun'); } else { localStorage.setItem('theme', 'light'); themeIcon.classList.replace('fa-sun', 'fa-moon'); } });
+
         let selectedFile = null;
+        document.getElementById('pdfInput').addEventListener('change', function(e) { if(e.target.files.length > 0) { selectedFile = e.target.files[0]; updateQueueUI(); } });
 
-        function triggerUpload() {
-            document.getElementById('fileInput').click();
+        function updateQueueUI() {
+            const box = document.getElementById('queueBox');
+            if(!selectedFile) { box.innerHTML = `<p class="text-center text-slate-400 font-medium text-xs py-2">No file selected.</p>`; return; }
+            box.innerHTML = `<div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3"><div class="flex items-center gap-3 w-4/5"><i class="fa-solid fa-file-pdf text-rose-500 text-2xl shrink-0"></i><span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${selectedFile.name}</span></div><button onclick="selectedFile=null; updateQueueUI();" class="text-slate-400 hover:text-red-500 p-2"><i class="fa-solid fa-xmark"></i></button></div>`;
         }
 
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            if(e.target.files.length > 0) {
-                selectedFile = e.target.files[0];
-                document.getElementById('fileName').innerText = selectedFile.name;
-                document.getElementById('fileDisplay').classList.remove('hidden');
-                document.getElementById('fileDisplay').classList.add('flex');
-            }
-        });
-
-        function clearFile() {
-            selectedFile = null;
-            document.getElementById('fileInput').value = '';
-            document.getElementById('fileDisplay').classList.add('hidden');
-            document.getElementById('fileDisplay').classList.remove('flex');
-            document.getElementById('progressBar').style.width = '0%';
-        }
-
-        function processEngine() {
-            if (!selectedFile) {
-                alert("Please select a PDF file first.");
-                return;
-            }
-            
+        async function processEngine() {
+            if(!selectedFile) return alert("Please select a PDF file first.");
             const pages = document.getElementById('pageRange').value.trim();
-            if (!pages) {
-                alert("Please enter the page numbers you want to extract.");
-                return;
-            }
+            if(!pages) return alert("Please enter the pages to extract (e.g., 1-3, 5).");
 
-            const btn = document.getElementById('startBtn');
-            const pBar = document.getElementById('progressBar');
-            
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> SLICING DOCUMENT...";
-            btn.classList.add("opacity-80", "pointer-events-none");
-            pBar.style.width = '50%';
+            const btn = document.getElementById('startBtn'); const pBar = document.getElementById('progressBar');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SPLITTING...'; btn.classList.add("opacity-70", "pointer-events-none"); pBar.style.width = '60%'; 
 
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            formData.append('pages', pages);
-
-            fetch('/split_pdf', { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => {
+            const formData = new FormData(); formData.append('file', selectedFile); formData.append('pages', pages);
+            try {
+                const res = await fetch('/split_pdf', { method: 'POST', body: formData });
+                const data = await res.json();
                 pBar.style.width = '100%';
-                if (data.success) {
-                    setTimeout(() => { showPopup(data); }, 600);
-                } else {
-                    alert("Error: " + data.error);
-                    resetBtn();
-                }
-            })
-            .catch(() => {
-                alert("A system error occurred!");
-                resetBtn();
-            });
+                if(res.ok && data.success) { setTimeout(() => { showPopup(data); }, 500); } else { alert('Error: ' + data.error); resetBtn(); }
+            } catch (e) { alert('Connection error!'); resetBtn(); }
         }
 
         function showPopup(data) {
-            const popup = document.getElementById('successPopup');
-            popup.classList.remove('hidden');
-            setTimeout(() => {
-                popup.classList.remove('opacity-0', 'scale-95');
-                popup.classList.add('opacity-100', 'scale-100');
-            }, 10);
-            
-            document.getElementById('valLeft').innerText = data.original_kb + " KB";
-            document.getElementById('valRight').innerText = data.new_kb + " KB";
-
-            const dlLnk = document.getElementById('downloadLnk');
-            dlLnk.href = `data:${data.mime_type};base64,${data.file_data}`;
-            dlLnk.download = data.file_name;
-            
+            const popup = document.getElementById('successPopup'); popup.classList.remove('hidden');
+            setTimeout(() => { popup.classList.remove('opacity-0', 'scale-95'); popup.classList.add('opacity-100', 'scale-100'); }, 10);
+            const dlBtn = document.getElementById('downloadBtn'); dlBtn.href = `data:${data.mime_type};base64,${data.file_data}`; dlBtn.download = data.file_name;
             resetBtn();
         }
-
         function closePopup() {
-            const popup = document.getElementById('successPopup');
-            popup.classList.remove('opacity-100', 'scale-100');
-            popup.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => {
-                popup.classList.add('hidden');
-                popup.classList.remove('flex');
-                clearFile();
-                document.getElementById('pageRange').value = '';
-            }, 300);
+            const popup = document.getElementById('successPopup'); popup.classList.remove('opacity-100', 'scale-100'); popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => { popup.classList.add('hidden'); selectedFile = null; updateQueueUI(); document.getElementById('pageRange').value = ''; }, 300);
         }
-
         function resetBtn() {
-            const btn = document.getElementById('startBtn');
-            btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-scissors text-yellow-200"></i> SPLIT DOCUMENT</span>`;
-            btn.classList.remove("opacity-80", "pointer-events-none");
-            document.getElementById('progressBar').style.width = '0%';
+            const btn = document.getElementById('startBtn'); btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-scissors"></i> SPLIT PDF</span>`;
+            btn.classList.remove("opacity-70", "pointer-events-none"); document.getElementById('progressBar').style.width = '0%';
         }
     </script>
 </body>
