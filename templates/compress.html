@@ -48,7 +48,7 @@
             width: 100%;
             height: 8px;
             border-radius: 10px;
-            background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981); /* Red to Green */
             outline: none;
             transition: all 0.3s;
         }
@@ -156,17 +156,18 @@
             <!-- 🚀 DYNAMIC SLIDER WITH +/- (Safe Mode UI) -->
             <div id="safe-mode-ui" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 mb-5 shadow-sm transition-colors duration-500">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Quality Level</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Target File Size</span>
                     <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
                 </div>
                 
-                <!-- NEW: Stepper with Slider -->
+                <!-- NEW: Stepper with Slider (50-50 Step Logic) -->
                 <div class="flex items-center space-x-4 mb-2">
                     <button id="slider-minus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
                         <i class="fa-solid fa-minus text-xs"></i>
                     </button>
                     
-                    <input type="range" id="compression-slider" min="10" max="90" value="50" class="custom-slider flex-1">
+                    <!-- Min=50, Step=50. Max will be set dynamically via JS -->
+                    <input type="range" id="compression-slider" min="50" max="1000" step="50" value="150" class="custom-slider flex-1">
                     
                     <button id="slider-plus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
                         <i class="fa-solid fa-plus text-xs"></i>
@@ -174,13 +175,14 @@
                 </div>
 
                 <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-10">
-                    <span>High Quality</span>
                     <span>Max Compress</span>
+                    <span>Original Size</span>
                 </div>
                 
-                <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-2 border border-slate-100 dark:border-slate-700">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Estimated Target Size</p>
-                    <p id="estimated-kb" class="text-lg font-black text-sky-500">Add files to see size</p>
+                <div class="text-center bg-slate-50 dark:bg-slate-900 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                    <p class="text-xs text-slate-500 font-bold tracking-wider mb-1">Target Bracket</p>
+                    <!-- Here is where the 50-100, 100-150 magic happens -->
+                    <p id="estimated-kb" class="text-2xl font-black text-sky-500 bg-white dark:bg-slate-800 inline-block px-4 py-1 rounded-xl shadow-sm border border-sky-100 dark:border-sky-900/50">Add files to see</p>
                 </div>
             </div>
 
@@ -325,7 +327,7 @@
         }
         setMode('safe');
 
-        // 🚀 SLIDER & PLUS/MINUS LOGIC
+        // 🚀 SMART SLIDER & PLUS/MINUS LOGIC (50-50 Jumps)
         const slider = document.getElementById('compression-slider');
         const sliderLabel = document.getElementById('slider-label');
         const estKbText = document.getElementById('estimated-kb');
@@ -334,16 +336,18 @@
 
         document.getElementById('slider-minus').addEventListener('click', () => {
             let currentVal = parseInt(slider.value);
-            if(currentVal > parseInt(slider.min)) {
-                slider.value = currentVal - 1;
+            let minVal = parseInt(slider.min);
+            if(currentVal > minVal) {
+                slider.value = currentVal - 50;
                 updateSliderEstimate();
             }
         });
 
         document.getElementById('slider-plus').addEventListener('click', () => {
             let currentVal = parseInt(slider.value);
-            if(currentVal < parseInt(slider.max)) {
-                slider.value = currentVal + 1;
+            let maxVal = parseInt(slider.max);
+            if(currentVal < maxVal) {
+                slider.value = currentVal + 50;
                 updateSliderEstimate();
             }
         });
@@ -353,18 +357,20 @@
                 estKbText.innerText = "Add files to see size";
                 return;
             }
-            const val = slider.value;
-            let percent = 100 - val; // 10 = High Quality (90% size), 90 = Extreme (10% size)
-            let estimatedTarget = (originalTotalKB * (percent / 100));
             
-            let lowerBound = (estimatedTarget * 0.9).toFixed(0);
-            let upperBound = (estimatedTarget * 1.1).toFixed(0);
-            estKbText.innerText = `~ ${lowerBound} - ${upperBound} KB`;
+            const val = parseInt(slider.value);
+            let lowerBound = val - 50;
+            if(lowerBound < 0) lowerBound = 0;
+            
+            // e.g. "50 - 100 KB"
+            estKbText.innerText = `${lowerBound} - ${val} KB`;
 
-            if(val < 30) {
+            // Change Colors based on Compression Ratio
+            let ratio = val / originalTotalKB;
+            if (ratio >= 0.7) {
                 sliderLabel.innerText = "High Quality";
                 sliderLabel.className = "text-[10px] font-black bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider";
-            } else if (val < 70) {
+            } else if (ratio >= 0.3) {
                 sliderLabel.innerText = "Balanced";
                 sliderLabel.className = "text-[10px] font-black bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider";
             } else {
@@ -373,10 +379,21 @@
             }
         }
 
-        // Calculate Total Size whenever files change
+        // Calculate Total Size whenever files change & Adjust Slider Max limit
         function calculateTotalSize() {
             let totalBytes = selectedFiles.reduce((acc, file) => acc + file.size, 0);
             originalTotalKB = totalBytes / 1024;
+            
+            if (originalTotalKB > 0) {
+                // Round up to nearest 50 for max slider limit
+                let maxKb = Math.ceil(originalTotalKB / 50) * 50;
+                if (maxKb < 50) maxKb = 50;
+                
+                slider.max = maxKb;
+                // Default value (try to set to something sensible like half, or max if small)
+                if (slider.value > maxKb) slider.value = maxKb;
+            }
+            
             updateSliderEstimate();
         }
 
@@ -458,7 +475,7 @@
                 return;
             }
 
-            // 🚀 Logic to get Target KB based on Mode
+            // 🚀 Get Exact Target KB directly from UI
             let targetKb = 0;
             if(compMode === 'strict') {
                 targetKb = document.getElementById('strict_target_kb').value;
@@ -467,8 +484,7 @@
                     return;
                 }
             } else {
-                let percent = 100 - slider.value;
-                targetKb = Math.floor(originalTotalKB * (percent / 100));
+                targetKb = parseInt(slider.value); 
                 if(targetKb <= 0) targetKb = 500; // Fallback
             }
 
