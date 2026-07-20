@@ -53,13 +53,12 @@ def security_page():
 def image_crop():
     return render_template('image_crop.html')
 
-# 🚀 NEW ROUTE ADDED HERE FOR IMAGE COMPRESSOR
 @app.route('/image_compress_page', methods=['GET'])
 def image_compress_page():
     return render_template('image_compressor.html')
 
 # ==========================================
-# 🗜️ ENGINE 1: PDF COMPRESSOR (Universal Safe/Strict Logic)
+# 🗜️ ENGINE 1: PDF COMPRESSOR (Original/Safe/Strict Logic)
 # ==========================================
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
@@ -70,9 +69,14 @@ def compress_batch():
         if not files or files[0].filename == '':
             return jsonify({"error": "No files selected"}), 400
 
-        target_kb = int(request.form.get('target_kb', 500))
+        target_kb = request.form.get('target_kb', 500)
         comp_mode = request.form.get('comp_mode', 'safe')
-        target_size_bytes = target_kb * 1024
+        
+        # 🚀 Ignore target size if original mode
+        if comp_mode == 'original':
+            target_size_bytes = float('inf')
+        else:
+            target_size_bytes = int(target_kb) * 1024
         
         total_original_size = 0
         total_new_size = 0
@@ -92,14 +96,13 @@ def compress_batch():
 
             pdf_bytes = doc.tobytes(garbage=4, deflate=True, clean=True)
 
-            if len(pdf_bytes) > target_size_bytes:
-                # 🚀 EXTREME FALLBACKS: To strictly guarantee target match!
+            if len(pdf_bytes) > target_size_bytes and comp_mode != 'original':
                 settings = [
                     (1.2, 85), (1.2, 65), (1.0, 85), (1.0, 65), (1.0, 45),
                     (0.8, 70), (0.8, 50), (0.8, 30),
                     (0.6, 60), (0.6, 40), (0.6, 20),
                     (0.4, 50), (0.4, 30), (0.4, 15),
-                    (0.2, 30), (0.2, 10), (0.1, 5) # Extreme Low Levels Added!
+                    (0.2, 30), (0.2, 10), (0.1, 5) 
                 ]
                 for zoom, quality in settings:
                     new_doc = fitz.open()
@@ -121,7 +124,7 @@ def compress_batch():
             # 🚀 UNIVERSAL STRICT PADDING (\x00)
             if comp_mode == 'strict':
                 if len(pdf_bytes) < target_size_bytes:
-                    padding_needed = target_size_bytes - len(pdf_bytes)
+                    padding_needed = int(target_size_bytes) - len(pdf_bytes)
                     pdf_bytes += b'\x00' * padding_needed
 
             total_new_size += len(pdf_bytes) / 1024
@@ -155,7 +158,7 @@ def compress_batch():
         gc.collect()
 
 # ==========================================
-# 🖼️ ENGINE 2: IMAGES TO PDF (Universal Safe/Strict Logic)
+# 🖼️ ENGINE 2: IMAGES TO PDF (Original/Safe/Strict Logic)
 # ==========================================
 @app.route('/images_to_pdf', methods=['POST'])
 def images_to_pdf():
@@ -164,9 +167,13 @@ def images_to_pdf():
             return jsonify({"error": "No files uploaded"}), 400
         files = request.files.getlist('files')
         
-        target_kb = int(request.form.get('target_kb', 500))
+        target_kb = request.form.get('target_kb', 500)
         comp_mode = request.form.get('comp_mode', 'safe') 
-        target_size_bytes = target_kb * 1024
+        
+        if comp_mode == 'original':
+            target_size_bytes = float('inf')
+        else:
+            target_size_bytes = int(target_kb) * 1024
         
         total_image_size = 0
         new_doc = fitz.open()
@@ -187,17 +194,15 @@ def images_to_pdf():
             return jsonify({"error": "No valid images found to convert."}), 400
 
         original_pdf_bytes = new_doc.tobytes(garbage=4, deflate=True)
-        generated_pdf_kb = len(original_pdf_bytes) / 1024
         pdf_bytes = original_pdf_bytes 
         
-        if len(pdf_bytes) > target_size_bytes:
-            # 🚀 EXTREME FALLBACKS FOR IMAGE TO PDF
+        if len(pdf_bytes) > target_size_bytes and comp_mode != 'original':
             settings = [
                 (1.0, 90), (1.0, 75), (1.0, 60), (1.0, 45),
                 (0.8, 80), (0.8, 60), (0.8, 40), (0.8, 20),
                 (0.6, 70), (0.6, 50), (0.6, 30), (0.6, 15),
                 (0.4, 60), (0.4, 40), (0.4, 20), (0.4, 10),
-                (0.2, 50), (0.2, 30), (0.2, 10), (0.1, 5) # Extreme Low Levels Added!
+                (0.2, 50), (0.2, 30), (0.2, 10), (0.1, 5) 
             ]
             for zoom, quality in settings:
                 comp_doc = fitz.open()
@@ -215,22 +220,18 @@ def images_to_pdf():
                     break
         new_doc.close()
 
-        # 🚀 UNIVERSAL STRICT PADDING (\x00)
         if comp_mode == 'strict':
             if len(pdf_bytes) < target_size_bytes:
-                padding_needed = target_size_bytes - len(pdf_bytes)
+                padding_needed = int(target_size_bytes) - len(pdf_bytes)
                 pdf_bytes += b'\x00' * padding_needed
 
         return jsonify({
             "success": True,
             "is_dual": True,
             "original_kb": round(total_image_size, 1),
-            "generated_pdf_kb": round(generated_pdf_kb, 1),
             "new_kb": round(len(pdf_bytes) / 1024, 1),
-            "file_name_orig": "Original_Images.pdf",
-            "file_name_comp": "Target_Images.pdf",
+            "file_name_comp": "Converted_Images.pdf",
             "mime_type": "application/pdf",
-            "file_data_orig": base64.b64encode(original_pdf_bytes).decode('utf-8'),
             "file_data_comp": base64.b64encode(pdf_bytes).decode('utf-8')
         })
     except Exception as e:
@@ -246,8 +247,7 @@ def pdf_to_images():
     try:
         if 'files' not in request.files:
             return jsonify({"error": "No files uploaded"}), 400
-        files = request.files.getlist('files')
-        file = files[0]
+        file = request.files.getlist('files')[0]
         pdf_bytes = file.read()
         total_original_kb = len(pdf_bytes) / 1024
         
@@ -331,7 +331,7 @@ def pdf_to_word():
         gc.collect()
 
 # ==========================================
-# 📑 ENGINE 5: WORD TO PDF (Advanced Pro Version with Fallback)
+# 📑 ENGINE 5: WORD TO PDF
 # ==========================================
 @app.route('/word_to_pdf', methods=['POST'])
 def word_to_pdf():
@@ -365,7 +365,7 @@ def word_to_pdf():
                 with open(temp_pdf_name, 'rb') as f:
                     pdf_bytes = f.read()
         except Exception as e:
-            print(f"LibreOffice failed or not installed. Fallback to basic engine. Error: {e}")
+            print(f"LibreOffice failed. Fallback to basic engine. Error: {e}")
             
         if not conversion_success:
             doc = Document(temp_docx.name)
@@ -562,7 +562,7 @@ def protect_pdf():
         gc.collect()
 
 # ==========================================
-# ✂️🖼️ ENGINE 9: PRO IMAGE CROPPER & ENHANCER (Universal Safe/Strict Logic)
+# ✂️🖼️ ENGINE 9: PRO IMAGE COMPRESSOR & CROPPER
 # ==========================================
 @app.route('/process-image-crop', methods=['POST'])
 def process_image_crop():
@@ -582,76 +582,46 @@ def process_image_crop():
             img = img.convert("RGB")
             original_format = 'JPEG'
 
+        # Crop settings
         x = int(float(request.form.get('x', 0)))
         y = int(float(request.form.get('y', 0)))
         w = int(float(request.form.get('width', img.width)))
         h = int(float(request.form.get('height', img.height)))
-        
         if w > 0 and h > 0:
             img = img.crop((x, y, x + w, y + h))
 
+        # Enhance Settings
         if request.form.get('enhance') == 'true':
-            enhancer = ImageEnhance.Sharpness(img)
-            img = enhancer.enhance(1.6) 
-            enhancer_contrast = ImageEnhance.Contrast(img)
-            img = enhancer_contrast.enhance(1.15)
-            enhancer_color = ImageEnhance.Color(img)
-            img = enhancer_color.enhance(1.1)
+            img = ImageEnhance.Sharpness(img).enhance(1.6) 
+            img = ImageEnhance.Contrast(img).enhance(1.15)
+            img = ImageEnhance.Color(img).enhance(1.1)
 
-        unit = request.form.get('unit', 'px')
-        raw_w = request.form.get('target_w', '')
-        raw_h = request.form.get('target_h', '')
-        raw_dpi = request.form.get('target_dpi', '')
-
-        try:
-            target_dpi = int(raw_dpi) if raw_dpi else 300
-        except ValueError:
-            target_dpi = 300
-
-        target_w, target_h = None, None
-        if raw_w and raw_h:
-            try:
-                if unit == 'cm':
-                    target_w = int((float(raw_w) / 2.54) * target_dpi)
-                    target_h = int((float(raw_h) / 2.54) * target_dpi)
-                else:
-                    target_w = int(float(raw_w))
-                    target_h = int(float(raw_h))
-            except ValueError:
-                pass
-
-        if target_w and target_h and target_w > 0 and target_h > 0:
-            img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
-
-        target_kb = request.form.get('target_kb')
         comp_mode = request.form.get('comp_mode', 'safe') 
+        target_kb = request.form.get('target_kb')
         img_byte_arr = io.BytesIO()
         
-        if target_kb and target_kb.isdigit():
+        if comp_mode == 'original' or not target_kb or not str(target_kb).isdigit():
+            img.save(img_byte_arr, format=original_format, quality=95, optimize=True)
+        else:
             target_bytes = int(target_kb) * 1024
             quality = 95
-            # 🚀 UNIVERSAL: Gradual Step Down for Image
             while quality > 15:
                 img_byte_arr.seek(0)
                 img_byte_arr.truncate()
-                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True, dpi=(target_dpi, target_dpi))
+                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True)
                 if img_byte_arr.tell() <= target_bytes:
                     break
                 quality -= 5
                 
-            # 🚀 UNIVERSAL STRICT PADDING (\x00)
             if comp_mode == 'strict':
                 current_size = img_byte_arr.tell()
                 if current_size < target_bytes:
                     img_byte_arr.write(b'\x00' * (target_bytes - current_size))
-        else:
-            img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
 
         img_byte_arr.seek(0)
         return send_file(img_byte_arr, mimetype=f'image/{original_format.lower()}', as_attachment=True, download_name=f"Edited_Image.{original_format.lower()}")
 
     except Exception as e:
-        print("Error System Core Grid Failure:", e)
         return jsonify({'error': f"Image Processing Error: {str(e)}"}), 500
     finally:
         gc.collect()
