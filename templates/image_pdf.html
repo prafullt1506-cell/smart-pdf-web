@@ -186,14 +186,15 @@
             <!-- Settings Panel (Slider + Modes) -->
             <div id="targetBox" class="transition-all duration-300 overflow-hidden" style="max-height: 800px; opacity: 1;">
                 
-                <!-- SAFE / STRICT MODE TOGGLE -->
+                <!-- 🚀 3 MODE TOGGLE (Original | Safe | Strict) -->
                 <div class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 mb-4 shadow-sm backdrop-blur-sm transition-colors duration-500">
                     <div class="flex justify-between items-center mb-2">
                         <label class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center">Compression Mode <span id="modeBadge" class="ml-2 text-[9px] bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black">Safe</span></label>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
-                        <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe (Auto-Optimize)</button>
-                        <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white">Strict (Exact Size)</button>
+                    <div class="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 transition-colors duration-500">
+                        <button id="modeOrigBtn" onclick="setMode('original')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-transparent">Original</button>
+                        <button id="modeSafeBtn" onclick="setMode('safe')" class="py-1.5 rounded-md font-bold text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-none">Safe</button>
+                        <button id="modeStrictBtn" onclick="setMode('strict')" class="py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-transparent">Strict</button>
                     </div>
                 </div>
 
@@ -204,7 +205,6 @@
                         <span id="slider-label" class="text-[10px] font-black bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Balanced</span>
                     </div>
                     
-                    <!-- Stepper with Slider (50-50 Step Logic) -->
                     <div class="flex items-center space-x-4 mb-2">
                         <button id="slider-minus" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-300 transition-all flex items-center justify-center font-bold shadow-sm border border-slate-200 dark:border-slate-600 active:scale-95">
                             <i class="fa-solid fa-minus text-xs"></i>
@@ -238,6 +238,13 @@
                     <p class="text-[10px] text-slate-500 mt-2 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Output will be padded to match this exact size if it falls short.</p>
                 </div>
 
+                <!-- 🚀 ORIGINAL MODE UI -->
+                <div id="original-mode-ui" class="bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm backdrop-blur-sm transition-colors duration-500 hidden text-center">
+                    <i class="fa-solid fa-check-circle text-emerald-500 text-3xl mb-2"></i>
+                    <h4 class="font-bold text-slate-700 dark:text-slate-300 text-sm">Original Quality Selected</h4>
+                    <p class="text-[11px] text-slate-500 mt-1">Images will be merged into a PDF perfectly with zero quality loss.</p>
+                </div>
+
             </div>
 
             <input type="file" id="fileInput" multiple class="hidden">
@@ -257,7 +264,7 @@
                 <button onclick="clearQueue()" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 font-bold text-xs transition-colors">Clear All</button>
             </div>
 
-            <!-- Queue Box (Grid with Image Previews) -->
+            <!-- Queue Box -->
             <div id="queueBox" class="bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-2xl h-32 overflow-y-auto p-3 mb-6 custom-scrollbar shadow-inner backdrop-blur-sm transition-colors duration-500 grid grid-cols-2 gap-2 content-start">
                 <p id="emptyMsg" class="col-span-2 text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>
             </div>
@@ -277,38 +284,30 @@
                 <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>
             </button>
 
-            <!-- 🌟 Success Popup -->
+            <!-- 🌟 Success Popup (GIANT UI DESIGN) -->
             <div id="successPopup" class="absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-8 rounded-[2.5rem] z-50 transition-all duration-300 opacity-0 scale-95 border border-slate-200 dark:border-slate-800">
                 
-                <div class="w-16 h-16 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6">
-                    <i class="fa-solid fa-check text-3xl"></i>
+                <div class="w-20 h-20 bg-gradient-to-tr from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/30 mb-6 relative">
+                    <i class="fa-solid fa-check text-4xl"></i>
+                    <span class="absolute -bottom-2 bg-emerald-800 text-white text-[9px] font-black px-3 py-1 rounded-full border-2 border-white dark:border-slate-900 tracking-wider">DONE</span>
                 </div>
                 
-                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 text-center tracking-tight">Conversion Successful!</h2>
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 text-center tracking-tight" id="popupTitle">Mission Accomplished!</h2>
                 
-                <div class="flex space-x-4 w-full mb-6">
-                    <div class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
-                        <p id="lblLeft" class="text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Original Size</p>
-                        <p id="valLeft" class="text-slate-700 dark:text-slate-300 text-2xl font-black">0 KB</p>
+                <!-- Before -> After Giant Design -->
+                <div class="flex items-center justify-center gap-4 w-full mb-8 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-inner">
+                    <div class="text-center w-5/12">
+                        <p id="lblLeft" class="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">Before</p>
+                        <p id="popOrig" class="text-slate-400 dark:text-slate-500 text-lg font-bold decoration-red-400/60 decoration-2">0 KB</p>
                     </div>
-                    <div class="flex-1 bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-900/50 rounded-2xl p-4 text-center transition-colors duration-500 shadow-sm">
-                        <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">Target Size</p>
-                        <p id="valRight" class="text-slate-700 dark:text-slate-400 text-2xl font-black">0 KB</p>
+                    <div class="text-slate-300 dark:text-slate-600 text-xl w-2/12 flex justify-center"><i class="fa-solid fa-arrow-right-long"></i></div>
+                    <div class="text-center w-5/12">
+                        <p id="lblRight" class="text-sky-500 text-[10px] font-extrabold uppercase tracking-widest mb-1">After</p>
+                        <p id="popNew" class="text-sky-500 dark:text-sky-400 text-3xl font-black drop-shadow-sm">0 KB</p>
                     </div>
                 </div>
 
-                <div class="w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-900/50 rounded-xl py-3 text-center mb-6 font-bold text-emerald-700 dark:text-emerald-400 text-xs tracking-wide transition-colors duration-500 shadow-sm">
-                    ✨ High Definition File Matrix Ready!
-                </div>
-
-                <!-- 🚀 DOWNLOAD LABEL -->
-                <div class="w-full text-center mb-4">
-                    <span class="inline-block bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest animate-pulse border border-yellow-200 dark:border-yellow-700/50 shadow-sm">
-                        👇 Click Below to Download 👇
-                    </span>
-                </div>
-
-                <div class="flex w-full space-x-3" id="downloadLayout"></div>
+                <div class="w-full" id="downloadLayout"></div>
             </div>
 
         </div>
@@ -341,31 +340,39 @@
         let compMode = 'safe'; 
         let originalTotalKB = 0;
 
-        // Switch Safe / Strict Mode Function
+        // 🚀 Switch Mode Function (Original | Safe | Strict)
         function setMode(mode) {
             compMode = mode;
+            const origBtn = document.getElementById('modeOrigBtn');
             const safeBtn = document.getElementById('modeSafeBtn');
             const strictBtn = document.getElementById('modeStrictBtn');
             const badge = document.getElementById('modeBadge');
             
+            const origUI = document.getElementById('original-mode-ui');
             const safeUI = document.getElementById('safe-mode-ui');
             const strictUI = document.getElementById('strict-mode-ui');
             const isDark = html.classList.contains('dark');
 
-            if(mode === 'strict') {
-                safeUI.classList.add('hidden');
-                strictUI.classList.remove('hidden');
+            // Reset buttons
+            origBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-transparent";
+            safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-transparent";
+            strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-transparent";
 
+            origUI.classList.add('hidden'); safeUI.classList.add('hidden'); strictUI.classList.add('hidden');
+
+            if(mode === 'strict') {
+                strictUI.classList.remove('hidden');
                 strictBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-sky-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-sky-600 shadow-sm border border-sky-200";
-                safeBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
                 badge.innerText = "Strict";
                 badge.className = isDark ? "ml-2 text-[9px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-sky-100 text-sky-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
+            } else if (mode === 'original') {
+                origUI.classList.remove('hidden');
+                origBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-slate-200 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-slate-800 shadow-sm border border-slate-200";
+                badge.innerText = "Original";
+                badge.className = isDark ? "ml-2 text-[9px] bg-slate-500/10 text-slate-300 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
             } else {
                 safeUI.classList.remove('hidden');
-                strictUI.classList.add('hidden');
-
                 safeBtn.className = isDark ? "py-1.5 rounded-md font-bold text-xs transition-all bg-slate-700 text-emerald-400 shadow-sm border-none" : "py-1.5 rounded-md font-bold text-xs transition-all bg-white text-emerald-600 shadow-sm border border-emerald-200";
-                strictBtn.className = "py-1.5 rounded-md font-bold text-xs transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white";
                 badge.innerText = "Safe";
                 badge.className = isDark ? "ml-2 text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-black" : "ml-2 text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full uppercase tracking-wider font-black";
             }
@@ -382,34 +389,21 @@
         document.getElementById('slider-minus').addEventListener('click', () => {
             let currentVal = parseInt(slider.value);
             let minVal = parseInt(slider.min);
-            if(currentVal > minVal) {
-                slider.value = currentVal - 50;
-                updateSliderEstimate();
-            }
+            if(currentVal > minVal) { slider.value = currentVal - 50; updateSliderEstimate(); }
         });
 
         document.getElementById('slider-plus').addEventListener('click', () => {
             let currentVal = parseInt(slider.value);
             let maxVal = parseInt(slider.max);
-            if(currentVal < maxVal) {
-                slider.value = currentVal + 50;
-                updateSliderEstimate();
-            }
+            if(currentVal < maxVal) { slider.value = currentVal + 50; updateSliderEstimate(); }
         });
 
         function updateSliderEstimate() {
-            if(originalTotalKB === 0) {
-                estKbText.innerText = "Add images to see";
-                return;
-            }
-            
+            if(originalTotalKB === 0) { estKbText.innerText = "Add images to see"; return; }
             const val = parseInt(slider.value);
-            let lowerBound = val - 50;
-            if(lowerBound < 0) lowerBound = 0;
-            
+            let lowerBound = val - 50; if(lowerBound < 0) lowerBound = 0;
             estKbText.innerText = `${lowerBound} - ${val} KB`;
 
-            // Change Colors
             let ratio = val / originalTotalKB;
             if (ratio >= 0.8) {
                 sliderLabel.innerText = "High Quality";
@@ -423,20 +417,16 @@
             }
         }
 
-        // Calculate Total Size & Adjust Max Limit
         function calculateTotalSize() {
             let totalBytes = selectedFiles.reduce((acc, file) => acc + file.size, 0);
             originalTotalKB = totalBytes / 1024;
-            
             if (originalTotalKB > 0) {
                 let estimatedMaxPdfSize = originalTotalKB * 1.5; 
                 let maxKb = Math.ceil(estimatedMaxPdfSize / 50) * 50;
                 if (maxKb < 50) maxKb = 50;
-                
                 slider.max = maxKb;
                 if (slider.value > maxKb) slider.value = maxKb;
             }
-            
             updateSliderEstimate();
         }
 
@@ -455,10 +445,7 @@
                 document.getElementById('dropzoneSub').innerText = "Supports secure PDF formats";
                 document.getElementById('dropzoneIcon').className = "fa-solid fa-file-pdf text-rose-400";
                 
-                // Hide Settings Panel smoothly
-                targetBox.style.opacity = '0';
-                targetBox.style.maxHeight = '0px';
-                targetBox.style.marginBottom = '0px';
+                targetBox.style.opacity = '0'; targetBox.style.maxHeight = '0px'; targetBox.style.marginBottom = '0px';
             } else {
                 currentMode = 'img_to_pdf';
                 document.getElementById('toolTitle').innerText = "Images to PDF";
@@ -467,20 +454,14 @@
                 document.getElementById('dropzoneSub').innerText = "Supports high-res JPG and PNG formats";
                 document.getElementById('dropzoneIcon').className = "fa-solid fa-cloud-arrow-up text-sky-400";
                 
-                // Show Settings Panel smoothly
-                targetBox.style.maxHeight = '800px';
-                targetBox.style.opacity = '1';
-                targetBox.style.marginBottom = '24px';
+                targetBox.style.maxHeight = '800px'; targetBox.style.opacity = '1'; targetBox.style.marginBottom = '24px';
             }
         }
 
         function triggerUpload() {
             const input = document.getElementById('fileInput');
-            if (currentMode === 'img_to_pdf') {
-                input.setAttribute('accept', '.jpg,.jpeg,.png');
-            } else {
-                input.setAttribute('accept', '.pdf');
-            }
+            if (currentMode === 'img_to_pdf') { input.setAttribute('accept', '.jpg,.jpeg,.png'); } 
+            else { input.setAttribute('accept', '.pdf'); }
             input.click();
         }
 
@@ -489,15 +470,12 @@
             for(let i=0; i<files.length; i++) {
                 if (currentMode === 'pdf_to_img') {
                     if(files[i].name.toLowerCase().endsWith('.pdf')) {
-                        selectedFiles = [files[i]]; 
-                        break;
+                        selectedFiles = [files[i]]; break;
                     }
                 } else {
                     const name = files[i].name.toLowerCase();
                     if(name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png')) {
-                        if(!selectedFiles.some(f => f.name === files[i].name)) {
-                            selectedFiles.push(files[i]);
-                        }
+                        if(!selectedFiles.some(f => f.name === files[i].name)) { selectedFiles.push(files[i]); }
                     }
                 }
             }
@@ -512,10 +490,8 @@
         }
 
         function clearQueue() {
-            selectedFiles = [];
-            originalTotalKB = 0;
-            document.getElementById('fileInput').value = '';
-            document.getElementById('progressBar').style.width = '0%';
+            selectedFiles = []; originalTotalKB = 0;
+            document.getElementById('fileInput').value = ''; document.getElementById('progressBar').style.width = '0%';
             updateQueueUI();
             if(currentMode === 'img_to_pdf') calculateTotalSize();
         }
@@ -523,8 +499,7 @@
         function updateQueueUI() {
             const box = document.getElementById('queueBox');
             if (selectedFiles.length === 0) {
-                box.innerHTML = `<p class="col-span-2 text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>`;
-                return;
+                box.innerHTML = `<p class="col-span-2 text-center text-slate-400 dark:text-slate-500 font-medium text-xs mt-10">No files selected yet.</p>`; return;
             }
             box.innerHTML = '';
             selectedFiles.forEach((file, index) => {
@@ -555,129 +530,106 @@
         }
 
         function processEngine() {
-            if (selectedFiles.length === 0) {
-                alert("Please select files to proceed.");
-                return;
-            }
+            if (selectedFiles.length === 0) { alert("Please select files to proceed."); return; }
             
             let targetKb = 0;
             if (currentMode === 'img_to_pdf') {
                 if(compMode === 'strict') {
                     targetKb = document.getElementById('strict_target_kb').value;
-                    if(!targetKb || targetKb <= 0) {
-                        alert("Please enter a valid Target Size (KB) for Strict Mode.");
-                        return;
-                    }
-                } else {
+                    if(!targetKb || targetKb <= 0) { alert("Please enter a valid Target Size (KB) for Strict Mode."); return; }
+                } else if (compMode === 'safe') {
                     targetKb = parseInt(slider.value); 
                     if(targetKb <= 0) targetKb = 500; 
-                }
+                } else { targetKb = 0; } // original mode
             }
 
-            const btn = document.getElementById('startBtn');
-            const pBar = document.getElementById('progressBar');
-            
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> PROCESSING...";
-            btn.classList.add("opacity-80", "pointer-events-none");
-            pBar.style.width = '50%';
+            const btn = document.getElementById('startBtn'); const pBar = document.getElementById('progressBar');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> PROCESSING..."; btn.classList.add("opacity-80", "pointer-events-none"); pBar.style.width = '50%';
 
             const formData = new FormData();
             selectedFiles.forEach(f => formData.append('files', f));
             
             let endpoint = '';
             if (currentMode === 'img_to_pdf') {
-                formData.append('target_kb', targetKb);
-                formData.append('comp_mode', compMode);
+                formData.append('target_kb', targetKb); formData.append('comp_mode', compMode);
                 endpoint = '/images_to_pdf';
-            } else {
-                endpoint = '/pdf_to_images';
-            }
+            } else { endpoint = '/pdf_to_images'; }
 
             fetch(endpoint, { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
                 pBar.style.width = '100%';
-                if (data.success) {
-                    setTimeout(() => { showPopup(data); }, 600);
-                } else {
-                    alert("Error processing files: " + data.error);
-                    resetBtn();
-                }
-            })
-            .catch(() => {
-                alert("A system error occurred!");
-                resetBtn();
-            });
+                if (data.success) { setTimeout(() => { showPopup(data); }, 600); } 
+                else { alert("Error processing files: " + data.error); resetBtn(); }
+            }).catch(() => { alert("A system error occurred!"); resetBtn(); });
         }
 
         function showPopup(data) {
             const popup = document.getElementById('successPopup');
             popup.classList.remove('hidden');
-            setTimeout(() => {
-                popup.classList.remove('opacity-0', 'scale-95');
-                popup.classList.add('opacity-100', 'scale-100');
-            }, 10);
+            setTimeout(() => { popup.classList.remove('opacity-0', 'scale-95'); popup.classList.add('opacity-100', 'scale-100'); }, 10);
             
             const dlLayout = document.getElementById('downloadLayout');
+            
+            // Format sizes nicely
+            let orig = data.original_kb > 1024 ? (data.original_kb/1024).toFixed(2) + ' MB' : data.original_kb + ' KB';
+            let newS = data.new_kb > 1024 ? (data.new_kb/1024).toFixed(2) + ' MB' : data.new_kb + ' KB';
 
             if (data.is_dual) {
-                document.getElementById('lblLeft').innerText = "Original PDF";
-                document.getElementById('valLeft').innerText = data.generated_pdf_kb + " KB";
-                document.getElementById('lblRight').innerText = "Target PDF";
-                document.getElementById('valRight').innerText = data.new_kb + " KB";
-                
-                let saved = (data.generated_pdf_kb - data.new_kb).toFixed(1);
-                if (saved <= 0) {
-                    document.getElementById('popSave').innerText = "✨ Both formats ready! ✨";
+                document.getElementById('popupTitle').innerText = compMode === 'original' ? "Images Merged Successfully!" : "Images Compressed & Merged!";
+                document.getElementById('lblLeft').innerText = "Total Images";
+                document.getElementById('popOrig').innerText = orig;
+                document.getElementById('lblRight').innerText = "Generated PDF";
+                document.getElementById('popNew').innerText = newS;
+
+                // Strikethrough logic
+                if(compMode === 'original') { document.getElementById('popOrig').classList.remove('line-through', 'decoration-red-400/60'); }
+                else { document.getElementById('popOrig').classList.add('line-through', 'decoration-red-400/60'); }
+
+                if(compMode === 'original') {
+                    dlLayout.innerHTML = `
+                        <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-500/30 transition-all transform hover:-translate-y-1 text-lg tracking-wide mb-3">
+                            <i class="fa-solid fa-cloud-arrow-down text-2xl animate-bounce"></i> DOWNLOAD PDF
+                        </a>
+                    `;
                 } else {
-                    document.getElementById('popSave').innerText = `🔥 You Can Save ${saved} KB Space! 🔥`;
+                    dlLayout.innerHTML = `
+                        <a href="data:${data.mime_type};base64,${data.file_data_comp}" download="${data.file_name_comp}" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-sky-500/30 transition-all transform hover:-translate-y-1 text-lg tracking-wide mb-3">
+                            <i class="fa-solid fa-cloud-arrow-down text-2xl animate-bounce"></i> DOWNLOAD TARGET PDF
+                        </a>
+                        <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="block text-center text-xs text-sky-600 dark:text-sky-400 font-bold hover:underline">Or download original quality PDF (${data.generated_pdf_kb} KB)</a>
+                    `;
                 }
-
-                dlLayout.innerHTML = `
-                    <a href="data:${data.mime_type};base64,${data.file_data_orig}" download="${data.file_name_orig}" class="flex-1 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 rounded-2xl transition-colors text-xs border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <span>Original HD</span><span class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">${data.generated_pdf_kb} KB</span>
-                    </a>
-                    <a href="data:${data.mime_type};base64,${data.file_data_comp}" download="${data.file_name_comp}" class="flex-1 flex flex-col items-center justify-center bg-sky-500 dark:bg-sky-600 hover:bg-sky-600 dark:hover:bg-sky-500 text-white font-bold py-3 rounded-2xl shadow-lg transition-colors text-xs">
-                        <span>Target Match</span><span class="text-[9px] text-sky-100 dark:text-sky-200 mt-0.5">${data.new_kb} KB</span>
-                    </a>
-                `;
             } else {
+                document.getElementById('popupTitle').innerText = "PDF Extracted Successfully!";
                 document.getElementById('lblLeft').innerText = "Input PDF";
-                document.getElementById('valLeft').innerText = data.original_kb + " KB";
+                document.getElementById('popOrig').innerText = orig;
                 document.getElementById('lblRight').innerText = "Extracted ZIP";
-                document.getElementById('valRight').innerText = data.new_kb + " KB";
-                document.getElementById('popSave').innerText = "✨ Clean high-density image extraction finished perfectly!";
+                document.getElementById('popNew').innerText = newS;
+                
+                document.getElementById('popOrig').classList.remove('line-through', 'decoration-red-400/60');
 
                 dlLayout.innerHTML = `
-                    <button onclick="closePopup()" class="w-1/3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3.5 rounded-2xl transition-colors text-sm border border-slate-200 dark:border-slate-700">Close</button>
-                    <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="w-2/3 flex items-center justify-center gap-2 bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-colors text-sm">
-                        <i class="fa-solid fa-file-zipper text-lg"></i> Download ZIP
+                    <a href="data:${data.mime_type};base64,${data.file_data}" download="${data.file_name}" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-500/30 transition-all transform hover:-translate-y-1 text-lg tracking-wide mb-3">
+                        <i class="fa-solid fa-file-zipper text-2xl animate-bounce"></i> DOWNLOAD ZIP
                     </a>
                 `;
             }
             
             dlLayout.innerHTML += `<button onclick="closePopup()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>`;
-
             resetBtn();
         }
 
-        // Popup close function
         function closePopup() {
             const popup = document.getElementById('successPopup');
-            popup.classList.remove('opacity-100', 'scale-100');
-            popup.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => {
-                popup.classList.add('hidden');
-                popup.classList.remove('flex');
-                clearQueue();
-            }, 300);
+            popup.classList.remove('opacity-100', 'scale-100'); popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => { popup.classList.add('hidden'); clearQueue(); }, 300);
         }
 
         function resetBtn() {
             const btn = document.getElementById('startBtn');
             btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> START CONVERSION</span><div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine"></div>`;
-            btn.classList.remove("opacity-80", "pointer-events-none");
-            document.getElementById('progressBar').style.width = '0%';
+            btn.classList.remove("opacity-80", "pointer-events-none"); document.getElementById('progressBar').style.width = '0%';
         }
     </script>
 </body>
