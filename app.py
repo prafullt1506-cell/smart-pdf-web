@@ -230,8 +230,11 @@ def images_to_pdf():
             "is_dual": True,
             "original_kb": round(total_image_size, 1),
             "new_kb": round(len(pdf_bytes) / 1024, 1),
+            "generated_pdf_kb": round(len(original_pdf_bytes) / 1024, 1),
+            "file_name_orig": "Original_Images.pdf",
             "file_name_comp": "Converted_Images.pdf",
             "mime_type": "application/pdf",
+            "file_data_orig": base64.b64encode(original_pdf_bytes).decode('utf-8'),
             "file_data_comp": base64.b64encode(pdf_bytes).decode('utf-8')
         })
     except Exception as e:
@@ -500,7 +503,7 @@ def split_pdf():
         gc.collect()
 
 # ==========================================
-# 🔐 ENGINE 8: PROTECT & UNLOCK PDF
+# 🔐 ENGINE 8: PROTECT & UNLOCK PDF (FIXED ERROR)
 # ==========================================
 @app.route('/protect_pdf', methods=['POST'])
 def protect_pdf():
@@ -526,10 +529,12 @@ def protect_pdf():
             if doc.is_encrypted:
                 doc.close()
                 return jsonify({"error": "This PDF is already protected!"}), 400
-            doc.saveIncr() 
+            
+            # 🚀 FIXED: SaveIncr removed, direct AES-256 encryption applied in memory!
             out_bytes = doc.tobytes(
                 garbage=4, 
                 deflate=True, 
+                encryption=fitz.PDF_ENCRYPT_AES_256,
                 user_pw=password, 
                 owner_pw=password, 
                 permissions=fitz.PDF_PERM_ACCESSIBILITY
