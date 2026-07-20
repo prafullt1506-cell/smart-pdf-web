@@ -58,7 +58,7 @@ def image_compress_page():
     return render_template('image_compressor.html')
 
 # ==========================================
-# 🗜️ ENGINE 1: PDF COMPRESSOR (Original/Safe/Strict Logic)
+# 🗜️ ENGINE 1: PDF COMPRESSOR (Universal Safe/Strict/Original)
 # ==========================================
 @app.route('/compress_batch', methods=['POST'])
 def compress_batch():
@@ -158,7 +158,7 @@ def compress_batch():
         gc.collect()
 
 # ==========================================
-# 🖼️ ENGINE 2: IMAGES TO PDF (Original/Safe/Strict Logic)
+# 🖼️ ENGINE 2: IMAGES TO PDF 
 # ==========================================
 @app.route('/images_to_pdf', methods=['POST'])
 def images_to_pdf():
@@ -596,19 +596,45 @@ def process_image_crop():
             img = ImageEnhance.Contrast(img).enhance(1.15)
             img = ImageEnhance.Color(img).enhance(1.1)
 
+        # 🚀 RESTORED: Unit and DPI Logic
+        unit = request.form.get('unit', 'px')
+        raw_w = request.form.get('target_w', '')
+        raw_h = request.form.get('target_h', '')
+        raw_dpi = request.form.get('target_dpi', '')
+
+        try:
+            target_dpi = int(raw_dpi) if raw_dpi else 300
+        except ValueError:
+            target_dpi = 300
+
+        target_w, target_h = None, None
+        if raw_w and raw_h:
+            try:
+                if unit == 'cm':
+                    target_w = int((float(raw_w) / 2.54) * target_dpi)
+                    target_h = int((float(raw_h) / 2.54) * target_dpi)
+                else:
+                    target_w = int(float(raw_w))
+                    target_h = int(float(raw_h))
+            except ValueError:
+                pass
+
+        if target_w and target_h and target_w > 0 and target_h > 0:
+            img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+
         comp_mode = request.form.get('comp_mode', 'safe') 
         target_kb = request.form.get('target_kb')
         img_byte_arr = io.BytesIO()
         
         if comp_mode == 'original' or not target_kb or not str(target_kb).isdigit():
-            img.save(img_byte_arr, format=original_format, quality=95, optimize=True)
+            img.save(img_byte_arr, format=original_format, quality=95, optimize=True, dpi=(target_dpi, target_dpi))
         else:
             target_bytes = int(target_kb) * 1024
             quality = 95
             while quality > 15:
                 img_byte_arr.seek(0)
                 img_byte_arr.truncate()
-                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True)
+                img.save(img_byte_arr, format=original_format, quality=quality, optimize=True, dpi=(target_dpi, target_dpi))
                 if img_byte_arr.tell() <= target_bytes:
                     break
                 quality -= 5
